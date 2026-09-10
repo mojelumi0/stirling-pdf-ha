@@ -1,0 +1,111 @@
+{
+  "title": "Stirling PDF",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Stirling PDF",
+        "description": "Enter the full local URL of your Stirling PDF instance.",
+        "data": {
+          "url": "URL",
+          "api_key": "API key (optional)"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure Stirling PDF",
+        "description": "Change the server URL or API key.",
+        "data": {
+          "url": "URL",
+          "api_key": "API key (optional)"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Update authentication",
+        "description": "The Stirling PDF server rejected the configured API key. Enter a valid key.",
+        "data": {
+          "api_key": "API key"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect. Check the URL and whether Stirling PDF is running.",
+      "invalid_auth": "The API key was rejected.",
+      "invalid_url": "Enter a valid HTTP or HTTPS base URL.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "single_instance_allowed": "Only one Stirling PDF instance can be configured.",
+      "reauth_successful": "Authentication was updated successfully.",
+      "reconfigure_successful": "The configuration was updated successfully."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "version": { "name": "Version" },
+      "jobs_processed": { "name": "Jobs processed" },
+      "last_operation": {
+        "name": "Last operation",
+        "state": {
+          "merge": "Merge",
+          "split": "Split",
+          "ocr": "OCR",
+          "compress": "Compress"
+        }
+      }
+    },
+    "binary_sensor": {
+      "reachable": { "name": "Reachable" }
+    }
+  },
+  "exceptions": {
+    "not_configured": { "message": "Stirling PDF is not configured." },
+    "entry_not_loaded": { "message": "The Stirling PDF configuration is not loaded." },
+    "path_not_allowed": { "message": "The path `{path}` is not allowed by Home Assistant. Add its parent directory to `allowlist_external_dirs`." },
+    "invalid_extension": { "message": "The path `{path}` must use the `{extension}` extension." },
+    "invalid_languages": { "message": "Enter at least one valid OCR language code, such as `eng` or `deu`." },
+    "output_exists": { "message": "The output file `{path}` already exists. Enable overwrite or choose another path." },
+    "authentication_failed": { "message": "Stirling PDF rejected the API key." },
+    "processing_failed": { "message": "Stirling PDF could not process the document: {error}" },
+    "file_error": { "message": "Home Assistant could not read or write the file: {error}" }
+  },
+  "services": {
+    "merge": {
+      "name": "Merge PDFs",
+      "description": "Combine two or more PDF files in the specified order.",
+      "fields": {
+        "file_paths": { "name": "File paths", "description": "Absolute paths of the PDF files to merge, in order." },
+        "output_path": { "name": "Output path", "description": "Absolute path for the merged PDF." },
+        "overwrite": { "name": "Overwrite", "description": "Replace the output file if it already exists." }
+      }
+    },
+    "split": {
+      "name": "Split PDF",
+      "description": "Split a PDF after the specified page numbers.",
+      "fields": {
+        "file_path": { "name": "File path", "description": "Absolute path of the PDF to split." },
+        "page_numbers": { "name": "Page numbers", "description": "Split points such as `2,5`, ranges, `all`, or functions such as `2n+1`." },
+        "output_path": { "name": "Output path", "description": "Absolute `.zip` path for the resulting PDFs." },
+        "overwrite": { "name": "Overwrite", "description": "Replace the output file if it already exists." }
+      }
+    },
+    "ocr": {
+      "name": "Run OCR on PDF",
+      "description": "Make a scanned PDF searchable using OCR.",
+      "fields": {
+        "file_path": { "name": "File path", "description": "Absolute path of the scanned PDF." },
+        "languages": { "name": "Languages", "description": "Installed Tesseract language codes, for example `eng` and `deu`." },
+        "output_path": { "name": "Output path", "description": "Absolute path for the searchable PDF." },
+        "overwrite": { "name": "Overwrite", "description": "Replace the output file if it already exists." }
+      }
+    },
+    "compress": {
+      "name": "Compress PDF",
+      "description": "Reduce the file size of a PDF.",
+      "fields": {
+        "file_path": { "name": "File path", "description": "Absolute path of the PDF to compress." },
+        "optimize_level": { "name": "Optimization level", "description": "A value from 1 (light) through 9 (most aggressive)." },
+        "output_path": { "name": "Output path", "description": "Absolute path for the compressed PDF." },
+        "overwrite": { "name": "Overwrite", "description": "Replace the output file if it already exists." }
+      }
+    }
+  }
+}
