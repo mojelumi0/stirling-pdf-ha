@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import struct
 from pathlib import Path
 from typing import Any
 
@@ -11,6 +12,15 @@ import yaml
 ROOT = Path(__file__).resolve().parents[3]
 INTEGRATION = ROOT / "custom_components" / "stirling_pdf"
 WORKFLOWS = ROOT / ".github" / "workflows"
+
+
+def _png_dimensions_and_color_type(path: Path) -> tuple[int, int, int]:
+    """Return the dimensions and PNG color type from the IHDR chunk."""
+    content = path.read_bytes()
+    assert content.startswith(b"\x89PNG\r\n\x1a\n")
+    assert content[12:16] == b"IHDR"
+    width, height = struct.unpack(">II", content[16:24])
+    return width, height, content[25]
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -73,6 +83,16 @@ def test_hacs_manifest_is_valid() -> None:
         "name": "Stirling PDF",
         "homeassistant": "2026.9.0",
     }
+
+
+def test_brand_icons_have_supported_sizes_and_transparency() -> None:
+    """Validate the local Home Assistant and HACS brand assets."""
+    brand = INTEGRATION / "brand"
+
+    for filename, expected_size in (("icon.png", 256), ("icon@2x.png", 512)):
+        width, height, color_type = _png_dimensions_and_color_type(brand / filename)
+        assert (width, height) == (expected_size, expected_size)
+        assert color_type in {4, 6}
 
 
 def test_github_validation_workflows_exist() -> None:
