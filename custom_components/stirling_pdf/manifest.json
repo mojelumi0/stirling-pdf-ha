@@ -1,0 +1,13 @@
+{
+  "domain": "stirling_pdf",
+  "name": "Stirling PDF",
+  "codeowners": ["@mojelumi0"],
+  "config_flow": true,
+  "documentation": "https://github.com/mojelumi0/stirling-pdf-ha",
+  "integration_type": "service",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/mojelumi0/stirling-pdf-ha/issues",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "0.1.0"
+}
