@@ -1,0 +1,111 @@
+{
+  "title": "Stirling PDF",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Mit Stirling PDF verbinden",
+        "description": "Gib die vollständige lokale URL deiner Stirling-PDF-Instanz ein.",
+        "data": {
+          "url": "URL",
+          "api_key": "API-Key (optional)"
+        }
+      },
+      "reconfigure": {
+        "title": "Stirling PDF neu konfigurieren",
+        "description": "Ändere die Server-URL oder den API-Key.",
+        "data": {
+          "url": "URL",
+          "api_key": "API-Key (optional)"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Authentifizierung aktualisieren",
+        "description": "Der Stirling-PDF-Server hat den konfigurierten API-Key abgelehnt. Gib einen gültigen Key ein.",
+        "data": {
+          "api_key": "API-Key"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung fehlgeschlagen. Prüfe die URL und ob Stirling PDF läuft.",
+      "invalid_auth": "Der API-Key wurde abgelehnt.",
+      "invalid_url": "Gib eine gültige HTTP- oder HTTPS-Basis-URL ein.",
+      "unknown": "Unerwarteter Fehler."
+    },
+    "abort": {
+      "single_instance_allowed": "Es kann nur eine Stirling-PDF-Instanz eingerichtet werden.",
+      "reauth_successful": "Die Authentifizierung wurde erfolgreich aktualisiert.",
+      "reconfigure_successful": "Die Konfiguration wurde erfolgreich aktualisiert."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "version": { "name": "Version" },
+      "jobs_processed": { "name": "Verarbeitete Aufträge" },
+      "last_operation": {
+        "name": "Letzte Aktion",
+        "state": {
+          "merge": "Zusammenführen",
+          "split": "Teilen",
+          "ocr": "OCR",
+          "compress": "Komprimieren"
+        }
+      }
+    },
+    "binary_sensor": {
+      "reachable": { "name": "Erreichbar" }
+    }
+  },
+  "exceptions": {
+    "not_configured": { "message": "Stirling PDF ist nicht eingerichtet." },
+    "entry_not_loaded": { "message": "Die Stirling-PDF-Konfiguration ist nicht geladen." },
+    "path_not_allowed": { "message": "Der Pfad `{path}` ist in Home Assistant nicht erlaubt. Füge den übergeordneten Ordner zu `allowlist_external_dirs` hinzu." },
+    "invalid_extension": { "message": "Der Pfad `{path}` muss die Dateiendung `{extension}` verwenden." },
+    "invalid_languages": { "message": "Gib mindestens einen gültigen OCR-Sprachcode ein, beispielsweise `eng` oder `deu`." },
+    "output_exists": { "message": "Die Ausgabedatei `{path}` existiert bereits. Aktiviere Überschreiben oder wähle einen anderen Pfad." },
+    "authentication_failed": { "message": "Stirling PDF hat den API-Key abgelehnt." },
+    "processing_failed": { "message": "Stirling PDF konnte das Dokument nicht verarbeiten: {error}" },
+    "file_error": { "message": "Home Assistant konnte die Datei nicht lesen oder schreiben: {error}" }
+  },
+  "services": {
+    "merge": {
+      "name": "PDFs zusammenführen",
+      "description": "Führe zwei oder mehr PDF-Dateien in der angegebenen Reihenfolge zusammen.",
+      "fields": {
+        "file_paths": { "name": "Dateipfade", "description": "Absolute Pfade der zusammenzuführenden PDFs in der gewünschten Reihenfolge." },
+        "output_path": { "name": "Ausgabepfad", "description": "Absoluter Pfad für das zusammengeführte PDF." },
+        "overwrite": { "name": "Überschreiben", "description": "Ersetze die Ausgabedatei, wenn sie bereits existiert." }
+      }
+    },
+    "split": {
+      "name": "PDF teilen",
+      "description": "Teile ein PDF nach den angegebenen Seitenzahlen.",
+      "fields": {
+        "file_path": { "name": "Dateipfad", "description": "Absoluter Pfad des zu teilenden PDFs." },
+        "page_numbers": { "name": "Seitenzahlen", "description": "Trennpunkte wie `2,5`, Bereiche, `all` oder Funktionen wie `2n+1`." },
+        "output_path": { "name": "Ausgabepfad", "description": "Absoluter `.zip`-Pfad für die erzeugten PDFs." },
+        "overwrite": { "name": "Überschreiben", "description": "Ersetze die Ausgabedatei, wenn sie bereits existiert." }
+      }
+    },
+    "ocr": {
+      "name": "OCR auf PDF anwenden",
+      "description": "Mache ein gescanntes PDF per OCR durchsuchbar.",
+      "fields": {
+        "file_path": { "name": "Dateipfad", "description": "Absoluter Pfad des gescannten PDFs." },
+        "languages": { "name": "Sprachen", "description": "Installierte Tesseract-Sprachcodes, beispielsweise `eng` und `deu`." },
+        "output_path": { "name": "Ausgabepfad", "description": "Absoluter Pfad für das durchsuchbare PDF." },
+        "overwrite": { "name": "Überschreiben", "description": "Ersetze die Ausgabedatei, wenn sie bereits existiert." }
+      }
+    },
+    "compress": {
+      "name": "PDF komprimieren",
+      "description": "Verringere die Dateigröße eines PDFs.",
+      "fields": {
+        "file_path": { "name": "Dateipfad", "description": "Absoluter Pfad des zu komprimierenden PDFs." },
+        "optimize_level": { "name": "Optimierungsstufe", "description": "Ein Wert von 1 (leicht) bis 9 (am stärksten)." },
+        "output_path": { "name": "Ausgabepfad", "description": "Absoluter Pfad für das komprimierte PDF." },
+        "overwrite": { "name": "Überschreiben", "description": "Ersetze die Ausgabedatei, wenn sie bereits existiert." }
+      }
+    }
+  }
+}
