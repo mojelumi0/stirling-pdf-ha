@@ -1,0 +1,28 @@
+name: Check release version matches manifest
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.release.target_commitish }}
+
+      - name: Compare tag to manifest.json version
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          TAG="${TAG#v}"
+          MANIFEST_VERSION=$(jq -r '.version' custom_components/stirling_pdf/manifest.json)
+          echo "Normalized release tag: $TAG"
+          echo "manifest.json version: $MANIFEST_VERSION"
+          if [ "$TAG" != "$MANIFEST_VERSION" ]; then
+            echo "::error::Release tag ($TAG) does not match manifest.json ($MANIFEST_VERSION). HACS would report a version mismatch."
+            exit 1
+          fi
