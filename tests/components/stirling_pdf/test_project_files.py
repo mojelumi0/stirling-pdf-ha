@@ -76,7 +76,13 @@ def test_hacs_manifest_is_valid() -> None:
 
 
 def test_github_validation_workflows_exist() -> None:
-    workflow_names = {"tests.yml", "hassfest.yml", "validate.yaml"}
+    workflow_names = {
+        "tests.yml",
+        "hassfest.yml",
+        "validate.yaml",
+        "release-drafter.yml",
+        "release-version-check.yml",
+    }
 
     for name in workflow_names:
         workflow = (WORKFLOWS / name).read_text(encoding="utf-8")
@@ -96,3 +102,24 @@ def test_github_validation_workflows_exist() -> None:
     hacs_workflow = (WORKFLOWS / "validate.yaml").read_text(encoding="utf-8")
     assert "hacs/action@main" in hacs_workflow
     assert "category: integration" in hacs_workflow
+
+    release_drafter_workflow = (WORKFLOWS / "release-drafter.yml").read_text(
+        encoding="utf-8"
+    )
+    assert "release-drafter/release-drafter@v7" in release_drafter_workflow
+
+    release_version_workflow = (WORKFLOWS / "release-version-check.yml").read_text(
+        encoding="utf-8"
+    )
+    assert "github.event.release.tag_name" in release_version_workflow
+    assert "custom_components/stirling_pdf/manifest.json" in release_version_workflow
+
+
+def test_release_drafter_config_exists() -> None:
+    config = (ROOT / ".github" / "release-drafter.yml").read_text(encoding="utf-8")
+    parsed = yaml.safe_load(config)
+
+    assert isinstance(parsed, dict)
+    assert parsed["tag-template"] == "$RESOLVED_VERSION"
+    assert parsed["include-pre-releases"] is True
+    assert "$CHANGES" in parsed["template"]
