@@ -17,6 +17,14 @@ processing actions, connectivity monitoring, and a simple UI-based setup.
 > files until it has been verified with more Home Assistant and Stirling PDF
 > versions.
 
+## Testing status
+
+The initial setup flow and all four actions—merge, split, OCR, and
+compression—have been manually tested successfully by the maintainer on a
+local Home Assistant and Stirling PDF installation. Automated tests cover the
+API client and repository structure. Broader compatibility testing is still
+needed during the alpha phase.
+
 ## What this integration does
 
 Stirling PDF already provides a powerful local PDF processing API. This custom
@@ -262,6 +270,25 @@ information.
 - Only one Stirling PDF instance can currently be configured.
 - Operation statistics are local and are not persisted across restarts.
 - There is no browser-based file picker for Home Assistant host paths.
+- Password, watermark, and office-document conversion actions are not part of
+  the first version.
+- Compatibility with additional Home Assistant and Stirling PDF versions still
+  needs broader community testing.
+
+## Development
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider
+.\.venv\Scripts\ruff.exe check --no-cache custom_components tests
+.\.venv\Scripts\ruff.exe format --check --no-cache custom_components tests
+```
+
+The standalone tests cover URL handling, authentication, multipart requests,
+response validation, manifests, HACS metadata, translations, services, and
+workflow structure. More coverage using Home Assistant's official test
+framework is planned as the integration develops.
 
 ## Support
 
@@ -282,6 +309,14 @@ version, installation method, action used, and sanitized error message.
 - [Home Assistant integration actions](https://developers.home-assistant.io/docs/dev_101_services/)
 - [Home Assistant config flow](https://developers.home-assistant.io/docs/core/integration/config_flow/)
 - [HACS integration repository requirements](https://hacs.xyz/docs/publish/integration/)
+
+## Development transparency
+
+This project is developed with support from AI tools, including ChatGPT and
+Claude. I personally review the proposed code, documentation, and other project
+files before publishing changes. AI assistance does not replace manual review,
+testing, or maintainer responsibility, and mistakes can still happen. If you
+spot something, please open an issue.
 
 ## Disclaimer
 
