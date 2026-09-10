@@ -1,0 +1,92 @@
+merge:
+  fields:
+    file_paths:
+      required: true
+      example:
+        - "/config/pdf/a.pdf"
+        - "/config/pdf/b.pdf"
+      selector:
+        text:
+          multiple: true
+    output_path:
+      required: true
+      example: "/config/pdf/merged.pdf"
+      selector:
+        text:
+    overwrite:
+      default: false
+      selector:
+        boolean:
+
+split:
+  fields:
+    file_path:
+      required: true
+      example: "/config/pdf/document.pdf"
+      selector:
+        text:
+    page_numbers:
+      required: true
+      example: "2,5"
+      selector:
+        text:
+    output_path:
+      required: true
+      example: "/config/pdf/document_split.zip"
+      selector:
+        text:
+    overwrite:
+      default: false
+      selector:
+        boolean:
+
+ocr:
+  fields:
+    file_path:
+      required: true
+      example: "/config/pdf/scan.pdf"
+      selector:
+        text:
+    languages:
+      default:
+        - "eng"
+      example:
+        - "eng"
+        - "deu"
+      selector:
+        text:
+          multiple: true
+    output_path:
+      required: true
+      example: "/config/pdf/scan_ocr.pdf"
+      selector:
+        text:
+    overwrite:
+      default: false
+      selector:
+        boolean:
+
+compress:
+  fields:
+    file_path:
+      required: true
+      example: "/config/pdf/large.pdf"
+      selector:
+        text:
+    optimize_level:
+      default: 5
+      selector:
+        number:
+          min: 1
+          max: 9
+          step: 1
+          mode: slider
+    output_path:
+      required: true
+      example: "/config/pdf/large_compressed.pdf"
+      selector:
+        text:
+    overwrite:
+      default: false
+      selector:
+        boolean:
