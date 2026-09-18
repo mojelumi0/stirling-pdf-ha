@@ -52,7 +52,10 @@ async def test_setup_creates_expected_entities_and_device(
     assert _state(hass, jobs).state == "0"
     assert _state(hass, last_operation).state == "unknown"
 
-    device = dr.async_get(hass).async_get_device({(DOMAIN, loaded_entry.entry_id)})
+    device = dr.async_get(hass).async_get_device_by_identifier(
+        (DOMAIN, loaded_entry.entry_id),
+        loaded_entry.entry_id,
+    )
     assert device is not None
     assert device.manufacturer == "Stirling PDF"
     assert device.configuration_url == "http://pdf.local:8080"
