@@ -57,7 +57,7 @@ class StirlingPdfVersionSensor(StirlingPdfEntity, SensorEntity):
 
 
 class StirlingPdfJobsProcessedSensor(StirlingPdfEntity, SensorEntity):
-    """Count successful actions run through this integration since setup."""
+    """Count successful actions run through this integration."""
 
     _attr_translation_key = "jobs_processed"
     _attr_state_class = SensorStateClass.TOTAL_INCREASING

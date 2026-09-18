@@ -17,9 +17,12 @@ from custom_components.stirling_pdf.api import (
 from custom_components.stirling_pdf.const import (
     ATTR_FILE_PATH,
     ATTR_FILE_PATHS,
+    ATTR_INPUT_COUNT,
     ATTR_LANGUAGES,
+    ATTR_OPERATION,
     ATTR_OPTIMIZE_LEVEL,
     ATTR_OUTPUT_PATH,
+    ATTR_OUTPUT_SIZE,
     ATTR_OVERWRITE,
     ATTR_PAGE_NUMBERS,
     DOMAIN,
@@ -94,7 +97,7 @@ async def test_all_actions_write_results_and_update_statistics(
     )
 
     compressed = tmp_path / "compressed.pdf"
-    await hass.services.async_call(
+    response = await hass.services.async_call(
         DOMAIN,
         SERVICE_COMPRESS,
         {
@@ -103,6 +106,7 @@ async def test_all_actions_write_results_and_update_statistics(
             ATTR_OUTPUT_PATH: str(compressed),
         },
         blocking=True,
+        return_response=True,
     )
 
     assert merged.read_bytes() == PDF_RESULT
@@ -115,6 +119,12 @@ async def test_all_actions_write_results_and_update_statistics(
     client.async_split.assert_awaited_once_with("first.pdf", PDF_INPUT, "2,5")
     client.async_ocr.assert_awaited_once_with("first.pdf", PDF_INPUT, ["eng", "deu"])
     client.async_compress.assert_awaited_once_with("first.pdf", PDF_INPUT, 7)
+    assert response == {
+        ATTR_OPERATION: SERVICE_COMPRESS,
+        ATTR_OUTPUT_PATH: str(compressed),
+        ATTR_OUTPUT_SIZE: len(PDF_RESULT),
+        ATTR_INPUT_COUNT: 1,
+    }
     assert coordinator.jobs_processed == 4
     assert coordinator.last_operation == SERVICE_COMPRESS
 

@@ -11,7 +11,12 @@ from typing import cast
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import CONF_API_KEY, CONF_URL, Platform
-from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.core import (
+    HomeAssistant,
+    ServiceCall,
+    ServiceResponse,
+    SupportsResponse,
+)
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -21,9 +26,12 @@ from .api import StirlingPdfApiClient, StirlingPdfApiError, StirlingPdfAuthError
 from .const import (
     ATTR_FILE_PATH,
     ATTR_FILE_PATHS,
+    ATTR_INPUT_COUNT,
     ATTR_LANGUAGES,
+    ATTR_OPERATION,
     ATTR_OPTIMIZE_LEVEL,
     ATTR_OUTPUT_PATH,
+    ATTR_OUTPUT_SIZE,
     ATTR_OVERWRITE,
     ATTR_PAGE_NUMBERS,
     DEFAULT_OCR_LANGUAGES,
@@ -34,7 +42,7 @@ from .const import (
     SERVICE_OCR,
     SERVICE_SPLIT,
 )
-from .coordinator import StirlingPdfCoordinator
+from .coordinator import StirlingPdfCoordinator, async_remove_statistics
 
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR]
 
@@ -101,6 +109,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
             service,
             _async_handle_action,
             schema=schema,
+            supports_response=SupportsResponse.OPTIONAL,
         )
     return True
 
@@ -112,7 +121,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: StirlingPdfConfigEntry) 
         entry.data[CONF_URL],
         entry.data.get(CONF_API_KEY),
     )
-    coordinator = StirlingPdfCoordinator(hass, client, DEFAULT_SCAN_INTERVAL)
+    coordinator = StirlingPdfCoordinator(
+        hass,
+        client,
+        DEFAULT_SCAN_INTERVAL,
+        entry.entry_id,
+    )
+    await coordinator.async_load_statistics()
     await coordinator.async_config_entry_first_refresh()
     entry.runtime_data = coordinator
 
@@ -124,7 +139,17 @@ async def async_unload_entry(
     hass: HomeAssistant, entry: StirlingPdfConfigEntry
 ) -> bool:
     """Unload a config entry while leaving service actions registered."""
-    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unload_ok:
+        await entry.runtime_data.async_save_statistics()
+    return unload_ok
+
+
+async def async_remove_entry(
+    hass: HomeAssistant, entry: StirlingPdfConfigEntry
+) -> None:
+    """Remove locally persisted statistics with the config entry."""
+    await async_remove_statistics(hass, entry.entry_id)
 
 
 def _get_coordinator(hass: HomeAssistant) -> StirlingPdfCoordinator:
@@ -234,7 +259,7 @@ def _normalize_languages(values: list[str]) -> list[str]:
     return languages
 
 
-async def _async_handle_action(call: ServiceCall) -> None:
+async def _async_handle_action(call: ServiceCall) -> ServiceResponse | None:
     """Handle one of the four Stirling PDF service actions."""
     coordinator = _get_coordinator(call.hass)
     overwrite = call.data[ATTR_OVERWRITE]
@@ -247,6 +272,7 @@ async def _async_handle_action(call: ServiceCall) -> None:
             ]
             result = await coordinator.client.async_merge(files)
             output_suffix = ".pdf"
+            input_count = len(files)
         else:
             filename, content = await _async_read_pdf(
                 call.hass, call.data[ATTR_FILE_PATH]
@@ -272,6 +298,7 @@ async def _async_handle_action(call: ServiceCall) -> None:
                     call.data[ATTR_OPTIMIZE_LEVEL],
                 )
                 output_suffix = ".pdf"
+            input_count = 1
 
         await _async_write_result(
             call.hass,
@@ -307,3 +334,11 @@ async def _async_handle_action(call: ServiceCall) -> None:
         ) from err
 
     coordinator.record_operation(call.service)
+    if not call.return_response:
+        return None
+    return {
+        ATTR_OPERATION: call.service,
+        ATTR_OUTPUT_PATH: call.data[ATTR_OUTPUT_PATH],
+        ATTR_OUTPUT_SIZE: len(result),
+        ATTR_INPUT_COUNT: input_count,
+    }
