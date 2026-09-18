@@ -113,6 +113,7 @@ def test_github_validation_workflows_exist() -> None:
     tests_workflow = (WORKFLOWS / "tests.yml").read_text(encoding="utf-8")
     assert 'python-version: "3.14"' in tests_workflow
     assert "python -m pytest" in tests_workflow
+    assert "--cov=custom_components/stirling_pdf" in tests_workflow
     assert "ruff check" in tests_workflow
     assert "ruff format --check" in tests_workflow
 
@@ -143,3 +144,15 @@ def test_release_drafter_config_exists() -> None:
     assert parsed["tag-template"] == "$RESOLVED_VERSION"
     assert parsed["include-pre-releases"] is True
     assert "$CHANGES" in parsed["template"]
+
+
+def test_community_health_files_exist() -> None:
+    for filename in ("bug_report.yml", "feature_request.yml", "config.yml"):
+        path = ROOT / ".github" / "ISSUE_TEMPLATE" / filename
+        parsed = yaml.safe_load(path.read_text(encoding="utf-8"))
+        assert isinstance(parsed, dict)
+
+    assert "Local checks" in (ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+    assert "Reporting a vulnerability" in (ROOT / "SECURITY.md").read_text(
+        encoding="utf-8"
+    )

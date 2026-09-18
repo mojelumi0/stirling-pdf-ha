@@ -6,6 +6,8 @@ from datetime import timedelta
 
 DOMAIN = "stirling_pdf"
 
+API_KEY_PLACEHOLDER = "********"
+
 DEFAULT_URL = "http://localhost:8080"
 DEFAULT_SCAN_INTERVAL = timedelta(seconds=60)
 DEFAULT_STATUS_TIMEOUT = 10

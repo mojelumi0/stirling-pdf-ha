@@ -19,31 +19,24 @@ _API_PATH = (
 )
 _CONST_PATH = _API_PATH.parent / "const.py"
 
-_package_root = importlib.util.module_from_spec(
-    importlib.util.spec_from_loader("custom_components", loader=None, is_package=True)
-)
+_TEST_PACKAGE = "_stirling_pdf_standalone"
 _component_package = importlib.util.module_from_spec(
-    importlib.util.spec_from_loader(
-        "custom_components.stirling_pdf", loader=None, is_package=True
-    )
+    importlib.util.spec_from_loader(_TEST_PACKAGE, loader=None, is_package=True)
 )
-sys.modules["custom_components"] = _package_root
-sys.modules["custom_components.stirling_pdf"] = _component_package
+sys.modules[_TEST_PACKAGE] = _component_package
 
 _const_spec = importlib.util.spec_from_file_location(
-    "custom_components.stirling_pdf.const", _CONST_PATH
+    f"{_TEST_PACKAGE}.const", _CONST_PATH
 )
 assert _const_spec and _const_spec.loader
 _const_module = importlib.util.module_from_spec(_const_spec)
-sys.modules["custom_components.stirling_pdf.const"] = _const_module
+sys.modules[f"{_TEST_PACKAGE}.const"] = _const_module
 _const_spec.loader.exec_module(_const_module)
 
-_api_spec = importlib.util.spec_from_file_location(
-    "custom_components.stirling_pdf.api", _API_PATH
-)
+_api_spec = importlib.util.spec_from_file_location(f"{_TEST_PACKAGE}.api", _API_PATH)
 assert _api_spec and _api_spec.loader
 _api_module = importlib.util.module_from_spec(_api_spec)
-sys.modules["custom_components.stirling_pdf.api"] = _api_module
+sys.modules[f"{_TEST_PACKAGE}.api"] = _api_module
 _api_spec.loader.exec_module(_api_module)
 
 StirlingPdfApiClient = _api_module.StirlingPdfApiClient
@@ -51,6 +44,9 @@ StirlingPdfApiError = _api_module.StirlingPdfApiError
 StirlingPdfAuthError = _api_module.StirlingPdfAuthError
 StirlingPdfConnectionError = _api_module.StirlingPdfConnectionError
 StirlingPdfInvalidUrlError = _api_module.StirlingPdfInvalidUrlError
+StirlingPdfStatusEndpointDisabledError = (
+    _api_module.StirlingPdfStatusEndpointDisabledError
+)
 normalize_base_url = _api_module.normalize_base_url
 
 
@@ -126,6 +122,17 @@ async def test_get_status_accepts_legacy_plain_text(session: MagicMock) -> None:
     client = StirlingPdfApiClient(session, "http://127.0.0.1:8080")
 
     assert await client.async_get_status() == {"status": "UP"}
+
+
+@pytest.mark.asyncio
+async def test_get_status_rejects_disabled_endpoint(session: MagicMock) -> None:
+    session.get.return_value = _mock_response(
+        200, text_data="This endpoint is disabled."
+    )
+    client = StirlingPdfApiClient(session, "http://127.0.0.1:8080")
+
+    with pytest.raises(StirlingPdfStatusEndpointDisabledError):
+        await client.async_get_status()
 
 
 @pytest.mark.asyncio

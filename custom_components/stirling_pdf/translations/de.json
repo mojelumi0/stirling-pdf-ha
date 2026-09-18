@@ -12,7 +12,7 @@
       },
       "reconfigure": {
         "title": "Stirling PDF neu konfigurieren",
-        "description": "Ändere die Server-URL oder den API-Key.",
+        "description": "Ändere die Server-URL oder den API-Key. Der gespeicherte API-Key wird nie angezeigt: Lass den maskierten Platzhalter unverändert, um ihn zu behalten, gib einen neuen Key ein, um ihn zu ersetzen, oder leere das Feld, um ihn zu entfernen.",
         "data": {
           "url": "URL",
           "api_key": "API-Key (optional)"
@@ -30,6 +30,7 @@
       "cannot_connect": "Verbindung fehlgeschlagen. Prüfe die URL und ob Stirling PDF läuft.",
       "invalid_auth": "Der API-Key wurde abgelehnt.",
       "invalid_url": "Gib eine gültige HTTP- oder HTTPS-Basis-URL ein.",
+      "status_endpoint_disabled": "Stirling PDF meldet, dass der Status-Endpunkt deaktiviert ist. Aktiviere den Status-Endpunkt in Stirling PDF und versuche es erneut.",
       "unknown": "Unerwarteter Fehler."
     },
     "abort": {

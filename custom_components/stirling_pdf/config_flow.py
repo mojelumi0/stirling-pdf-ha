@@ -23,24 +23,32 @@ from .api import (
     StirlingPdfAuthError,
     StirlingPdfConnectionError,
     StirlingPdfInvalidUrlError,
+    StirlingPdfStatusEndpointDisabledError,
     normalize_base_url,
 )
-from .const import DEFAULT_URL, DOMAIN
+from .const import API_KEY_PLACEHOLDER, DEFAULT_URL, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def _data_schema(defaults: dict[str, Any] | None = None) -> vol.Schema:
+def _data_schema(
+    defaults: dict[str, Any] | None = None,
+    *,
+    mask_api_key: bool = False,
+) -> vol.Schema:
     """Return the configuration schema with suggested defaults."""
     values = defaults or {}
+    api_key_default = values.get(CONF_API_KEY, "")
+    if mask_api_key and api_key_default:
+        api_key_default = API_KEY_PLACEHOLDER
     return vol.Schema(
         {
             vol.Required(
                 CONF_URL, default=values.get(CONF_URL, DEFAULT_URL)
             ): TextSelector(TextSelectorConfig(type=TextSelectorType.URL)),
-            vol.Optional(
-                CONF_API_KEY, default=values.get(CONF_API_KEY, "")
-            ): TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD)),
+            vol.Optional(CONF_API_KEY, default=api_key_default): TextSelector(
+                TextSelectorConfig(type=TextSelectorType.PASSWORD)
+            ),
         }
     )
 
@@ -93,7 +101,10 @@ class StirlingPdfConfigFlow(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
         data = user_input
         if user_input is not None:
-            data, errors = await self._async_validate_and_normalize(user_input)
+            submitted_data = dict(user_input)
+            if submitted_data.get(CONF_API_KEY) == API_KEY_PLACEHOLDER:
+                submitted_data[CONF_API_KEY] = entry.data.get(CONF_API_KEY, "")
+            data, errors = await self._async_validate_and_normalize(submitted_data)
             if not errors:
                 assert data is not None
                 host = URL(data[CONF_URL]).host or data[CONF_URL]
@@ -105,7 +116,10 @@ class StirlingPdfConfigFlow(ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="reconfigure",
-            data_schema=_data_schema(data or dict(entry.data)),
+            data_schema=_data_schema(
+                data or dict(entry.data),
+                mask_api_key=True,
+            ),
             errors=errors,
         )
 
@@ -127,6 +141,8 @@ class StirlingPdfConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors["base"] = "invalid_auth"
             except StirlingPdfConnectionError:
                 errors["base"] = "cannot_connect"
+            except StirlingPdfStatusEndpointDisabledError:
+                errors["base"] = "status_endpoint_disabled"
             except StirlingPdfApiError:
                 _LOGGER.exception("Unexpected API response during reauthentication")
                 errors["base"] = "unknown"
@@ -143,9 +159,9 @@ class StirlingPdfConfigFlow(ConfigFlow, domain=DOMAIN):
             step_id="reauth_confirm",
             data_schema=vol.Schema(
                 {
-                    vol.Optional(
-                        CONF_API_KEY, default=entry.data.get(CONF_API_KEY, "")
-                    ): TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD))
+                    vol.Optional(CONF_API_KEY, default=""): TextSelector(
+                        TextSelectorConfig(type=TextSelectorType.PASSWORD)
+                    )
                 }
             ),
             errors=errors,
@@ -168,6 +184,8 @@ class StirlingPdfConfigFlow(ConfigFlow, domain=DOMAIN):
             return data, {"base": "invalid_auth"}
         except StirlingPdfConnectionError:
             return data, {"base": "cannot_connect"}
+        except StirlingPdfStatusEndpointDisabledError:
+            return data, {"base": "status_endpoint_disabled"}
         except StirlingPdfApiError:
             _LOGGER.exception("Unexpected API response during connection validation")
             return data, {"base": "unknown"}

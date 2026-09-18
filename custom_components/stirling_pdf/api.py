@@ -41,6 +41,10 @@ class StirlingPdfInvalidUrlError(StirlingPdfApiError):
     """Raised when a base URL is invalid."""
 
 
+class StirlingPdfStatusEndpointDisabledError(StirlingPdfApiError):
+    """Raised when Stirling PDF reports that its status endpoint is disabled."""
+
+
 def normalize_base_url(value: str) -> str:
     """Validate and normalize a Stirling PDF base URL."""
     try:
@@ -112,17 +116,25 @@ class StirlingPdfApiClient:
         except json.JSONDecodeError:
             status = body.strip()
             if status and len(status) <= 100 and "<" not in status:
-                return {"status": status}
-            raise StirlingPdfApiError(
-                "The status endpoint returned an invalid non-JSON response"
-            )
+                data = {"status": status}
+            else:
+                raise StirlingPdfApiError(
+                    "The status endpoint returned an invalid non-JSON response"
+                )
 
         if isinstance(data, str):
-            return {"status": data}
+            data = {"status": data}
         if not isinstance(data, dict):
             raise StirlingPdfApiError(
                 "The status endpoint returned an invalid response"
             )
+        status = data.get("status")
+        if isinstance(status, str):
+            normalized_status = status.casefold()
+            if "endpoint" in normalized_status and "disabled" in normalized_status:
+                raise StirlingPdfStatusEndpointDisabledError(
+                    "The Stirling PDF status endpoint is disabled"
+                )
         return data
 
     async def _async_post_files(

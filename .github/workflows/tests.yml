@@ -30,7 +30,10 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements-dev.txt
       - name: Run tests
-        run: python -m pytest -q -p no:cacheprovider
+        run: >-
+          python -m pytest -q -p no:cacheprovider
+          --cov=custom_components/stirling_pdf
+          --cov-report=term-missing
       - name: Run Ruff
         run: ruff check --no-cache custom_components tests
       - name: Check Ruff formatting

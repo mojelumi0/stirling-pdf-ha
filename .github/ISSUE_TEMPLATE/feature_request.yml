@@ -1,0 +1,40 @@
+name: Feature request
+description: Suggest an improvement or a new Stirling PDF action
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Automation use case
+      description: Explain what you want Home Assistant to automate and why it is useful.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the action, entity, or configuration change you would expect.
+    validations:
+      required: true
+  - type: input
+    id: endpoint
+    attributes:
+      label: Stirling PDF endpoint
+      description: If known, include the official Swagger or API endpoint.
+      placeholder: /api/v1/...
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Mention existing Home Assistant or Stirling PDF features that almost solve the problem.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched the existing issues for a similar request.
+          required: true
+        - label: This request describes a Home Assistant automation use case, not only a Stirling PDF web-interface feature.
+          required: true
