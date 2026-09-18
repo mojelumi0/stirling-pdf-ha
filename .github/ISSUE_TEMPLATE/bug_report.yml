@@ -1,0 +1,75 @@
+name: Bug report
+description: Report a reproducible problem with the Stirling PDF integration
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve the integration. Never attach private PDFs, API keys, or unredacted logs.
+  - type: input
+    id: home_assistant_version
+    attributes:
+      label: Home Assistant version
+      placeholder: 2026.9.3
+    validations:
+      required: true
+  - type: input
+    id: stirling_pdf_version
+    attributes:
+      label: Stirling PDF version
+      placeholder: 2.14.3
+    validations:
+      required: true
+  - type: dropdown
+    id: installation
+    attributes:
+      label: Integration installation method
+      options:
+        - HACS
+        - Manual copy
+        - Development checkout
+    validations:
+      required: true
+  - type: dropdown
+    id: authentication
+    attributes:
+      label: Stirling PDF authentication
+      options:
+        - No API key
+        - API key enabled
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the expected and actual behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Run ...
+        3. See ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized logs
+      description: Remove API keys, private URLs, filenames, paths, and document content.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety check
+      options:
+        - label: I used a copy of the affected PDF and removed all private information from this report.
+          required: true
+        - label: I searched the existing issues before opening this report.
+          required: true

@@ -12,7 +12,7 @@
       },
       "reconfigure": {
         "title": "Reconfigure Stirling PDF",
-        "description": "Change the server URL or API key.",
+        "description": "Change the server URL or API key. The saved API key is never displayed: leave the masked placeholder unchanged to keep it, enter a new key to replace it, or clear the field to remove it.",
         "data": {
           "url": "URL",
           "api_key": "API key (optional)"
@@ -30,6 +30,7 @@
       "cannot_connect": "Failed to connect. Check the URL and whether Stirling PDF is running.",
       "invalid_auth": "The API key was rejected.",
       "invalid_url": "Enter a valid HTTP or HTTPS base URL.",
+      "status_endpoint_disabled": "Stirling PDF reported that its status endpoint is disabled. Enable the status endpoint in Stirling PDF and try again.",
       "unknown": "Unexpected error."
     },
     "abort": {

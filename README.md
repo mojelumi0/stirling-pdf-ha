@@ -21,9 +21,16 @@ processing actions, connectivity monitoring, and a simple UI-based setup.
 
 The initial setup flow and all four actions—merge, split, OCR, and
 compression—have been manually tested successfully by the maintainer on a
-local Home Assistant and Stirling PDF installation. Automated tests cover the
-API client and repository structure. Broader compatibility testing is still
-needed during the alpha phase.
+local Home Assistant and Stirling PDF installation.
+
+| Test date | Home Assistant Core | Home Assistant OS | Stirling PDF | Result |
+|---|---|---|---|---|
+| 2026-09-18 | 2026.9.3 | 18.3 | 2.14.3 | ✅ Setup, entities, merge, split, OCR, and compression |
+
+Automated tests additionally cover the API client, repository structure,
+configuration and reauthentication flows, entity setup and unloading, and the
+actions through Home Assistant's service registry. Broader compatibility
+testing is still needed during the alpha phase.
 
 ## What this integration does
 
@@ -100,6 +107,11 @@ Supported URL examples:
 The integration validates the connection with
 `/api/v1/info/status`. The URL and API key can later be changed with
 **Reconfigure** on the integration page.
+
+For security, an already saved API key is never sent back to the reconfigure
+form. A masked placeholder means that a key is stored. Leave the placeholder
+unchanged to keep the key, enter a new value to replace it, or clear the field
+to remove it. Reauthentication always starts with an empty API-key field.
 
 ## File access
 
@@ -238,6 +250,15 @@ for the exact API supported by the installed Stirling PDF version.
 - Do not use `localhost` for a different container or computer.
 - Check the API key when Stirling PDF security is enabled.
 
+### The status endpoint is disabled
+
+The integration needs `/api/v1/info/status` for setup and availability
+monitoring. If Stirling PDF reports that this endpoint is disabled, enable the
+status endpoint in the Stirling PDF configuration, restart Stirling PDF, and
+then try the setup again. See the
+[upstream Stirling PDF issue](https://github.com/Stirling-Tools/Stirling-PDF/issues/5493)
+for background.
+
 ### A file path is rejected
 
 - Use an absolute path visible from Home Assistant.
@@ -280,15 +301,16 @@ information.
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
-.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider
+.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --cov=custom_components/stirling_pdf --cov-report=term-missing
 .\.venv\Scripts\ruff.exe check --no-cache custom_components tests
 .\.venv\Scripts\ruff.exe format --check --no-cache custom_components tests
 ```
 
-The standalone tests cover URL handling, authentication, multipart requests,
-response validation, manifests, HACS metadata, translations, services, and
-workflow structure. More coverage using Home Assistant's official test
-framework is planned as the integration develops.
+The test suite covers URL handling, authentication, multipart requests,
+response validation, manifests, HACS metadata, translations, workflow
+structure, Home Assistant config flows, entity setup, unload behavior, and
+service actions. GitHub Actions publishes a line-by-line coverage summary in
+every test run.
 
 ## Support
 
