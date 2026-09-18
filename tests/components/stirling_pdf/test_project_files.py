@@ -95,6 +95,31 @@ def test_brand_icons_have_supported_sizes_and_transparency() -> None:
         assert color_type in {4, 6}
 
 
+def test_integration_package_contains_runtime_files() -> None:
+    """Ensure source archives contain every runtime file required by HACS."""
+    expected_files = {
+        "__init__.py",
+        "api.py",
+        "binary_sensor.py",
+        "config_flow.py",
+        "const.py",
+        "coordinator.py",
+        "diagnostics.py",
+        "entity.py",
+        "manifest.json",
+        "sensor.py",
+        "services.yaml",
+        "strings.json",
+        "brand/icon.png",
+        "brand/icon@2x.png",
+        "translations/de.json",
+        "translations/en.json",
+    }
+
+    for relative_path in expected_files:
+        assert (INTEGRATION / relative_path).is_file()
+
+
 def test_github_validation_workflows_exist() -> None:
     workflow_names = {
         "tests.yml",
@@ -114,6 +139,7 @@ def test_github_validation_workflows_exist() -> None:
     assert 'python-version: "3.14"' in tests_workflow
     assert "python -m pytest" in tests_workflow
     assert "--cov=custom_components/stirling_pdf" in tests_workflow
+    assert "--cov-fail-under=90" in tests_workflow
     assert "ruff check" in tests_workflow
     assert "ruff format --check" in tests_workflow
 

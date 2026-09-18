@@ -34,6 +34,7 @@ jobs:
           python -m pytest -q -p no:cacheprovider
           --cov=custom_components/stirling_pdf
           --cov-report=term-missing
+          --cov-fail-under=90
       - name: Run Ruff
         run: ruff check --no-cache custom_components tests
       - name: Check Ruff formatting

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from unittest.mock import AsyncMock, patch
+
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
@@ -83,6 +85,31 @@ async def test_local_statistics_remain_available_during_api_failure(
     assert "last_run" in _state(hass, last_operation).attributes
 
 
+async def test_local_statistics_persist_across_reload(
+    hass: HomeAssistant,
+    loaded_entry: MockConfigEntry,
+) -> None:
+    """Test successful-operation statistics survive an integration reload."""
+    coordinator = loaded_entry.runtime_data
+    coordinator.record_operation("ocr")
+    recorded_time = coordinator.last_operation_time
+
+    assert await hass.config_entries.async_unload(loaded_entry.entry_id)
+    await hass.async_block_till_done()
+
+    with patch(
+        "custom_components.stirling_pdf.api.StirlingPdfApiClient.async_get_status",
+        new=AsyncMock(return_value={"status": "UP", "version": "2.14.3"}),
+    ):
+        assert await hass.config_entries.async_setup(loaded_entry.entry_id)
+        await hass.async_block_till_done()
+
+    restored = loaded_entry.runtime_data
+    assert restored.jobs_processed == 1
+    assert restored.last_operation == "ocr"
+    assert restored.last_operation_time == recorded_time
+
+
 async def test_unload_entry(
     hass: HomeAssistant,
     loaded_entry: MockConfigEntry,
@@ -92,3 +119,20 @@ async def test_unload_entry(
     await hass.async_block_till_done()
 
     assert loaded_entry.state is ConfigEntryState.NOT_LOADED
+
+
+async def test_remove_entry_deletes_persisted_statistics(
+    hass: HomeAssistant,
+    loaded_entry: MockConfigEntry,
+) -> None:
+    """Test removing the config entry also removes its local statistics."""
+    coordinator = loaded_entry.runtime_data
+    coordinator.record_operation("split")
+    await coordinator.async_save_statistics()
+
+    assert await coordinator._store.async_load() is not None
+
+    await hass.config_entries.async_remove(loaded_entry.entry_id)
+    await hass.async_block_till_done()
+
+    assert await coordinator._store.async_load() is None

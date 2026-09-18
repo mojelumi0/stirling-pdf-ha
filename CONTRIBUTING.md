@@ -18,7 +18,7 @@ The development dependencies require Python 3.14 or newer.
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
-.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --cov=custom_components/stirling_pdf --cov-report=term-missing
+.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --cov=custom_components/stirling_pdf --cov-report=term-missing --cov-fail-under=90
 .\.venv\Scripts\ruff.exe check --no-cache custom_components tests
 .\.venv\Scripts\ruff.exe format --check --no-cache custom_components tests
 ```

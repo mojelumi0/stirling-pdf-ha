@@ -43,7 +43,9 @@ Assistant actions, ready for scripts and automations.
 - Optional Stirling PDF API-key authentication
 - Automatic connection validation and reauthentication
 - Merge, split, OCR, and compression actions
-- Connectivity, version, and local operation-status entities
+- Optional response data for scripts and automations
+- Connectivity, version, and persistent local operation-status entities
+- Privacy-aware diagnostics for easier troubleshooting
 - No cloud service required
 - English and German user-interface translations
 
@@ -75,8 +77,15 @@ Home Assistant.
 4. Open **Settings → Devices & services → Add integration**.
 5. Search for **Stirling PDF**.
 
-During the initial test phase, HACS can install the default branch even when no
-GitHub release exists yet.
+The current releases are prereleases. If HACS does not offer the newest alpha
+version, enable the `switch.stirling_pdf_pre_release` entity under
+**Settings → Devices & services → Entities**, then refresh the update
+information in HACS.
+
+The HACS update dialog can currently show **Icon not available** even though the
+integration icon appears correctly elsewhere in Home Assistant. This is a
+known HACS frontend issue and does not affect the integration. See
+[HACS issue #5223](https://github.com/hacs/integration/issues/5223).
 
 ### Manual installation
 
@@ -148,12 +157,13 @@ All entities belong to a single Stirling PDF service device.
 |---|---|---|
 | Reachable | Binary sensor | Whether the latest status request succeeded |
 | Version | Diagnostic sensor | Version reported by Stirling PDF |
-| Jobs processed | Sensor | Successful actions run through this integration since it was loaded |
+| Jobs processed | Sensor | Persisted count of successful actions run through this integration |
 | Last operation | Enum sensor | Most recent successful action, with a UTC timestamp attribute |
 
 `Jobs processed` is a local Home Assistant counter. It does not include jobs
-started from the Stirling PDF web interface and resets when the integration is
-reloaded or Home Assistant restarts.
+started from the Stirling PDF web interface. The counter and last-operation
+details are saved and restored across integration reloads and Home Assistant
+restarts.
 
 ## Available actions
 
@@ -221,6 +231,33 @@ data:
 Optimization levels range from `1` to `9`. Higher levels can reduce quality and
 take longer to process.
 
+### Action response data
+
+Every action can optionally return data to a Home Assistant script or
+automation. The response contains:
+
+| Field | Description |
+|---|---|
+| `operation` | Completed action: `merge`, `split`, `ocr`, or `compress` |
+| `output_path` | Path of the generated file |
+| `output_size` | Size of the generated file in bytes |
+| `input_count` | Number of input files processed |
+
+Use `response_variable` when the result is needed by later steps:
+
+```yaml
+action: stirling_pdf.compress
+data:
+  file_path: /config/pdf/large.pdf
+  optimize_level: 5
+  output_path: /config/pdf/compressed.pdf
+response_variable: stirling_result
+```
+
+For example, `{{ stirling_result.output_size }}` then contains the output size
+in bytes. The response is optional, so existing scripts continue to work
+unchanged.
+
 ## API mapping
 
 | Action | Stirling PDF endpoint |
@@ -286,10 +323,17 @@ Restart Home Assistant, reproduce the problem, and remove debug logging when
 finished. Never publish logs containing API keys, private URLs, or document
 information.
 
+### Download diagnostics
+
+Open **Settings → Devices & services → Stirling PDF**, open the three-dot menu,
+and select **Download diagnostics**. The diagnostic file includes status and
+local operation information while automatically removing the API key and
+configured server URL. Review diagnostic files before sharing them publicly.
+
 ## Known limitations
 
 - Only one Stirling PDF instance can currently be configured.
-- Operation statistics are local and are not persisted across restarts.
+- Operation statistics only count actions started through this integration.
 - There is no browser-based file picker for Home Assistant host paths.
 - Password, watermark, and office-document conversion actions are not part of
   the first version.
@@ -301,16 +345,18 @@ information.
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
-.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --cov=custom_components/stirling_pdf --cov-report=term-missing
+.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --cov=custom_components/stirling_pdf --cov-report=term-missing --cov-fail-under=90
 .\.venv\Scripts\ruff.exe check --no-cache custom_components tests
 .\.venv\Scripts\ruff.exe format --check --no-cache custom_components tests
 ```
 
 The test suite covers URL handling, authentication, multipart requests,
 response validation, manifests, HACS metadata, translations, workflow
-structure, Home Assistant config flows, entity setup, unload behavior, and
-service actions. GitHub Actions publishes a line-by-line coverage summary in
-every test run.
+structure, Home Assistant config flows, entity setup, unload behavior,
+diagnostics, persistent statistics, and service actions. GitHub Actions
+publishes a line-by-line coverage summary and requires at least 90 percent line
+coverage in every test run.
+
 
 ## Support
 
@@ -329,6 +375,7 @@ version, installation method, action used, and sanitized error message.
 - [Stirling PDF source code](https://github.com/Stirling-Tools/Stirling-PDF)
 - [Home Assistant integration manifest](https://developers.home-assistant.io/docs/creating_integration_manifest/)
 - [Home Assistant integration actions](https://developers.home-assistant.io/docs/dev_101_services/)
+- [Home Assistant integration diagnostics](https://developers.home-assistant.io/docs/core/integration/diagnostics/)
 - [Home Assistant config flow](https://developers.home-assistant.io/docs/core/integration/config_flow/)
 - [HACS integration repository requirements](https://hacs.xyz/docs/publish/integration/)
 
