@@ -44,6 +44,8 @@ from .const import (
 )
 from .coordinator import StirlingPdfCoordinator, async_remove_statistics
 
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR]
 
 type StirlingPdfConfigEntry = ConfigEntry[StirlingPdfCoordinator]
