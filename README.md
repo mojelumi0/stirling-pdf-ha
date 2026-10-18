@@ -17,21 +17,6 @@ processing actions, connectivity monitoring, and a simple UI-based setup.
 > files until it has been verified with more Home Assistant and Stirling PDF
 > versions.
 
-## Testing status
-
-The initial setup flow and all four actions—merge, split, OCR, and
-compression—have been manually tested successfully by the maintainer on a
-local Home Assistant and Stirling PDF installation.
-
-| Test date | Home Assistant Core | Home Assistant OS | Stirling PDF | Result |
-|---|---|---|---|---|
-| 2026-09-18 | 2026.9.3 | 18.3 | 2.14.3 | ✅ Setup, entities, merge, split, OCR, and compression |
-
-Automated tests additionally cover the API client, repository structure,
-configuration and reauthentication flows, entity setup and unloading, and the
-actions through Home Assistant's service registry. Broader compatibility
-testing is still needed during the alpha phase.
-
 ## What this integration does
 
 Stirling PDF already provides a powerful local PDF processing API. This custom
@@ -113,8 +98,18 @@ Supported URL examples:
 | Reverse proxy with HTTPS | `https://pdf.example.com` |
 | Reverse proxy subpath | `https://example.com/stirling` |
 
-The integration validates the connection with
-`/api/v1/info/status`. The URL and API key can later be changed with
+The integration validates reachability with `/api/v1/info/status` and checks
+API access through the read-only `/api/v1/info/health` endpoint. In Stirling PDF
+3.2.0, status is public while health requires authentication when login is
+enabled. No PDF is uploaded or processed during this check.
+
+If health returns HTTP 404, 405, or 501, the integration falls back to the status
+check for compatibility. Diagnostics then report
+`authentication_check_supported: false`; a successful setup in this case does
+not confirm permission to process PDFs. A successful health check also cannot
+guarantee that every individual PDF tool is enabled or allowed.
+
+The URL and API key can later be changed with
 **Reconfigure** on the integration page.
 
 For security, an already saved API key is never sent back to the reconfigure
@@ -155,7 +150,7 @@ All entities belong to a single Stirling PDF service device.
 
 | Entity | Type | Description |
 |---|---|---|
-| Reachable | Binary sensor | Whether the latest status request succeeded |
+| Reachable | Binary sensor | Whether the latest status and supported API-access checks succeeded |
 | Version | Diagnostic sensor | Version reported by Stirling PDF |
 | Jobs processed | Sensor | Persisted count of successful actions run through this integration |
 | Last operation | Enum sensor | Most recent successful action, with a UTC timestamp attribute |
@@ -263,6 +258,7 @@ unchanged.
 | Action | Stirling PDF endpoint |
 |---|---|
 | Status | `/api/v1/info/status` |
+| API access check | `/api/v1/info/health` |
 | Merge | `/api/v1/general/merge-pdfs` |
 | Split | `/api/v1/general/split-pages` |
 | OCR | `/api/v1/misc/ocr-pdf` |
@@ -295,6 +291,25 @@ status endpoint in the Stirling PDF configuration, restart Stirling PDF, and
 then try the setup again. See the
 [upstream Stirling PDF issue](https://github.com/Stirling-Tools/Stirling-PDF/issues/5493)
 for background.
+
+### The server is reachable, but PDF actions reject the API key
+
+A public status response does not prove permission to process documents.
+Starting with 0.1.4-alpha, setup, reconfiguration, reauthentication, and periodic
+updates also check the health endpoint when available. If a PDF action returns
+HTTP 401 or 403, Home Assistant starts a reauthentication flow. Open
+**Settings → Devices & services** and enter a valid Stirling PDF API key.
+The failed action is not automatically retried and does not increase the local
+job counter. After updating the key, run the action again.
+
+A 403 response can also mean an account or access restriction. If replacing
+the key does not help, check permissions on the Stirling PDF server.
+
+### A compression value is rejected with “Got None”
+
+Optimization levels must be integers from 1 through 9. Home Assistant may append
+“Got None” to its validation message for an invalid value. This does not mean
+that a PDF was processed successfully or that the job counter should increase.
 
 ### A file path is rejected
 
@@ -342,12 +357,15 @@ configured server URL. Review diagnostic files before sharing them publicly.
 
 ## Development
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
-.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --cov=custom_components/stirling_pdf --cov-report=term-missing --cov-fail-under=90
-.\.venv\Scripts\ruff.exe check --no-cache custom_components tests
-.\.venv\Scripts\ruff.exe format --check --no-cache custom_components tests
+Use Linux and Python 3.14.2 or newer for the full Home Assistant test environment,
+or let the repository's GitHub Actions run it:
+
+```bash
+python3.14 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python -m pytest -q -p no:cacheprovider --cov=custom_components/stirling_pdf --cov-report=term-missing --cov-fail-under=90
+.venv/bin/ruff check --no-cache custom_components tests tests_live
+.venv/bin/ruff format --check --no-cache custom_components tests tests_live
 ```
 
 The test suite covers URL handling, authentication, multipart requests,
@@ -356,6 +374,42 @@ structure, Home Assistant config flows, entity setup, unload behavior,
 diagnostics, persistent statistics, and service actions. GitHub Actions
 publishes a line-by-line coverage summary and requires at least 90 percent line
 coverage in every test run.
+
+The `Tests` workflow runs the Home Assistant suite against both the advertised
+minimum (2026.9.0) and current tested Core version (2026.10.2), using separate
+compatible dependency sets. Its final `pytest` job keeps the existing required
+status-check name and only succeeds when both versions pass.
+
+All workflows use Ubuntu 24.04 explicitly. Release-version validation checks
+the actual release tag rather than a potentially newer default-branch commit.
+After the first server-test run, the two `PDF server (login true/false)` checks
+can also be selected as required checks in the branch ruleset.
+
+### Real-server tests
+
+The `Stirling PDF server tests` workflow starts a disposable, version-pinned
+Stirling PDF 3.2.0 container with login enabled and disabled. It runs on pushes,
+pull requests, manual dispatch, and weekly. It checks public status versus
+protected health, missing and invalid API keys, merge ordering, Unicode
+filenames, split ZIP contents, and compression while preserving page text.
+These are real HTTP/API-client tests; Home Assistant action execution and
+file handling are covered separately by the Home Assistant suite. OCR is
+currently covered by client/service tests and the documented manual tests,
+not by this container workflow.
+
+To run the server tests locally, use a separate virtual environment with
+`requirements-live.txt`, start a disposable Stirling PDF 3.2.0 server, and set:
+
+```powershell
+$env:STIRLING_PDF_URL = "http://127.0.0.1:8080"
+$env:STIRLING_PDF_API_KEY = "<test-server-api-key>"
+$env:STIRLING_PDF_REQUIRE_AUTH = "true"
+python -m pytest -q -p no:cacheprovider tests_live
+```
+
+Use `"false"` for `STIRLING_PDF_REQUIRE_AUTH` when login is disabled. The tests
+upload only synthetic PDFs. Without `STIRLING_PDF_URL`, server-dependent tests
+are skipped. A Docker runtime is required to reproduce the container workflow.
 
 
 ## Support
@@ -377,6 +431,8 @@ version, installation method, action used, and sanitized error message.
 - [Home Assistant integration actions](https://developers.home-assistant.io/docs/dev_101_services/)
 - [Home Assistant integration diagnostics](https://developers.home-assistant.io/docs/core/integration/diagnostics/)
 - [Home Assistant config flow](https://developers.home-assistant.io/docs/core/integration/config_flow/)
+- [Stirling PDF 3.2.0 status and health controller](https://github.com/Stirling-Tools/Stirling-PDF/blob/v3.2.0/app/core/src/main/java/stirling/software/SPDF/controller/web/MetricsController.java)
+- [Stirling PDF 3.2.0 authentication filter](https://github.com/Stirling-Tools/Stirling-PDF/blob/v3.2.0/app/proprietary/src/main/java/stirling/software/proprietary/security/filter/UserAuthenticationFilter.java)
 - [HACS integration repository requirements](https://hacs.xyz/docs/publish/integration/)
 
 ## Development transparency

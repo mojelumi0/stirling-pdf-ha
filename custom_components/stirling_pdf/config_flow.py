@@ -54,13 +54,13 @@ def _data_schema(
 
 
 async def _async_validate_input(hass: HomeAssistant, data: dict[str, Any]) -> None:
-    """Verify credentials and connectivity using the status endpoint."""
+    """Verify connectivity and, when supported, API access."""
     client = StirlingPdfApiClient(
         async_get_clientsession(hass),
         data[CONF_URL],
         data.get(CONF_API_KEY),
     )
-    await client.async_get_status()
+    await client.async_validate_connection()
 
 
 class StirlingPdfConfigFlow(ConfigFlow, domain=DOMAIN):

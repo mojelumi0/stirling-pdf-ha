@@ -4,13 +4,14 @@ from __future__ import annotations
 
 from unittest.mock import AsyncMock, patch
 
-from homeassistant.config_entries import ConfigEntryState
+from homeassistant.config_entries import SOURCE_REAUTH, ConfigEntryState
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.update_coordinator import UpdateFailed
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
+from custom_components.stirling_pdf.api import StirlingPdfAuthError
 from custom_components.stirling_pdf.const import DOMAIN
 
 
@@ -98,7 +99,7 @@ async def test_local_statistics_persist_across_reload(
     await hass.async_block_till_done()
 
     with patch(
-        "custom_components.stirling_pdf.api.StirlingPdfApiClient.async_get_status",
+        "custom_components.stirling_pdf.api.StirlingPdfApiClient.async_validate_connection",
         new=AsyncMock(return_value={"status": "UP", "version": "2.14.3"}),
     ):
         assert await hass.config_entries.async_setup(loaded_entry.entry_id)
@@ -119,6 +120,27 @@ async def test_unload_entry(
     await hass.async_block_till_done()
 
     assert loaded_entry.state is ConfigEntryState.NOT_LOADED
+
+
+async def test_rejected_credentials_during_setup_start_reauth(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    enable_custom_integrations: None,
+) -> None:
+    """Start reauthentication when the protected access check fails."""
+    with patch(
+        "custom_components.stirling_pdf.api.StirlingPdfApiClient.async_validate_connection",
+        new=AsyncMock(side_effect=StirlingPdfAuthError("Missing key")),
+    ):
+        assert not await hass.config_entries.async_setup(mock_config_entry.entry_id)
+        await hass.async_block_till_done()
+
+    reauth_flows = [
+        flow
+        for flow in hass.config_entries.flow.async_progress()
+        if flow["handler"] == DOMAIN and flow["context"]["source"] == SOURCE_REAUTH
+    ]
+    assert len(reauth_flows) == 1
 
 
 async def test_remove_entry_deletes_persisted_statistics(

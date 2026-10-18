@@ -35,7 +35,7 @@ async def loaded_entry(
 ) -> MockConfigEntry:
     """Set up a loaded Stirling PDF config entry."""
     with patch(
-        "custom_components.stirling_pdf.api.StirlingPdfApiClient.async_get_status",
+        "custom_components.stirling_pdf.api.StirlingPdfApiClient.async_validate_connection",
         new=AsyncMock(return_value={"status": "UP", "version": "2.14.3"}),
     ):
         assert await hass.config_entries.async_setup(mock_config_entry.entry_id)

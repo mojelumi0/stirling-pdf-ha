@@ -31,6 +31,9 @@ async def async_get_config_entry_diagnostics(
         "config_entry": async_redact_data(entry.data, _TO_REDACT),
         "coordinator": {
             "last_update_success": coordinator.last_update_success,
+            "authentication_check_supported": (
+                coordinator.client.authentication_check_supported
+            ),
             "status": async_redact_data(coordinator.data or {}, _TO_REDACT),
             "jobs_processed": coordinator.jobs_processed,
             "last_operation": coordinator.last_operation,

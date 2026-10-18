@@ -4,7 +4,7 @@
     "step": {
       "user": {
         "title": "Connect to Stirling PDF",
-        "description": "Enter the full local URL of your Stirling PDF instance.",
+        "description": "Enter the full local URL of your Stirling PDF instance. An API key is required when Stirling PDF protects its API, even if its status page is public.",
         "data": {
           "url": "URL",
           "api_key": "API key (optional)"
@@ -28,7 +28,7 @@
     },
     "error": {
       "cannot_connect": "Failed to connect. Check the URL and whether Stirling PDF is running.",
-      "invalid_auth": "The API key was rejected.",
+      "invalid_auth": "The API key is missing or invalid, or Stirling PDF denied access.",
       "invalid_url": "Enter a valid HTTP or HTTPS base URL.",
       "status_endpoint_disabled": "Stirling PDF reported that its status endpoint is disabled. Enable the status endpoint in Stirling PDF and try again.",
       "unknown": "Unexpected error."
@@ -64,7 +64,7 @@
     "invalid_extension": { "message": "The path `{path}` must use the `{extension}` extension." },
     "invalid_languages": { "message": "Enter at least one valid OCR language code, such as `eng` or `deu`." },
     "output_exists": { "message": "The output file `{path}` already exists. Enable overwrite or choose another path." },
-    "authentication_failed": { "message": "Stirling PDF rejected the API key." },
+    "authentication_failed": { "message": "Stirling PDF rejected API access. Update authentication under Settings > Devices & services." },
     "processing_failed": { "message": "Stirling PDF could not process the document: {error}" },
     "file_error": { "message": "Home Assistant could not read or write the file: {error}" }
   },

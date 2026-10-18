@@ -6,6 +6,7 @@ import logging
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.storage import Store
@@ -41,7 +42,7 @@ class StirlingPdfCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         hass: HomeAssistant,
         client: StirlingPdfApiClient,
         update_interval: timedelta,
-        entry_id: str,
+        entry: ConfigEntry,
     ) -> None:
         """Initialize the coordinator."""
         super().__init__(
@@ -49,12 +50,13 @@ class StirlingPdfCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             _LOGGER,
             name=DOMAIN,
             update_interval=update_interval,
+            config_entry=entry,
         )
         self.client = client
         self.jobs_processed = 0
         self.last_operation: str | None = None
         self.last_operation_time: datetime | None = None
-        self._store = _statistics_store(hass, entry_id)
+        self._store = _statistics_store(hass, entry.entry_id)
 
     async def async_load_statistics(self) -> None:
         """Restore locally recorded operation statistics."""
@@ -104,7 +106,7 @@ class StirlingPdfCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch current server status."""
         try:
-            return await self.client.async_get_status()
+            return await self.client.async_validate_connection()
         except StirlingPdfAuthError as err:
             raise ConfigEntryAuthFailed from err
         except StirlingPdfApiError as err:

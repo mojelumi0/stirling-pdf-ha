@@ -4,7 +4,7 @@
     "step": {
       "user": {
         "title": "Mit Stirling PDF verbinden",
-        "description": "Gib die vollständige lokale URL deiner Stirling-PDF-Instanz ein.",
+        "description": "Gib die vollständige lokale URL deiner Stirling-PDF-Instanz ein. Wenn Stirling PDF seine API schützt, ist ein API-Key erforderlich, auch wenn die Statusseite öffentlich erreichbar ist.",
         "data": {
           "url": "URL",
           "api_key": "API-Key (optional)"
@@ -28,7 +28,7 @@
     },
     "error": {
       "cannot_connect": "Verbindung fehlgeschlagen. Prüfe die URL und ob Stirling PDF läuft.",
-      "invalid_auth": "Der API-Key wurde abgelehnt.",
+      "invalid_auth": "Der API-Key fehlt oder ist ungültig, oder Stirling PDF hat den Zugriff verweigert.",
       "invalid_url": "Gib eine gültige HTTP- oder HTTPS-Basis-URL ein.",
       "status_endpoint_disabled": "Stirling PDF meldet, dass der Status-Endpunkt deaktiviert ist. Aktiviere den Status-Endpunkt in Stirling PDF und versuche es erneut.",
       "unknown": "Unerwarteter Fehler."
@@ -64,7 +64,7 @@
     "invalid_extension": { "message": "Der Pfad `{path}` muss die Dateiendung `{extension}` verwenden." },
     "invalid_languages": { "message": "Gib mindestens einen gültigen OCR-Sprachcode ein, beispielsweise `eng` oder `deu`." },
     "output_exists": { "message": "Die Ausgabedatei `{path}` existiert bereits. Aktiviere Überschreiben oder wähle einen anderen Pfad." },
-    "authentication_failed": { "message": "Stirling PDF hat den API-Key abgelehnt." },
+    "authentication_failed": { "message": "Stirling PDF hat den API-Zugriff abgelehnt. Aktualisiere die Authentifizierung unter Einstellungen > Geräte & Dienste." },
     "processing_failed": { "message": "Stirling PDF konnte das Dokument nicht verarbeiten: {error}" },
     "file_error": { "message": "Home Assistant konnte die Datei nicht lesen oder schreiben: {error}" }
   },

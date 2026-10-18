@@ -191,6 +191,95 @@ async def test_merge_posts_files_and_required_defaults(session: MagicMock) -> No
 
 
 @pytest.mark.asyncio
+async def test_connection_checks_protected_health_without_upload(
+    session: MagicMock,
+) -> None:
+    """A public status response must be followed by the protected check."""
+    session.get.side_effect = [
+        _mock_response(200, json_data={"status": "UP", "version": "3.2.0"}),
+        _mock_response(200, json_data={"status": "UP", "version": "3.2.0"}),
+    ]
+    client = StirlingPdfApiClient(session, "https://pdf.local/stirling", "secret")
+
+    assert await client.async_validate_connection() == {
+        "status": "UP",
+        "version": "3.2.0",
+    }
+    assert client.authentication_check_supported is True
+    request = session.get.call_args
+    assert request.args[0] == "https://pdf.local/stirling/api/v1/info/health"
+    assert request.kwargs["headers"]["X-API-KEY"] == "secret"
+    assert request.kwargs["allow_redirects"] is False
+    session.post.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("status", [401, 403])
+async def test_public_status_does_not_hide_authentication_failure(
+    session: MagicMock, status: int
+) -> None:
+    session.get.side_effect = [
+        _mock_response(200, json_data={"status": "UP"}),
+        _mock_response(status),
+    ]
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+
+    with pytest.raises(StirlingPdfAuthError):
+        await client.async_validate_connection()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("status", [404, 405, 501])
+async def test_unavailable_health_keeps_legacy_status_support(
+    session: MagicMock, status: int
+) -> None:
+    session.get.side_effect = [
+        _mock_response(200, json_data={"status": "UP"}),
+        _mock_response(status),
+    ]
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+
+    assert await client.async_validate_connection() == {"status": "UP"}
+    assert client.authentication_check_supported is False
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("body", ["<html>Login</html>", "[]", '{"status": "DOWN"}'])
+async def test_invalid_health_response_does_not_validate_credentials(
+    session: MagicMock, body: str
+) -> None:
+    session.get.return_value = _mock_response(200, text_data=body)
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+
+    with pytest.raises(StirlingPdfApiError):
+        await client.async_check_authentication()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("status", [302, 500])
+async def test_health_redirect_and_server_error_are_not_ignored(
+    session: MagicMock, status: int
+) -> None:
+    session.get.return_value = _mock_response(status)
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+
+    with pytest.raises(StirlingPdfApiError):
+        await client.async_check_authentication()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("error", [TimeoutError(), aiohttp.ClientConnectionError()])
+async def test_health_network_failure_is_wrapped(
+    session: MagicMock, error: Exception
+) -> None:
+    session.get.side_effect = error
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+
+    with pytest.raises(StirlingPdfConnectionError):
+        await client.async_check_authentication()
+
+
+@pytest.mark.asyncio
 async def test_merge_requires_two_files(session: MagicMock) -> None:
     client = StirlingPdfApiClient(session, "http://127.0.0.1:8080")
     with pytest.raises(StirlingPdfApiError):

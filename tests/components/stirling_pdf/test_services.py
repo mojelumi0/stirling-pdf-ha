@@ -6,6 +6,7 @@ from pathlib import Path
 from unittest.mock import AsyncMock
 
 import pytest
+from homeassistant.config_entries import SOURCE_REAUTH
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from pytest_homeassistant_custom_component.common import MockConfigEntry
@@ -250,3 +251,10 @@ async def test_api_failure_does_not_write_or_increment_counter(
 
     assert not output.exists()
     assert loaded_entry.runtime_data.jobs_processed == 0
+    await hass.async_block_till_done()
+    reauth_flows = [
+        flow
+        for flow in hass.config_entries.flow.async_progress()
+        if flow["handler"] == DOMAIN and flow["context"]["source"] == SOURCE_REAUTH
+    ]
+    assert len(reauth_flows) == (1 if isinstance(error, StirlingPdfAuthError) else 0)

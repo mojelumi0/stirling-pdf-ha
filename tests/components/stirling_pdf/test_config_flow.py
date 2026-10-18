@@ -258,3 +258,56 @@ async def test_reauth_form_is_blank_and_saves_replacement(
     assert result["type"] is FlowResultType.ABORT
     assert result["reason"] == "reauth_successful"
     assert mock_config_entry.data[CONF_API_KEY] == "replacement-secret"
+
+
+async def test_user_validation_checks_access_after_public_status(
+    hass: HomeAssistant,
+) -> None:
+    """Reject a missing key even when status is publicly reachable."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_USER},
+    )
+    with (
+        patch(
+            "custom_components.stirling_pdf.api.StirlingPdfApiClient.async_get_status",
+            new=AsyncMock(return_value={"status": "UP", "version": "3.2.0"}),
+        ),
+        patch(
+            "custom_components.stirling_pdf.api.StirlingPdfApiClient.async_check_authentication",
+            new=AsyncMock(side_effect=StirlingPdfAuthError("Missing key")),
+        ),
+    ):
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {CONF_URL: "http://pdf.local", CONF_API_KEY: ""},
+        )
+
+    assert result["type"] is FlowResultType.FORM
+    assert result["errors"] == {"base": "invalid_auth"}
+
+
+async def test_reauth_rejects_another_invalid_key(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+) -> None:
+    """Do not save another rejected key or clear the reauth request."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={
+            "source": config_entries.SOURCE_REAUTH,
+            "entry_id": mock_config_entry.entry_id,
+        },
+        data=dict(mock_config_entry.data),
+    )
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(side_effect=StirlingPdfAuthError("Invalid key")),
+    ):
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], {CONF_API_KEY: "wrong-again"}
+        )
+
+    assert result["type"] is FlowResultType.FORM
+    assert result["errors"] == {"base": "invalid_auth"}
+    assert mock_config_entry.data[CONF_API_KEY] == "stored-secret"
