@@ -59,6 +59,30 @@ async def test_user_flow_creates_entry(hass: HomeAssistant) -> None:
     )
 
 
+async def test_user_flow_accepts_omitted_key_when_server_allows_it(
+    hass: HomeAssistant,
+) -> None:
+    """Keep setup without authentication possible when no key is required."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_USER},
+    )
+
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(),
+    ) as validate:
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {CONF_URL: "http://pdf.local:8080"},
+        )
+
+    expected_data = {CONF_URL: "http://pdf.local:8080", CONF_API_KEY: ""}
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["data"] == expected_data
+    validate.assert_awaited_once_with(hass, expected_data)
+
+
 @pytest.mark.parametrize(
     ("error", "expected_error"),
     [
@@ -144,11 +168,14 @@ async def test_reconfigure_never_exposes_stored_api_key(
     )
 
     assert result["type"] is FlowResultType.FORM
-    defaults = result["data_schema"]({})
-    assert defaults == {
-        CONF_URL: "http://pdf.local:8080",
-        CONF_API_KEY: API_KEY_PLACEHOLDER,
-    }
+    schema = result["data_schema"]
+    api_key_field = next(
+        field for field in schema.schema if field.schema == CONF_API_KEY
+    )
+    assert api_key_field.description == {"suggested_value": API_KEY_PLACEHOLDER}
+    # A cleared optional field is omitted by the frontend. The schema must not
+    # reinsert the keep-key placeholder as a default in that case.
+    assert schema({}) == {CONF_URL: "http://pdf.local:8080"}
     assert "stored-secret" not in repr(result["data_schema"])
 
 
@@ -194,15 +221,16 @@ async def test_reconfigure_keeps_api_key_when_placeholder_is_unchanged(
 
 @pytest.mark.parametrize(
     ("submitted_key", "saved_key"),
-    [("replacement-secret", "replacement-secret"), ("", "")],
+    [("replacement-secret", "replacement-secret"), ("", ""), (None, "")],
+    ids=["replacement", "explicit-empty", "frontend-omits-empty"],
 )
 async def test_reconfigure_replaces_or_removes_api_key(
     hass: HomeAssistant,
     mock_config_entry: MockConfigEntry,
-    submitted_key: str,
+    submitted_key: str | None,
     saved_key: str,
 ) -> None:
-    """Test replacing and explicitly clearing the stored key."""
+    """Remove a key only after the server accepts unauthenticated access."""
     result = await hass.config_entries.flow.async_init(
         DOMAIN,
         context={
@@ -211,20 +239,61 @@ async def test_reconfigure_replaces_or_removes_api_key(
         },
     )
 
+    submitted_data = {CONF_URL: "http://pdf.local:8080"}
+    if submitted_key is not None:
+        submitted_data[CONF_API_KEY] = submitted_key
+
     with patch(
         "custom_components.stirling_pdf.config_flow._async_validate_input",
         new=AsyncMock(),
-    ):
+    ) as validate:
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"],
-            {
-                CONF_URL: "http://pdf.local:8080",
-                CONF_API_KEY: submitted_key,
-            },
+            submitted_data,
         )
 
     assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "reconfigure_successful"
     assert mock_config_entry.data[CONF_API_KEY] == saved_key
+    validate.assert_awaited_once_with(
+        hass,
+        {CONF_URL: "http://pdf.local:8080", CONF_API_KEY: saved_key},
+    )
+
+
+@pytest.mark.parametrize("omit_key", [False, True], ids=["explicit-empty", "omitted"])
+async def test_reconfigure_rejects_removing_required_api_key(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    omit_key: bool,
+) -> None:
+    """A rejected empty key must not silently keep or replace the stored key."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={
+            "source": config_entries.SOURCE_RECONFIGURE,
+            "entry_id": mock_config_entry.entry_id,
+        },
+    )
+    submitted_data = {CONF_URL: "http://pdf.local:8080"}
+    if not omit_key:
+        submitted_data[CONF_API_KEY] = ""
+
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(side_effect=StirlingPdfAuthError("Missing key")),
+    ) as validate:
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], submitted_data
+        )
+
+    validate.assert_awaited_once_with(
+        hass,
+        {CONF_URL: "http://pdf.local:8080", CONF_API_KEY: ""},
+    )
+    assert result["type"] is FlowResultType.FORM
+    assert result["errors"] == {"base": "invalid_auth"}
+    assert mock_config_entry.data[CONF_API_KEY] == "stored-secret"
 
 
 async def test_reauth_form_is_blank_and_saves_replacement(
