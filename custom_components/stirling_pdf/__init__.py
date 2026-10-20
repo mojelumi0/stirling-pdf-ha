@@ -199,14 +199,31 @@ def _validate_path(
 
 async def _async_read_pdf(hass: HomeAssistant, path_value: str) -> tuple[str, bytes]:
     """Read an allowed PDF without blocking Home Assistant's event loop."""
-    path = _validate_path(hass, path_value, ".pdf")
 
-    def _read() -> bytes:
+    def _read() -> tuple[str, bytes]:
+        path = _validate_path(hass, path_value, ".pdf")
         if not path.is_file():
             raise FileNotFoundError(path)
-        return path.read_bytes()
+        return path.name, path.read_bytes()
 
-    return path.name, await hass.async_add_executor_job(_read)
+    return await hass.async_add_executor_job(_read)
+
+
+def _validate_output_path(
+    hass: HomeAssistant,
+    path_value: str,
+    expected_suffix: str,
+    overwrite: bool,
+) -> Path:
+    """Check the destination without creating it; run this on the executor."""
+    path = _validate_path(hass, path_value, expected_suffix)
+    if not path.parent.is_dir():
+        raise FileNotFoundError(path.parent)
+    if not overwrite and os.path.lexists(path):
+        raise FileExistsError(path)
+    if path.is_dir():
+        raise IsADirectoryError(path)
+    return path
 
 
 async def _async_write_result(
@@ -216,13 +233,13 @@ async def _async_write_result(
     expected_suffix: str,
     overwrite: bool,
 ) -> None:
-    """Write an allowed result atomically without blocking the event loop."""
-    path = _validate_path(hass, path_value, expected_suffix)
+    """Write an allowed result, using atomic replacement for explicit overwrites."""
 
     def _write() -> None:
-        if not path.parent.is_dir():
-            raise FileNotFoundError(path.parent)
+        # The destination or allowlist may have changed while the server worked.
+        path = _validate_output_path(hass, path_value, expected_suffix, overwrite)
         if not overwrite:
+            # Exclusive creation protects files appearing after validation, too.
             with path.open("xb") as output_file:
                 output_file.write(content)
             return
@@ -265,15 +282,22 @@ async def _async_handle_action(call: ServiceCall) -> ServiceResponse | None:
     """Handle one of the four Stirling PDF service actions."""
     coordinator = _get_coordinator(call.hass)
     overwrite = call.data[ATTR_OVERWRITE]
+    output_suffix = ".zip" if call.service == SERVICE_SPLIT else ".pdf"
 
     try:
+        await call.hass.async_add_executor_job(
+            _validate_output_path,
+            call.hass,
+            call.data[ATTR_OUTPUT_PATH],
+            output_suffix,
+            overwrite,
+        )
         if call.service == SERVICE_MERGE:
             files = [
                 await _async_read_pdf(call.hass, path)
                 for path in call.data[ATTR_FILE_PATHS]
             ]
             result = await coordinator.client.async_merge(files)
-            output_suffix = ".pdf"
             input_count = len(files)
         else:
             filename, content = await _async_read_pdf(
@@ -285,21 +309,18 @@ async def _async_handle_action(call: ServiceCall) -> ServiceResponse | None:
                     content,
                     call.data[ATTR_PAGE_NUMBERS],
                 )
-                output_suffix = ".zip"
             elif call.service == SERVICE_OCR:
                 result = await coordinator.client.async_ocr(
                     filename,
                     content,
                     _normalize_languages(call.data[ATTR_LANGUAGES]),
                 )
-                output_suffix = ".pdf"
             else:
                 result = await coordinator.client.async_compress(
                     filename,
                     content,
                     call.data[ATTR_OPTIMIZE_LEVEL],
                 )
-                output_suffix = ".pdf"
             input_count = 1
 
         await _async_write_result(

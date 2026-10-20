@@ -138,6 +138,12 @@ Important behavior:
 - Split output must use `.zip` because Stirling PDF returns an archive.
 - The output directory must already exist.
 - Existing output files are not replaced unless **Overwrite** is enabled.
+- The Home Assistant allowlist, required file extensions, existing destinations,
+  and the output directory are checked before inputs are read or PDFs are uploaded.
+  This check does not create an output file.
+- Destination checks are repeated when saving because paths can change while
+  Stirling PDF is processing. Passing the initial check does not guarantee that
+  the final write will succeed.
 - Enabled overwriting uses an atomic replacement to avoid partial output files.
 - PDFs are temporarily held in Home Assistant memory while being transferred.
 
