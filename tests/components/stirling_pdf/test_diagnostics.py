@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 
+import pytest
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -12,12 +13,21 @@ from custom_components.stirling_pdf.diagnostics import (
 )
 
 
+@pytest.mark.parametrize(
+    "authentication_check_supported",
+    [True, False, None],
+    ids=["supported", "unsupported", "not-checked"],
+)
 async def test_diagnostics_are_useful_and_redacted(
     hass: HomeAssistant,
     loaded_entry: MockConfigEntry,
+    authentication_check_supported: bool | None,
 ) -> None:
     """Test diagnostics include runtime details without private configuration."""
     loaded_entry.runtime_data.record_operation("merge")
+    loaded_entry.runtime_data.client.authentication_check_supported = (
+        authentication_check_supported
+    )
 
     diagnostics = await async_get_config_entry_diagnostics(hass, loaded_entry)
     serialized = json.dumps(diagnostics)
@@ -25,8 +35,10 @@ async def test_diagnostics_are_useful_and_redacted(
     assert "stored-secret" not in serialized
     assert "pdf.local" not in serialized
     assert diagnostics["coordinator"]["last_update_success"] is True
-    # The mocked connection validation does not perform the actual health probe.
-    assert diagnostics["coordinator"]["authentication_check_supported"] is None
+    assert (
+        diagnostics["coordinator"]["authentication_check_supported"]
+        is authentication_check_supported
+    )
     assert diagnostics["coordinator"]["status"] == {
         "status": "UP",
         "version": "2.14.3",
