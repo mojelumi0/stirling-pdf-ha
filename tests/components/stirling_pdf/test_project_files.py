@@ -127,6 +127,7 @@ def test_github_validation_workflows_exist() -> None:
         "validate.yaml",
         "release-drafter.yml",
         "release-version-check.yml",
+        "server-tests.yml",
     }
 
     for name in workflow_names:

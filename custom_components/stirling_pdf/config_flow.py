@@ -36,31 +36,33 @@ def _data_schema(
     *,
     mask_api_key: bool = False,
 ) -> vol.Schema:
-    """Return the configuration schema with suggested defaults."""
+    """Return the configuration schema with an editable API-key suggestion."""
     values = defaults or {}
-    api_key_default = values.get(CONF_API_KEY, "")
-    if mask_api_key and api_key_default:
-        api_key_default = API_KEY_PLACEHOLDER
+    api_key_suggestion = values.get(CONF_API_KEY, "")
+    if mask_api_key and api_key_suggestion:
+        api_key_suggestion = API_KEY_PLACEHOLDER
     return vol.Schema(
         {
             vol.Required(
                 CONF_URL, default=values.get(CONF_URL, DEFAULT_URL)
             ): TextSelector(TextSelectorConfig(type=TextSelectorType.URL)),
-            vol.Optional(CONF_API_KEY, default=api_key_default): TextSelector(
-                TextSelectorConfig(type=TextSelectorType.PASSWORD)
-            ),
+            # A default would restore the placeholder when HA omits a cleared field.
+            vol.Optional(
+                CONF_API_KEY,
+                description={"suggested_value": api_key_suggestion},
+            ): TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD)),
         }
     )
 
 
 async def _async_validate_input(hass: HomeAssistant, data: dict[str, Any]) -> None:
-    """Verify credentials and connectivity using the status endpoint."""
+    """Verify connectivity and, when supported, API access."""
     client = StirlingPdfApiClient(
         async_get_clientsession(hass),
         data[CONF_URL],
         data.get(CONF_API_KEY),
     )
-    await client.async_get_status()
+    await client.async_validate_connection()
 
 
 class StirlingPdfConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -178,6 +180,9 @@ class StirlingPdfConfigFlow(ConfigFlow, domain=DOMAIN):
 
         data = dict(user_input)
         data[CONF_URL] = normalized_url
+        # The frontend omits a cleared optional field. Save an explicit empty key
+        # so a successful reconfiguration removes, rather than retains, the old key.
+        data[CONF_API_KEY] = user_input.get(CONF_API_KEY, "")
         try:
             await _async_validate_input(self.hass, data)
         except StirlingPdfAuthError:

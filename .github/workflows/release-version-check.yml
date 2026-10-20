@@ -9,16 +9,17 @@ permissions:
 
 jobs:
   check-version:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.release.target_commitish }}
+          ref: ${{ github.event.release.tag_name }}
 
       - name: Compare tag to manifest.json version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          TAG="${{ github.event.release.tag_name }}"
-          TAG="${TAG#v}"
+          TAG="${RELEASE_TAG#v}"
           MANIFEST_VERSION=$(jq -r '.version' custom_components/stirling_pdf/manifest.json)
           echo "Normalized release tag: $TAG"
           echo "manifest.json version: $MANIFEST_VERSION"

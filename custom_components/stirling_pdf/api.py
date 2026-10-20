@@ -15,6 +15,7 @@ from .const import (
     DEFAULT_OPERATION_TIMEOUT,
     DEFAULT_STATUS_TIMEOUT,
     ENDPOINT_COMPRESS,
+    ENDPOINT_HEALTH,
     ENDPOINT_MERGE,
     ENDPOINT_OCR,
     ENDPOINT_SPLIT,
@@ -82,6 +83,7 @@ class StirlingPdfApiClient:
         self._session = session
         self._base_url = normalize_base_url(base_url)
         self._api_key = api_key or None
+        self.authentication_check_supported: bool | None = None
         self._status_timeout = aiohttp.ClientTimeout(total=status_timeout)
         self._operation_timeout = aiohttp.ClientTimeout(total=operation_timeout)
 
@@ -136,6 +138,49 @@ class StirlingPdfApiClient:
                     "The Stirling PDF status endpoint is disabled"
                 )
         return data
+
+    async def async_validate_connection(self) -> dict[str, Any]:
+        """Check reachability and access without uploading a document."""
+        status = await self.async_get_status()
+        await self.async_check_authentication()
+        return status
+
+    async def async_check_authentication(self) -> None:
+        """Check access to the protected health endpoint when available.
+
+        Unlike the public status route, health passes through Stirling PDF's
+        authentication filter when login is enabled. Older or restricted
+        deployments may not expose it; action failures still trigger reauth.
+        """
+        url = f"{self._base_url}{ENDPOINT_HEALTH}"
+        try:
+            async with self._session.get(
+                url,
+                headers=self._headers(),
+                timeout=self._status_timeout,
+                allow_redirects=False,
+            ) as response:
+                if response.status in (404, 405, 501):
+                    self.authentication_check_supported = False
+                    return
+                await self._raise_for_status(response, ENDPOINT_HEALTH)
+                body = await response.text()
+        except TimeoutError as err:
+            raise StirlingPdfConnectionError("Authentication check timed out") from err
+        except aiohttp.ClientError as err:
+            raise StirlingPdfConnectionError("Authentication check failed") from err
+
+        try:
+            data = json.loads(body)
+        except json.JSONDecodeError as err:
+            raise StirlingPdfApiError(
+                "The health endpoint returned an invalid response"
+            ) from err
+        if not isinstance(data, dict) or data.get("status") != "UP":
+            raise StirlingPdfApiError(
+                "The health endpoint did not report a healthy instance"
+            )
+        self.authentication_check_supported = True
 
     async def _async_post_files(
         self,

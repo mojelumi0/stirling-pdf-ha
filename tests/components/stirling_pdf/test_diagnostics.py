@@ -25,6 +25,8 @@ async def test_diagnostics_are_useful_and_redacted(
     assert "stored-secret" not in serialized
     assert "pdf.local" not in serialized
     assert diagnostics["coordinator"]["last_update_success"] is True
+    # The mocked connection validation does not perform the actual health probe.
+    assert diagnostics["coordinator"]["authentication_check_supported"] is None
     assert diagnostics["coordinator"]["status"] == {
         "status": "UP",
         "version": "2.14.3",

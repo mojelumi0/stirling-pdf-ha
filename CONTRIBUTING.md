@@ -13,17 +13,28 @@ Thanks for helping improve Stirling PDF for Home Assistant.
 
 ## Local checks
 
-The development dependencies require Python 3.14 or newer.
+The development dependencies require Python 3.14.2 or newer. Use Linux for the
+full Home Assistant test environment.
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
-.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --cov=custom_components/stirling_pdf --cov-report=term-missing --cov-fail-under=90
-.\.venv\Scripts\ruff.exe check --no-cache custom_components tests
-.\.venv\Scripts\ruff.exe format --check --no-cache custom_components tests
+```bash
+python3.14 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python -m pytest -q -p no:cacheprovider --cov=custom_components/stirling_pdf --cov-report=term-missing --cov-fail-under=90
+.venv/bin/ruff check --no-cache custom_components tests tests_live
+.venv/bin/ruff format --check --no-cache custom_components tests tests_live
 ```
 
 Hassfest and HACS validation also run in GitHub Actions.
+
+CI tests Home Assistant 2026.9.0 with `requirements-dev-min.txt` and 2026.10.2
+with `requirements-dev.txt`. Keep their framework pins aligned with the
+Home Assistant versions in the workflow; shared pytest dependencies live in
+`requirements-dev-common.txt`.
+
+Real-server contract tests live in `tests_live/` and use
+`requirements-live.txt` in a separate environment. See the README for the
+required test-server environment variables. They deliberately avoid real
+documents and run with both enabled and disabled server authentication.
 
 ## Pull-request scope
 

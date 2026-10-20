@@ -44,6 +44,8 @@ from .const import (
 )
 from .coordinator import StirlingPdfCoordinator, async_remove_statistics
 
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR]
 
 type StirlingPdfConfigEntry = ConfigEntry[StirlingPdfCoordinator]
@@ -125,7 +127,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: StirlingPdfConfigEntry) 
         hass,
         client,
         DEFAULT_SCAN_INTERVAL,
-        entry.entry_id,
+        entry,
     )
     await coordinator.async_load_statistics()
     await coordinator.async_config_entry_first_refresh()
@@ -316,6 +318,8 @@ async def _async_handle_action(call: ServiceCall) -> ServiceResponse | None:
             translation_placeholders={"path": call.data[ATTR_OUTPUT_PATH]},
         ) from err
     except StirlingPdfAuthError as err:
+        if coordinator.config_entry is not None:
+            coordinator.config_entry.async_start_reauth(call.hass)
         raise HomeAssistantError(
             translation_domain=DOMAIN,
             translation_key="authentication_failed",
