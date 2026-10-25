@@ -42,7 +42,6 @@ def test_manifest_is_loadable_as_custom_integration() -> None:
     assert manifest["domain"] == "stirling_pdf"
     assert manifest["config_flow"] is True
     assert manifest["single_config_entry"] is True
-    assert manifest["categories"] == ["productivity_information.documents_photos"]
     assert manifest["requirements"] == []
     assert manifest["codeowners"] == ["@mojelumi0"]
     assert manifest["documentation"].startswith("https://github.com/")

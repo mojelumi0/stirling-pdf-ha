@@ -220,6 +220,44 @@ async def test_user_flow_allows_only_one_instance(
     assert result["reason"] == "single_instance_allowed"
 
 
+async def test_user_flow_rejects_entry_created_while_form_is_open(
+    hass: HomeAssistant,
+) -> None:
+    """Exercise the integration guard, not just HA's pre-flow instance check."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_USER},
+    )
+    assert result["type"] is FlowResultType.FORM
+
+    # HA checks single_config_entry before starting a flow. An entry added
+    # afterwards must also be rejected when this already-open form is submitted.
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="Stirling PDF (existing.local)",
+        data={CONF_URL: "http://existing.local:8080", CONF_API_KEY: "existing-key"},
+    )
+    entry.add_to_hass(hass)
+
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(),
+    ) as validate:
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {CONF_URL: "http://another.local:8080", CONF_API_KEY: "another-key"},
+        )
+
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "single_instance_allowed"
+    validate.assert_not_awaited()
+    assert hass.config_entries.async_entries(DOMAIN) == [entry]
+    assert entry.data == {
+        CONF_URL: "http://existing.local:8080",
+        CONF_API_KEY: "existing-key",
+    }
+
+
 async def test_reconfigure_never_exposes_stored_api_key(
     hass: HomeAssistant,
     mock_config_entry: MockConfigEntry,
