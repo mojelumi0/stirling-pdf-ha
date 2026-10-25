@@ -12,6 +12,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
+from custom_components.stirling_pdf import async_setup
 from custom_components.stirling_pdf.api import (
     StirlingPdfApiError,
     StirlingPdfAuthError,
@@ -452,3 +453,101 @@ async def test_api_failure_does_not_write_or_increment_counter(
         if flow["handler"] == DOMAIN and flow["context"]["source"] == SOURCE_REAUTH
     ]
     assert len(reauth_flows) == (1 if isinstance(error, StirlingPdfAuthError) else 0)
+
+
+async def test_action_without_config_entry_is_rejected(
+    hass: HomeAssistant, enable_custom_integrations: None
+) -> None:
+    """Actions remain registered but require a configured instance."""
+    assert await async_setup(hass, {})
+    with pytest.raises(ServiceValidationError) as error:
+        await hass.services.async_call(
+            DOMAIN,
+            SERVICE_COMPRESS,
+            {
+                ATTR_FILE_PATH: "/config/input.pdf",
+                ATTR_OUTPUT_PATH: "/config/output.pdf",
+            },
+            blocking=True,
+        )
+    assert error.value.translation_key == "not_configured"
+
+
+async def test_action_with_unloaded_config_entry_is_rejected(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    enable_custom_integrations: None,
+) -> None:
+    """Do not access runtime data on an entry that has not been loaded."""
+    assert await async_setup(hass, {})
+    with pytest.raises(ServiceValidationError) as error:
+        await hass.services.async_call(
+            DOMAIN,
+            SERVICE_COMPRESS,
+            {
+                ATTR_FILE_PATH: "/config/input.pdf",
+                ATTR_OUTPUT_PATH: "/config/output.pdf",
+            },
+            blocking=True,
+        )
+    assert error.value.translation_key == "entry_not_loaded"
+
+
+async def test_missing_input_does_not_upload_or_increment_statistics(
+    hass: HomeAssistant, loaded_entry: MockConfigEntry, tmp_path: Path
+) -> None:
+    """A valid destination must not hide a missing input file."""
+    _allow_test_directory(hass, tmp_path)
+    output = tmp_path / "output.pdf"
+    process = AsyncMock(return_value=PDF_RESULT)
+    loaded_entry.runtime_data.client.async_compress = process
+    with pytest.raises(HomeAssistantError) as error:
+        await hass.services.async_call(
+            DOMAIN,
+            SERVICE_COMPRESS,
+            {
+                ATTR_FILE_PATH: str(tmp_path / "missing.pdf"),
+                ATTR_OUTPUT_PATH: str(output),
+            },
+            blocking=True,
+        )
+    assert error.value.translation_key == "file_error"
+    process.assert_not_awaited()
+    assert not output.exists()
+    assert loaded_entry.runtime_data.jobs_processed == 0
+
+
+async def test_failed_atomic_overwrite_preserves_output_and_cleans_temporary_file(
+    hass: HomeAssistant, loaded_entry: MockConfigEntry, tmp_path: Path
+) -> None:
+    """Keep the old result and statistics if the final replacement fails."""
+    _allow_test_directory(hass, tmp_path)
+    source = tmp_path / "input.pdf"
+    output = tmp_path / "output.pdf"
+    source.write_bytes(PDF_INPUT)
+    output.write_bytes(b"original")
+    loaded_entry.runtime_data.client.async_compress = AsyncMock(return_value=PDF_RESULT)
+    with (
+        patch(
+            "custom_components.stirling_pdf.os.replace", side_effect=OSError("blocked")
+        ),
+        pytest.raises(HomeAssistantError) as error,
+    ):
+        await hass.services.async_call(
+            DOMAIN,
+            SERVICE_COMPRESS,
+            {
+                ATTR_FILE_PATH: str(source),
+                ATTR_OUTPUT_PATH: str(output),
+                ATTR_OVERWRITE: True,
+            },
+            blocking=True,
+        )
+    assert error.value.translation_key == "file_error"
+    assert output.read_bytes() == b"original"
+    assert source.read_bytes() == PDF_INPUT
+    assert sorted(path.name for path in tmp_path.iterdir()) == [
+        "input.pdf",
+        "output.pdf",
+    ]
+    assert loaded_entry.runtime_data.jobs_processed == 0

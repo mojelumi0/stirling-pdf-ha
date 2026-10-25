@@ -19,12 +19,21 @@ full Home Assistant test environment.
 ```bash
 python3.14 -m venv .venv
 .venv/bin/python -m pip install -r requirements-dev.txt
-.venv/bin/python -m pytest -q -p no:cacheprovider --cov=custom_components/stirling_pdf --cov-report=term-missing --cov-fail-under=90
-.venv/bin/ruff check --no-cache custom_components tests tests_live
-.venv/bin/ruff format --check --no-cache custom_components tests tests_live
+.venv/bin/python -m pytest -q -p no:cacheprovider --cov=custom_components/stirling_pdf --cov-report=term-missing --cov-report=json:coverage.json --cov-fail-under=95
+.venv/bin/python scripts/check_coverage.py coverage.json
+.venv/bin/ruff check --no-cache custom_components scripts tests tests_live
+.venv/bin/ruff format --check --no-cache custom_components scripts tests tests_live
 ```
 
 Hassfest and HACS validation also run in GitHub Actions.
+
+The coverage gate requires 100% line coverage for `config_flow.py` and more than
+95% for every other integration module. A high total cannot compensate for an
+uncovered module. Keep the report complete; do not weaken the thresholds or add
+coverage exclusions just to make a change pass. Test failures and recovery in
+the same config flow, not only the first displayed error. This integration
+deliberately uses a single-instance guard rather than a mutable URL/IP as its
+config-entry unique ID.
 
 CI tests Home Assistant 2026.9.0 with `requirements-dev-min.txt` and 2026.10.2
 with `requirements-dev.txt`. Keep their framework pins aligned with the

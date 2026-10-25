@@ -18,6 +18,9 @@ from .const import SERVICES
 from .coordinator import StirlingPdfCoordinator
 from .entity import StirlingPdfEntity
 
+# Entity updates are supplied by the shared coordinator, not individual polls.
+PARALLEL_UPDATES = 0
+
 
 async def async_setup_entry(
     hass: HomeAssistant,

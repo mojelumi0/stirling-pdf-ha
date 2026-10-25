@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from unittest.mock import AsyncMock, patch
 
+import pytest
 from homeassistant.config_entries import SOURCE_REAUTH, ConfigEntryState
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
@@ -11,6 +12,9 @@ from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.update_coordinator import UpdateFailed
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
+from custom_components.stirling_pdf import async_unload_entry
+from custom_components.stirling_pdf import binary_sensor as binary_sensor_platform
+from custom_components.stirling_pdf import sensor as sensor_platform
 from custom_components.stirling_pdf.api import StirlingPdfAuthError
 from custom_components.stirling_pdf.const import DOMAIN
 
@@ -158,3 +162,48 @@ async def test_remove_entry_deletes_persisted_statistics(
     await hass.async_block_till_done()
 
     assert await coordinator._store.async_load() is None
+
+
+def test_coordinator_platforms_declare_parallel_updates() -> None:
+    """Read-only coordinator entities do not need a per-entity update semaphore."""
+    assert sensor_platform.PARALLEL_UPDATES == 0
+    assert binary_sensor_platform.PARALLEL_UPDATES == 0
+
+
+@pytest.mark.parametrize(
+    ("status", "expected"),
+    [
+        ({}, "unknown"),
+        ({"appVersion": "3.2.0"}, "3.2.0"),
+        ({"status": "UP"}, "unknown"),
+    ],
+)
+async def test_version_sensor_handles_legacy_or_missing_version(
+    hass: HomeAssistant,
+    loaded_entry: MockConfigEntry,
+    status: dict[str, str],
+    expected: str,
+) -> None:
+    """Do not invent a version if status omits it; support the legacy key."""
+    loaded_entry.runtime_data.async_set_updated_data(status)
+    await hass.async_block_till_done()
+    assert (
+        _state(hass, _entity_id(hass, "sensor", loaded_entry, "version")).state
+        == expected
+    )
+
+
+async def test_failed_platform_unload_does_not_save_or_report_success(
+    hass: HomeAssistant, loaded_entry: MockConfigEntry
+) -> None:
+    """Respect a platform that cannot unload instead of pretending removal worked."""
+    with (
+        patch.object(
+            hass.config_entries, "async_unload_platforms", AsyncMock(return_value=False)
+        ),
+        patch.object(
+            loaded_entry.runtime_data, "async_save_statistics", AsyncMock()
+        ) as save,
+    ):
+        assert not await async_unload_entry(hass, loaded_entry)
+    save.assert_not_awaited()

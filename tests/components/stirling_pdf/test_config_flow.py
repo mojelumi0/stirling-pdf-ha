@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -20,6 +21,66 @@ from custom_components.stirling_pdf.api import (
 from custom_components.stirling_pdf.const import API_KEY_PLACEHOLDER, DOMAIN
 
 pytestmark = pytest.mark.usefixtures("enable_custom_integrations")
+
+
+@pytest.fixture(autouse=True)
+def mock_entry_setup() -> Iterator[None]:
+    """Keep background entry setup/reloads out of these isolated flow tests."""
+    with (
+        patch(
+            "custom_components.stirling_pdf.async_setup_entry",
+            new=AsyncMock(return_value=True),
+        ),
+        patch(
+            "custom_components.stirling_pdf.async_unload_entry",
+            new=AsyncMock(return_value=True),
+        ),
+    ):
+        yield
+
+
+async def _async_recover_user(hass: HomeAssistant, flow_id: str) -> None:
+    """Finish the same flow after correcting the input or server problem."""
+    expected = {CONF_URL: "http://pdf.local:8080", CONF_API_KEY: "correct-key"}
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(),
+    ) as validate:
+        result = await hass.config_entries.flow.async_configure(flow_id, expected)
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["data"] == expected
+    # Uniqueness deliberately uses the single-instance guard, not a mutable IP.
+    assert result["result"].unique_id is None
+    validate.assert_awaited_once_with(hass, expected)
+    await hass.async_block_till_done()
+
+
+async def _async_recover_existing(
+    hass: HomeAssistant,
+    flow_id: str,
+    entry: MockConfigEntry,
+    source: str,
+) -> None:
+    """Recover a reconfigure/reauth flow without replacing its config entry."""
+    original_entry_id = entry.entry_id
+    original_unique_id = entry.unique_id
+    submitted = {CONF_API_KEY: "correct-key"}
+    expected = {**entry.data, CONF_API_KEY: "correct-key"}
+    if source == config_entries.SOURCE_RECONFIGURE:
+        submitted[CONF_URL] = "http://new-pdf.local:8080"
+        expected[CONF_URL] = submitted[CONF_URL]
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(),
+    ) as validate:
+        result = await hass.config_entries.flow.async_configure(flow_id, submitted)
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == f"{source}_successful"
+    assert entry.entry_id == original_entry_id
+    assert entry.unique_id == original_unique_id
+    assert entry.data == expected
+    validate.assert_awaited_once_with(hass, expected)
+    await hass.async_block_till_done()
 
 
 async def test_user_flow_creates_entry(hass: HomeAssistant) -> None:
@@ -45,6 +106,7 @@ async def test_user_flow_creates_entry(hass: HomeAssistant) -> None:
         )
 
     assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["result"].unique_id is None
     assert result["title"] == "Stirling PDF (pdf.local)"
     assert result["data"] == {
         CONF_URL: "http://pdf.local:8080",
@@ -80,6 +142,7 @@ async def test_user_flow_accepts_omitted_key_when_server_allows_it(
     expected_data = {CONF_URL: "http://pdf.local:8080", CONF_API_KEY: ""}
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["data"] == expected_data
+    assert result["result"].unique_id is None
     validate.assert_awaited_once_with(hass, expected_data)
 
 
@@ -93,6 +156,7 @@ async def test_user_flow_accepts_omitted_key_when_server_allows_it(
             "status_endpoint_disabled",
         ),
         (StirlingPdfApiError("bad response"), "unknown"),
+        (RuntimeError("unexpected failure"), "unknown"),
     ],
 )
 async def test_user_flow_reports_connection_errors(
@@ -117,6 +181,7 @@ async def test_user_flow_reports_connection_errors(
 
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] == {"base": expected_error}
+    await _async_recover_user(hass, result["flow_id"])
 
 
 async def test_user_flow_rejects_invalid_url(hass: HomeAssistant) -> None:
@@ -138,6 +203,7 @@ async def test_user_flow_rejects_invalid_url(hass: HomeAssistant) -> None:
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] == {"base": "invalid_url"}
     validate.assert_not_awaited()
+    await _async_recover_user(hass, result["flow_id"])
 
 
 async def test_user_flow_allows_only_one_instance(
@@ -294,6 +360,9 @@ async def test_reconfigure_rejects_removing_required_api_key(
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] == {"base": "invalid_auth"}
     assert mock_config_entry.data[CONF_API_KEY] == "stored-secret"
+    await _async_recover_existing(
+        hass, result["flow_id"], mock_config_entry, config_entries.SOURCE_RECONFIGURE
+    )
 
 
 async def test_reauth_form_is_blank_and_saves_replacement(
@@ -354,11 +423,27 @@ async def test_user_validation_checks_access_after_public_status(
 
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] == {"base": "invalid_auth"}
+    await _async_recover_user(hass, result["flow_id"])
 
 
-async def test_reauth_rejects_another_invalid_key(
+@pytest.mark.parametrize(
+    ("error", "expected_error"),
+    [
+        (StirlingPdfAuthError("bad key"), "invalid_auth"),
+        (StirlingPdfConnectionError("offline"), "cannot_connect"),
+        (
+            StirlingPdfStatusEndpointDisabledError("disabled"),
+            "status_endpoint_disabled",
+        ),
+        (StirlingPdfApiError("bad response"), "unknown"),
+        (RuntimeError("unexpected failure"), "unknown"),
+    ],
+)
+async def test_reauth_reports_errors_and_recovers(
     hass: HomeAssistant,
     mock_config_entry: MockConfigEntry,
+    error: Exception,
+    expected_error: str,
 ) -> None:
     """Do not save another rejected key or clear the reauth request."""
     result = await hass.config_entries.flow.async_init(
@@ -371,12 +456,120 @@ async def test_reauth_rejects_another_invalid_key(
     )
     with patch(
         "custom_components.stirling_pdf.config_flow._async_validate_input",
-        new=AsyncMock(side_effect=StirlingPdfAuthError("Invalid key")),
+        new=AsyncMock(side_effect=error),
     ):
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"], {CONF_API_KEY: "wrong-again"}
         )
 
     assert result["type"] is FlowResultType.FORM
-    assert result["errors"] == {"base": "invalid_auth"}
+    assert result["errors"] == {"base": expected_error}
     assert mock_config_entry.data[CONF_API_KEY] == "stored-secret"
+    await _async_recover_existing(
+        hass, result["flow_id"], mock_config_entry, config_entries.SOURCE_REAUTH
+    )
+
+
+@pytest.mark.parametrize(
+    ("error", "expected_error"),
+    [
+        (StirlingPdfAuthError("bad key"), "invalid_auth"),
+        (StirlingPdfConnectionError("offline"), "cannot_connect"),
+        (
+            StirlingPdfStatusEndpointDisabledError("disabled"),
+            "status_endpoint_disabled",
+        ),
+        (StirlingPdfApiError("bad response"), "unknown"),
+        (RuntimeError("unexpected failure"), "unknown"),
+    ],
+)
+async def test_reconfigure_reports_errors_and_recovers(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    error: Exception,
+    expected_error: str,
+) -> None:
+    """Leave saved settings intact on failure and accept a corrected submission."""
+    original_data = dict(mock_config_entry.data)
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={
+            "source": config_entries.SOURCE_RECONFIGURE,
+            "entry_id": mock_config_entry.entry_id,
+        },
+    )
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(side_effect=error),
+    ):
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {CONF_URL: "http://new-pdf.local:8080", CONF_API_KEY: "wrong-key"},
+        )
+    assert result["type"] is FlowResultType.FORM
+    assert result["errors"] == {"base": expected_error}
+    assert mock_config_entry.data == original_data
+    assert "stored-secret" not in repr(result["data_schema"])
+    assert "wrong-key" not in repr(result["data_schema"])
+    await _async_recover_existing(
+        hass, result["flow_id"], mock_config_entry, config_entries.SOURCE_RECONFIGURE
+    )
+
+
+async def test_reconfigure_invalid_url_can_be_corrected(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry
+) -> None:
+    """Reject a malformed changed URL locally, then recover in the same flow."""
+    original_data = dict(mock_config_entry.data)
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={
+            "source": config_entries.SOURCE_RECONFIGURE,
+            "entry_id": mock_config_entry.entry_id,
+        },
+    )
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(),
+    ) as validate:
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {CONF_URL: "not-a-url", CONF_API_KEY: API_KEY_PLACEHOLDER},
+        )
+    assert result["type"] is FlowResultType.FORM
+    assert result["errors"] == {"base": "invalid_url"}
+    validate.assert_not_awaited()
+    assert mock_config_entry.data == original_data
+    await _async_recover_existing(
+        hass, result["flow_id"], mock_config_entry, config_entries.SOURCE_RECONFIGURE
+    )
+
+
+@pytest.mark.parametrize("source", ["reconfigure", "reauth"])
+async def test_existing_entry_without_key_can_use_an_unauthenticated_server(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry, source: str
+) -> None:
+    """Accept an omitted optional key for legacy entries without authentication."""
+    hass.config_entries.async_update_entry(
+        mock_config_entry, data={CONF_URL: "http://pdf.local:8080"}
+    )
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": source, "entry_id": mock_config_entry.entry_id},
+        data=dict(mock_config_entry.data) if source == "reauth" else None,
+    )
+    assert result["type"] is FlowResultType.FORM
+    submitted = {CONF_URL: "http://pdf.local:8080"} if source == "reconfigure" else {}
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(),
+    ) as validate:
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], submitted
+        )
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == f"{source}_successful"
+    assert mock_config_entry.data[CONF_API_KEY] == ""
+    validate.assert_awaited_once_with(
+        hass, {CONF_URL: "http://pdf.local:8080", CONF_API_KEY: ""}
+    )

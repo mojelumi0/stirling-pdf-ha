@@ -49,11 +49,15 @@ jobs:
           python -m pytest -q -p no:cacheprovider
           --cov=custom_components/stirling_pdf
           --cov-report=term-missing
-          --cov-fail-under=90
+          --cov-report=json:coverage.json
+          --cov-fail-under=95
+      - name: Enforce coverage for every integration module
+        if: ${{ !cancelled() }}
+        run: python scripts/check_coverage.py coverage.json
       - name: Run Ruff
-        run: ruff check --no-cache custom_components tests tests_live
+        run: ruff check --no-cache custom_components scripts tests tests_live
       - name: Check Ruff formatting
-        run: ruff format --check --no-cache custom_components tests tests_live
+        run: ruff format --check --no-cache custom_components scripts tests tests_live
 
   pytest:
     name: pytest

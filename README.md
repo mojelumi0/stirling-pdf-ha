@@ -80,6 +80,21 @@ known HACS frontend issue and does not affect the integration. See
 3. Restart Home Assistant.
 4. Add **Stirling PDF** from **Settings → Devices & services**.
 
+### Removing the integration
+
+1. Disable or update scripts and automations that call `stirling_pdf` actions.
+2. In **Settings → Devices & services**, open Stirling PDF and delete its
+   integration entry. This removes its entities and permanently deletes the
+   integration's locally saved job count and last-operation details. Make a
+   Home Assistant backup first if you want to retain the option to restore them.
+3. Remove the downloaded integration from HACS. For a manual installation,
+   remove only `/config/custom_components/stirling_pdf` instead.
+4. Restart Home Assistant after removing the integration files.
+
+Removing the integration does **not** delete your input PDFs, generated PDF/ZIP
+files, or the separate Stirling PDF server. Remove an `allowlist_external_dirs`
+entry only if no other integration or automation still needs that directory.
+
 ## Connecting to Stirling PDF
 
 The setup form asks for the complete root URL and an optional API key.
@@ -165,6 +180,23 @@ All entities belong to a single Stirling PDF service device.
 started from the Stirling PDF web interface. The counter and last-operation
 details are saved and restored across integration reloads and Home Assistant
 restarts.
+
+### Updates and availability
+
+The integration polls the status endpoint every **60 seconds** and also checks
+the health endpoint when supported. This interval is fixed; there is currently
+no polling-interval option in the UI. A change on the server may therefore take
+until the next successful poll to appear in Home Assistant.
+
+If a poll fails, **Reachable** becomes off and **Version** becomes unavailable.
+The locally stored **Jobs processed** and **Last operation** entities remain
+available. Polling resumes automatically after connection failures; rejected
+credentials instead trigger Home Assistant's reauthentication flow.
+
+Successful PDF actions update the local statistics after the output has been
+saved, without waiting for a poll. Failed actions do not count as completed
+jobs. Reloading the integration or restarting Home Assistant preserves these
+statistics; deleting the integration entry removes them.
 
 ## Available actions
 
@@ -369,17 +401,27 @@ or let the repository's GitHub Actions run it:
 ```bash
 python3.14 -m venv .venv
 .venv/bin/python -m pip install -r requirements-dev.txt
-.venv/bin/python -m pytest -q -p no:cacheprovider --cov=custom_components/stirling_pdf --cov-report=term-missing --cov-fail-under=90
-.venv/bin/ruff check --no-cache custom_components tests tests_live
-.venv/bin/ruff format --check --no-cache custom_components tests tests_live
+.venv/bin/python -m pytest -q -p no:cacheprovider --cov=custom_components/stirling_pdf --cov-report=term-missing --cov-report=json:coverage.json --cov-fail-under=95
+.venv/bin/python scripts/check_coverage.py coverage.json
+.venv/bin/ruff check --no-cache custom_components scripts tests tests_live
+.venv/bin/ruff format --check --no-cache custom_components scripts tests tests_live
 ```
 
 The test suite covers URL handling, authentication, multipart requests,
 response validation, manifests, HACS metadata, translations, workflow
 structure, Home Assistant config flows, entity setup, unload behavior,
-diagnostics, persistent statistics, and service actions. GitHub Actions
-publishes a line-by-line coverage summary and requires at least 90 percent line
-coverage in every test run.
+diagnostics, persistent statistics, and service actions. Flow tests include
+correcting errors and completing the same setup, reconfigure, or reauthentication
+flow. Additional tests cover malformed saved statistics, API timeouts, missing
+inputs, and failed atomic output replacement.
+
+GitHub Actions enforces **100% line coverage for `config_flow.py`** and
+**more than 95% for each other integration Python module**, as well as a 95%
+overall floor. The per-module checker uses exact covered/total line counts,
+not rounded percentages. Every source module must appear in the report;
+missing or malformed reports fail the check. Results and missing lines appear
+in the workflow log and GitHub job summary. These are enforced CI targets,
+not a claim that manual tests prove complete correctness.
 
 The `Tests` workflow runs the Home Assistant suite against both the advertised
 minimum (2026.9.0) and current tested Core version (2026.10.2), using separate
@@ -440,6 +482,10 @@ version, installation method, action used, and sanitized error message.
 - [Stirling PDF 3.2.0 status and health controller](https://github.com/Stirling-Tools/Stirling-PDF/blob/v3.2.0/app/core/src/main/java/stirling/software/SPDF/controller/web/MetricsController.java)
 - [Stirling PDF 3.2.0 authentication filter](https://github.com/Stirling-Tools/Stirling-PDF/blob/v3.2.0/app/proprietary/src/main/java/stirling/software/proprietary/security/filter/UserAuthenticationFilter.java)
 - [HACS integration repository requirements](https://hacs.xyz/docs/publish/integration/)
+- [Home Assistant config-flow test coverage](https://contributors.home-assistant.io/core/quality-scale/config-flow-test-coverage/)
+- [Home Assistant per-module test coverage](https://contributors.home-assistant.io/core/quality-scale/test-coverage/)
+- [Home Assistant parallel updates](https://contributors.home-assistant.io/core/quality-scale/parallel-updates/)
+- [Home Assistant integration categories](https://contributors.home-assistant.io/core/integrations/categories/)
 
 ## Development transparency
 
