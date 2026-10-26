@@ -10,7 +10,13 @@ from typing import cast
 
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry, ConfigEntryState
-from homeassistant.const import CONF_API_KEY, CONF_URL, Platform
+from homeassistant.const import (
+    CONF_API_KEY,
+    CONF_PASSWORD,
+    CONF_URL,
+    CONF_USERNAME,
+    Platform,
+)
 from homeassistant.core import (
     HomeAssistant,
     ServiceCall,
@@ -122,6 +128,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: StirlingPdfConfigEntry) 
         async_get_clientsession(hass),
         entry.data[CONF_URL],
         entry.data.get(CONF_API_KEY),
+        username=entry.data.get(CONF_USERNAME),
+        password=entry.data.get(CONF_PASSWORD),
     )
     coordinator = StirlingPdfCoordinator(
         hass,

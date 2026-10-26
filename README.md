@@ -12,10 +12,10 @@ processing actions, connectivity monitoring, and a simple UI-based setup.
 · [Report an issue](https://github.com/mojelumi0/stirling-pdf-ha/issues)
 · [Stirling PDF](https://www.stirlingpdf.com/)
 
-> [!WARNING]
-> This integration is in an early test phase. Use copies of non-sensitive PDF
-> files until it has been verified with more Home Assistant and Stirling PDF
-> versions.
+> [!NOTE]
+> This is an actively developed community integration with a focused feature
+> set. Keep backups and use copies of documents when testing a new deployment.
+> A regular release is not a guarantee of compatibility with every server setup.
 
 ## What this integration does
 
@@ -26,6 +26,7 @@ Assistant actions, ready for scripts and automations.
 - Local communication directly between Home Assistant and Stirling PDF
 - Configuration through the Home Assistant UI
 - Optional Stirling PDF API-key authentication
+- Optional HTTP Basic authentication for protected proxies and the Community App
 - Automatic connection validation and reauthentication
 - Merge, split, OCR, and compression actions
 - Optional response data for scripts and automations
@@ -41,6 +42,7 @@ Assistant actions, ready for scripts and automations.
 - HACS for the recommended installation method
 - A directory that Home Assistant can read and write
 - An API key when authentication is enabled in Stirling PDF
+- HTTP Basic username and password when the direct API port or proxy requires them
 
 The Stirling PDF URL must be reachable from **Home Assistant itself**. Do not
 use `localhost` unless Stirling PDF is running in the same network namespace as
@@ -62,10 +64,9 @@ Home Assistant.
 4. Open **Settings → Devices & services → Add integration**.
 5. Search for **Stirling PDF**.
 
-The current releases are prereleases. If HACS does not offer the newest alpha
-version, enable the `switch.stirling_pdf_pre_release` entity under
-**Settings → Devices & services → Entities**, then refresh the update
-information in HACS.
+Normal releases do not require opting into prereleases. To test a future
+prerelease, enable the repository's pre-release switch in HACS. Leave it disabled
+if you only want normal releases.
 
 The HACS update dialog can currently show **Icon not available** even though the
 integration icon appears correctly elsewhere in Home Assistant. This is a
@@ -103,6 +104,8 @@ The setup form asks for the complete root URL and an optional API key.
 |---|---|---|
 | URL | Root URL of Stirling PDF, without an API endpoint | `http://192.168.1.50:8080` |
 | API key | Required only when API authentication is enabled | `••••••••` |
+| HTTP Basic username | Required with the HTTP Basic password, if used | Your HA username for the Community App |
+| HTTP Basic password | Required with the HTTP Basic username, if used | Stored as a masked secret |
 
 Supported URL examples:
 
@@ -124,13 +127,58 @@ check for compatibility. Diagnostics then report
 not confirm permission to process PDFs. A successful health check also cannot
 guarantee that every individual PDF tool is enabled or allowed.
 
-The URL and API key can later be changed with
+The URL, API key and HTTP Basic credentials can later be changed with
 **Reconfigure** on the integration page.
 
-For security, an already saved API key is never sent back to the reconfigure
-form. A masked placeholder means that a key is stored. Leave the placeholder
-unchanged to keep the key, enter a new value to replace it, or clear the field
-to remove it. Reauthentication always starts with an empty API-key field.
+Saved API keys and passwords are never sent back to the forms. A masked
+placeholder represents a secret held by the integration. Leave it unchanged to
+keep that secret, replace it to update it, or clear it to remove it. To remove
+HTTP Basic authentication, clear **both** its username and password. A failed
+validation does not replace the saved configuration. Reauthentication starts
+with empty secret fields: re-enter every credential the deployment requires.
+
+### Stirling PDF Community App
+
+The [Home Assistant Community App](https://github.com/hassio-addons/app-stirling-pdf)
+protects its direct API port with **HTTP Basic authentication**, using your
+Home Assistant username and password. Ingress browser authentication is a
+different mechanism and cannot be used as the integration URL.
+
+1. In Home Assistant, open **Settings > Apps > Stirling PDF > Configuration**.
+2. Check **Network > Web interface & API**. If no host port is configured,
+   assigning one changes the running app's network exposure. Review that change
+   and your firewall first. The app documentation requires configuring the
+   direct API port for direct access; do not assume Ingress exposes it.
+3. Use your HA host address and configured direct host port, for example
+   `http://192.168.1.50:8080`. The app documentation also gives the internal
+   hostname `http://a0d7b954-stirling-pdf:8080` for HA REST commands; only use it
+   if reachable in your installation. Never use an Ingress URL.
+4. In the integration's **Reconfigure** form, enter that URL and your Home
+   Assistant login username and password in the **HTTP Basic** fields. Use the
+   actual username, not a display name or long-lived access token.
+5. Leave the Stirling API-key field empty unless your deployment separately
+   requires an API key. Both authentication methods can be used together.
+6. Leave the app's **`leave_front_door_open` set to `false`**. There is no need
+   to disable its authentication to use this integration.
+
+HTTP Basic encodes credentials; it does **not encrypt** them. Prefer HTTPS with
+a trusted certificate, or keep HTTP strictly inside a trusted, isolated local
+network. Do not expose the direct API port to the internet or untrusted clients.
+TLS certificate verification remains enabled; self-signed certificates must be
+trusted by Home Assistant rather than bypassing verification in this integration.
+The integration stores credentials in its Home Assistant config entry, not in
+entities or automations. Masking is not encryption; protect your HA storage and
+backups. Diagnostics redact the username, password, URL and API key.
+
+Automatic HTTP redirects are refused on every API request. Enter the final
+server URL, including the correct HTTPS scheme and any required subpath, so
+credentials and documents cannot be forwarded to a redirect destination.
+HTTP errors include their status and endpoint but not untrusted response bodies,
+which could echo private information.
+
+See the app's [official direct-access documentation](https://github.com/hassio-addons/app-stirling-pdf/blob/main/stirling-pdf/DOCS.md#direct-access)
+for its current networking and authentication behavior. Automated proxy tests
+do not replace testing the actual app and Supervisor authentication.
 
 ## File access
 
@@ -440,6 +488,11 @@ Stirling PDF 3.2.0 container with login enabled and disabled. It runs on pushes,
 pull requests, manual dispatch, and weekly. It checks public status versus
 protected health, missing and invalid API keys, merge ordering, Unicode
 filenames, split ZIP contents, and compression while preserving page text.
+The same jobs also exercise a synthetic HTTP Basic proxy in front of the real
+server, including combined API-key authentication and rejected Basic credentials.
+Local HTTP transport tests cover all four client operations and refusal to
+forward credentials or PDF uploads to redirect targets. These proxy/transport
+tests are not end-to-end tests of the Community App or Supervisor itself.
 These are real HTTP/API-client tests; Home Assistant action execution and
 file handling are covered separately by the Home Assistant suite. OCR is
 currently covered by client/service tests and the documented manual tests,
@@ -475,6 +528,7 @@ version, installation method, action used, and sanitized error message.
 - [Stirling PDF API documentation](https://docs.stirlingpdf.com/API/)
 - [Stirling PDF OpenAPI reference](https://registry.scalar.com/@stirlingpdf/apis/stirling-pdf-processing-api/)
 - [Stirling PDF source code](https://github.com/Stirling-Tools/Stirling-PDF)
+- [Stirling PDF Community App direct API access](https://github.com/hassio-addons/app-stirling-pdf/blob/main/stirling-pdf/DOCS.md#direct-access)
 - [Home Assistant integration manifest](https://developers.home-assistant.io/docs/creating_integration_manifest/)
 - [Home Assistant integration actions](https://developers.home-assistant.io/docs/dev_101_services/)
 - [Home Assistant integration diagnostics](https://developers.home-assistant.io/docs/core/integration/diagnostics/)

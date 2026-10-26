@@ -13,6 +13,7 @@ from zipfile import ZipFile
 
 import aiohttp
 import pytest
+from aiohttp import web
 from pypdf import PdfReader, PdfWriter
 from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
 
@@ -152,3 +153,95 @@ async def test_missing_and_invalid_keys_follow_server_security(
             [("a.pdf", _pdf("A1")), ("b.pdf", _pdf("B1"))]
         )
         assert _markers(merged) == ["A1", "B1"]
+
+
+@pytest.fixture
+async def basic_auth_proxy(server_url: str, unused_tcp_port: int) -> AsyncIterator[str]:
+    """Model a Basic-protected direct API port in front of the real CI server.
+
+    This is not the Community App or Supervisor. The synthetic proxy exercises
+    multipart forwarding and combined credentials; the app needs a manual test.
+    """
+    authorization = aiohttp.encode_basic_auth("ci-proxy-user", "ci-proxy-password")
+    async with aiohttp.ClientSession(cookie_jar=aiohttp.DummyCookieJar()) as upstream:
+
+        async def proxy(request: web.Request) -> web.Response:
+            if request.headers.get("Authorization") != authorization:
+                return web.Response(
+                    status=401,
+                    headers={"WWW-Authenticate": 'Basic realm="Synthetic CI proxy"'},
+                )
+            headers = {
+                name: request.headers[name]
+                for name in ("Accept", "Content-Type", "X-API-KEY")
+                if name in request.headers
+            }
+            async with upstream.request(
+                request.method,
+                f"{server_url.rstrip('/')}{request.rel_url}",
+                headers=headers,
+                data=await request.read(),
+                allow_redirects=False,
+            ) as response:
+                return web.Response(
+                    status=response.status,
+                    body=await response.read(),
+                    headers={"Content-Type": response.headers["Content-Type"]},
+                )
+
+        app = web.Application(client_max_size=10 * 1024 * 1024)
+        app.router.add_route("*", "/{path:.*}", proxy)
+        runner = web.AppRunner(app)
+        await runner.setup()
+        try:
+            await web.TCPSite(runner, "127.0.0.1", unused_tcp_port).start()
+            yield f"http://127.0.0.1:{unused_tcp_port}"
+        finally:
+            await runner.cleanup()
+
+
+async def test_processing_through_a_basic_protected_proxy(
+    session: aiohttp.ClientSession, basic_auth_proxy: str
+) -> None:
+    """Run real merge/split/compress with Basic auth plus optional server auth."""
+    client = StirlingPdfApiClient(
+        session,
+        basic_auth_proxy,
+        os.environ.get("STIRLING_PDF_API_KEY"),
+        username="ci-proxy-user",
+        password="ci-proxy-password",
+        operation_timeout=120,
+    )
+    assert (await client.async_validate_connection())["status"] == "UP"
+    merged = await client.async_merge(
+        [("b.pdf", _pdf("B1")), ("a.pdf", _pdf("A1", "A2"))]
+    )
+    assert _markers(merged) == ["B1", "A1", "A2"]
+    split = await client.async_split("merged.pdf", merged, "1")
+    with ZipFile(io.BytesIO(split)) as archive:
+        assert archive.testzip() is None
+        segments = sorted(
+            _markers(archive.read(name))
+            for name in archive.namelist()
+            if name.lower().endswith(".pdf")
+        )
+    assert segments == [["A1", "A2"], ["B1"]]
+    compressed = await client.async_compress("padded.pdf", _pdf("A1", "A2"), 5)
+    assert _markers(compressed) == ["A1", "A2"]
+
+
+@pytest.mark.parametrize("password", [None, "incorrect-ci-password"])
+async def test_proxy_rejects_missing_or_incorrect_basic_credentials(
+    session: aiohttp.ClientSession, basic_auth_proxy: str, password: str | None
+) -> None:
+    client = StirlingPdfApiClient(
+        session,
+        basic_auth_proxy,
+        os.environ.get("STIRLING_PDF_API_KEY"),
+        username="ci-proxy-user" if password else None,
+        password=password,
+    )
+    with pytest.raises(StirlingPdfAuthError):
+        await client.async_validate_connection()
+    with pytest.raises(StirlingPdfAuthError):
+        await client.async_merge([("a.pdf", _pdf("A1")), ("b.pdf", _pdf("B1"))])

@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 
 import pytest
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -60,3 +61,42 @@ async def test_diagnostics_before_the_first_operation(
     assert diagnostics["coordinator"]["last_operation_time"] is None
     assert "stored-secret" not in json.dumps(diagnostics)
     assert "pdf.local" not in json.dumps(diagnostics)
+
+
+async def test_diagnostics_redact_basic_credentials_and_nested_authorization(
+    hass: HomeAssistant, loaded_entry: MockConfigEntry
+) -> None:
+    """Redact private usernames, passwords and both header capitalizations."""
+    hass.config_entries.async_update_entry(
+        loaded_entry,
+        data={
+            **loaded_entry.data,
+            CONF_USERNAME: "private-ha-username",
+            CONF_PASSWORD: "private-ha-password",
+        },
+    )
+    loaded_entry.runtime_data.async_set_updated_data(
+        {
+            "status": "UP",
+            "nested": {
+                CONF_USERNAME: "echoed-username",
+                CONF_PASSWORD: "echoed-password",
+                "Authorization": "Basic private-encoded-header",
+                "authorization": "Basic private-lowercase-header",
+            },
+        }
+    )
+    serialized = json.dumps(
+        await async_get_config_entry_diagnostics(hass, loaded_entry)
+    )
+    for secret in (
+        "private-ha-username",
+        "private-ha-password",
+        "echoed-username",
+        "echoed-password",
+        "private-encoded-header",
+        "private-lowercase-header",
+        "stored-secret",
+        "pdf.local",
+    ):
+        assert secret not in serialized

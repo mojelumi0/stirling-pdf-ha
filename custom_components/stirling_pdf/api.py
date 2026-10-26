@@ -31,7 +31,11 @@ class StirlingPdfApiError(Exception):
 
 
 class StirlingPdfAuthError(StirlingPdfApiError):
-    """Raised when an API key is missing or rejected."""
+    """Raised when credentials are missing or rejected."""
+
+
+class StirlingPdfInvalidBasicAuthError(StirlingPdfAuthError):
+    """Raised when HTTP Basic credentials are incomplete or invalid."""
 
 
 class StirlingPdfConnectionError(StirlingPdfApiError):
@@ -76,6 +80,8 @@ class StirlingPdfApiClient:
         base_url: str,
         api_key: str | None = None,
         *,
+        username: str | None = None,
+        password: str | None = None,
         status_timeout: int = DEFAULT_STATUS_TIMEOUT,
         operation_timeout: int = DEFAULT_OPERATION_TIMEOUT,
     ) -> None:
@@ -83,6 +89,15 @@ class StirlingPdfApiClient:
         self._session = session
         self._base_url = normalize_base_url(base_url)
         self._api_key = api_key or None
+        self._authorization: str | None = None
+        if username or password:
+            if not username or not password or ":" in username:
+                raise StirlingPdfInvalidBasicAuthError(
+                    "Provide both HTTP Basic credentials and a username without ':'"
+                )
+            self._authorization = aiohttp.encode_basic_auth(
+                username, password, encoding="utf-8"
+            )
         self.authentication_check_supported: bool | None = None
         self._status_timeout = aiohttp.ClientTimeout(total=status_timeout)
         self._operation_timeout = aiohttp.ClientTimeout(total=operation_timeout)
@@ -97,6 +112,8 @@ class StirlingPdfApiClient:
         headers = {"Accept": "application/json, application/pdf, application/zip"}
         if self._api_key:
             headers[HEADER_API_KEY] = self._api_key
+        if self._authorization:
+            headers["Authorization"] = self._authorization
         return headers
 
     async def async_get_status(self) -> dict[str, Any]:
@@ -104,7 +121,10 @@ class StirlingPdfApiClient:
         url = f"{self._base_url}{ENDPOINT_STATUS}"
         try:
             async with self._session.get(
-                url, headers=self._headers(), timeout=self._status_timeout
+                url,
+                headers=self._headers(),
+                timeout=self._status_timeout,
+                allow_redirects=False,
             ) as response:
                 await self._raise_for_status(response, url)
                 body = await response.text()
@@ -217,6 +237,7 @@ class StirlingPdfApiClient:
                 data=form,
                 headers=self._headers(),
                 timeout=self._operation_timeout,
+                allow_redirects=False,
             ) as response:
                 await self._raise_for_status(response, endpoint)
                 return await response.read()
@@ -231,14 +252,13 @@ class StirlingPdfApiClient:
     ) -> None:
         """Raise a typed error for unsuccessful HTTP responses."""
         if response.status in (401, 403):
-            raise StirlingPdfAuthError("Invalid or missing API key")
+            raise StirlingPdfAuthError("Invalid or missing authentication credentials")
         if 200 <= response.status < 300:
             return
 
-        body = (await response.text()).strip()
-        detail = body[:500] if body else "No response body"
+        # Untrusted response bodies may echo credentials or uploaded document data.
         raise StirlingPdfApiError(
-            f"Stirling PDF returned HTTP {response.status} for {request_name}: {detail}"
+            f"Stirling PDF returned HTTP {response.status} for {request_name}"
         )
 
     async def async_merge(self, files: Sequence[tuple[str, bytes]]) -> bytes:
