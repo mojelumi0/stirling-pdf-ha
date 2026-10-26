@@ -96,7 +96,15 @@ def test_normalize_base_url(value: str, expected: str) -> None:
 
 @pytest.mark.parametrize(
     "value",
-    ["pdf.local:8080", "ftp://pdf.local", "http://user:pass@pdf.local", ""],
+    [
+        "pdf.local:8080",
+        "ftp://pdf.local",
+        "http://user:pass@pdf.local",
+        "http://[invalid-ipv6",
+        "http://pdf.local?token=secret",
+        "http://pdf.local#fragment",
+        "",
+    ],
 )
 def test_normalize_base_url_rejects_invalid_values(value: str) -> None:
     with pytest.raises(StirlingPdfInvalidUrlError):
@@ -355,3 +363,61 @@ async def test_successful_html_response_is_not_written_as_pdf(
 
     with pytest.raises(StirlingPdfApiError, match="not a PDF"):
         await client.async_compress("large.pdf", b"pdf", 5)
+
+
+@pytest.mark.asyncio
+async def test_status_timeout_is_wrapped(session: MagicMock) -> None:
+    """Expose network timeouts through the same typed connection error."""
+    session.get.side_effect = TimeoutError()
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+    with pytest.raises(StirlingPdfConnectionError, match="Timeout connecting"):
+        await client.async_get_status()
+
+
+@pytest.mark.asyncio
+async def test_json_string_status_is_supported(session: MagicMock) -> None:
+    """Support a legacy JSON string as well as unquoted plain text."""
+    session.get.return_value = _mock_response(200, json_data="UP")
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+    assert await client.async_get_status() == {"status": "UP"}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("body", ["[]", "null", "true", "123"])
+async def test_status_rejects_non_mapping_json(session: MagicMock, body: str) -> None:
+    """Valid JSON with an invalid structure is still an API error."""
+    session.get.return_value = _mock_response(200, text_data=body)
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+    with pytest.raises(StirlingPdfApiError, match="invalid response"):
+        await client.async_get_status()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("error", [TimeoutError(), aiohttp.ClientConnectionError()])
+async def test_post_network_failure_is_wrapped(
+    session: MagicMock, error: Exception
+) -> None:
+    """Wrap processing/upload connection failures without returning file bytes."""
+    session.post.side_effect = error
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+    with pytest.raises(StirlingPdfConnectionError):
+        await client.async_compress("input.pdf", b"pdf", 5)
+
+
+@pytest.mark.asyncio
+async def test_ocr_requires_a_language(session: MagicMock) -> None:
+    """Reject an empty language list before uploading a document."""
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+    with pytest.raises(StirlingPdfApiError, match="at least one language"):
+        await client.async_ocr("input.pdf", b"pdf", [])
+    session.post.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("content", [b"", b"%PDF-not-a-zip", b"<html>Login</html>"])
+async def test_split_rejects_non_zip_output(session: MagicMock, content: bytes) -> None:
+    """An HTTP success must not hide a non-archive split result."""
+    session.post.return_value = _mock_response(200, read_data=content)
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+    with pytest.raises(StirlingPdfApiError, match="not a ZIP"):
+        await client.async_split("input.pdf", b"pdf", "1")

@@ -46,3 +46,17 @@ async def test_diagnostics_are_useful_and_redacted(
     assert diagnostics["coordinator"]["jobs_processed"] == 1
     assert diagnostics["coordinator"]["last_operation"] == "merge"
     assert diagnostics["coordinator"]["last_operation_time"] is not None
+
+
+async def test_diagnostics_before_the_first_operation(
+    hass: HomeAssistant, loaded_entry: MockConfigEntry
+) -> None:
+    """Represent missing local history and empty server data without fabrication."""
+    loaded_entry.runtime_data.async_set_updated_data({})
+    diagnostics = await async_get_config_entry_diagnostics(hass, loaded_entry)
+    assert diagnostics["coordinator"]["status"] == {}
+    assert diagnostics["coordinator"]["jobs_processed"] == 0
+    assert diagnostics["coordinator"]["last_operation"] is None
+    assert diagnostics["coordinator"]["last_operation_time"] is None
+    assert "stored-secret" not in json.dumps(diagnostics)
+    assert "pdf.local" not in json.dumps(diagnostics)

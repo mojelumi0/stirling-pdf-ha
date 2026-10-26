@@ -140,7 +140,10 @@ def test_github_validation_workflows_exist() -> None:
     assert 'python-version: "3.14"' in tests_workflow
     assert "python -m pytest" in tests_workflow
     assert "--cov=custom_components/stirling_pdf" in tests_workflow
-    assert "--cov-fail-under=90" in tests_workflow
+    assert "--cov-fail-under=95" in tests_workflow
+    assert "--cov-report=json:coverage.json" in tests_workflow
+    assert "python scripts/check_coverage.py coverage.json" in tests_workflow
+    assert (ROOT / "scripts" / "check_coverage.py").is_file()
     assert "ruff check" in tests_workflow
     assert "ruff format --check" in tests_workflow
 
