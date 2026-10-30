@@ -6,7 +6,7 @@ from typing import Any
 
 from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_API_KEY, CONF_URL
+from homeassistant.const import CONF_API_KEY, CONF_PASSWORD, CONF_URL, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 
 from .coordinator import StirlingPdfCoordinator
@@ -14,9 +14,11 @@ from .coordinator import StirlingPdfCoordinator
 _TO_REDACT = {
     CONF_API_KEY,
     CONF_URL,
+    CONF_USERNAME,
+    CONF_PASSWORD,
     "apiKey",
     "authorization",
-    "password",
+    "Authorization",
     "token",
 }
 

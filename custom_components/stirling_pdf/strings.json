@@ -4,31 +4,38 @@
     "step": {
       "user": {
         "title": "Connect to Stirling PDF",
-        "description": "Enter the full local URL of your Stirling PDF instance. An API key is required when Stirling PDF protects its API, even if its status page is public.",
+        "description": "Enter the full local URL of Stirling PDF. Use an API key if required by Stirling PDF. For the Community App's direct API port, enter your Home Assistant username and password as HTTP Basic credentials. Both methods can be combined. Basic credentials require HTTPS or a trusted isolated network.",
         "data": {
           "url": "URL",
-          "api_key": "API key (optional)"
+          "api_key": "API key (optional)",
+          "username": "HTTP Basic username (optional)",
+          "password": "HTTP Basic password (optional)"
         }
       },
       "reconfigure": {
         "title": "Reconfigure Stirling PDF",
-        "description": "Change the server URL or API key. The saved API key is never displayed: leave the masked placeholder unchanged to keep it, enter a new key to replace it, or clear the field to remove it.",
+        "description": "Change the server URL or credentials. Saved secrets are never displayed. Leave a masked placeholder unchanged to keep its secret, enter a replacement, or clear it to remove it. To remove HTTP Basic authentication, clear both username and password. Changes are saved only after validation succeeds.",
         "data": {
           "url": "URL",
-          "api_key": "API key (optional)"
+          "api_key": "API key (optional)",
+          "username": "HTTP Basic username (optional)",
+          "password": "HTTP Basic password (optional)"
         }
       },
       "reauth_confirm": {
         "title": "Update authentication",
-        "description": "The Stirling PDF server rejected the configured API key. Enter a valid key.",
+        "description": "The server rejected access. Re-enter all credentials required by this deployment: the API key, HTTP Basic username and password, or both. Saved secrets are not prefilled. For the Community App, use your Home Assistant login credentials, not a long-lived access token.",
         "data": {
-          "api_key": "API key"
+          "api_key": "API key (optional)",
+          "username": "HTTP Basic username (optional)",
+          "password": "HTTP Basic password (optional)"
         }
       }
     },
     "error": {
       "cannot_connect": "Failed to connect. Check the URL and whether Stirling PDF is running.",
-      "invalid_auth": "The API key is missing or invalid, or Stirling PDF denied access.",
+      "invalid_auth": "The API key or HTTP Basic credentials are missing or invalid, or the server denied access.",
+      "invalid_basic_auth": "Enter both HTTP Basic username and password, or leave both empty. The username must not contain a colon (:).",
       "invalid_url": "Enter a valid HTTP or HTTPS base URL.",
       "status_endpoint_disabled": "Stirling PDF reported that its status endpoint is disabled. Enable the status endpoint in Stirling PDF and try again.",
       "unknown": "Unexpected error."

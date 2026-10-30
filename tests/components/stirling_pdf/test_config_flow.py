@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-from unittest.mock import AsyncMock, patch
+from unittest.mock import ANY, AsyncMock, call, patch
 
 import pytest
 from homeassistant import config_entries
-from homeassistant.const import CONF_API_KEY, CONF_URL
+from homeassistant.const import CONF_API_KEY, CONF_PASSWORD, CONF_URL, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 from pytest_homeassistant_custom_component.common import MockConfigEntry
@@ -18,7 +18,11 @@ from custom_components.stirling_pdf.api import (
     StirlingPdfConnectionError,
     StirlingPdfStatusEndpointDisabledError,
 )
-from custom_components.stirling_pdf.const import API_KEY_PLACEHOLDER, DOMAIN
+from custom_components.stirling_pdf.const import (
+    API_KEY_PLACEHOLDER,
+    DOMAIN,
+    PASSWORD_PLACEHOLDER,
+)
 
 pytestmark = pytest.mark.usefixtures("enable_custom_integrations")
 
@@ -419,7 +423,7 @@ async def test_reauth_form_is_blank_and_saves_replacement(
 
     assert result["type"] is FlowResultType.FORM
     assert result["step_id"] == "reauth_confirm"
-    assert result["data_schema"]({})[CONF_API_KEY] == ""
+    assert result["data_schema"]({}) == {}
     assert "stored-secret" not in repr(result["data_schema"])
 
     with patch(
@@ -611,3 +615,252 @@ async def test_existing_entry_without_key_can_use_an_unauthenticated_server(
     validate.assert_awaited_once_with(
         hass, {CONF_URL: "http://pdf.local:8080", CONF_API_KEY: ""}
     )
+
+
+@pytest.mark.parametrize("api_key", ["", "combined-key"])
+async def test_user_flow_passes_basic_credentials_to_http_client(
+    hass: HomeAssistant, api_key: str
+) -> None:
+    """Exercise the real validator and its constructor keyword wiring."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    submitted = {
+        CONF_URL: "https://pdf.local",
+        CONF_API_KEY: api_key,
+        CONF_USERNAME: "ha-user",
+        CONF_PASSWORD: " new:password ",
+    }
+    with patch(
+        "custom_components.stirling_pdf.config_flow.StirlingPdfApiClient",
+        autospec=True,
+    ) as client_class:
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], submitted
+        )
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["data"] == submitted
+    client_class.assert_called_once_with(
+        ANY,
+        submitted[CONF_URL],
+        api_key,
+        username="ha-user",
+        password=" new:password ",
+    )
+    client_class.return_value.async_validate_connection.assert_awaited_once_with()
+
+
+@pytest.mark.parametrize(
+    "credentials",
+    [
+        {CONF_USERNAME: "ha-user"},
+        {CONF_PASSWORD: "password"},
+        {CONF_USERNAME: "invalid:user", CONF_PASSWORD: "password"},
+    ],
+)
+async def test_user_flow_rejects_incomplete_basic_auth_and_recovers(
+    hass: HomeAssistant, credentials: dict[str, str]
+) -> None:
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    with patch(
+        "custom_components.stirling_pdf.config_flow.async_get_clientsession"
+    ) as session:
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], {CONF_URL: "http://pdf.local", **credentials}
+        )
+    assert result["type"] is FlowResultType.FORM
+    assert result["errors"] == {"base": "invalid_basic_auth"}
+    session.return_value.get.assert_not_called()
+    # Explicitly clear both fields before continuing with key-only access.
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(),
+    ):
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {CONF_URL: "http://pdf.local", CONF_USERNAME: "", CONF_PASSWORD: ""},
+        )
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+
+
+async def test_user_flow_masks_submitted_secrets_and_retains_them_on_retry(
+    hass: HomeAssistant,
+) -> None:
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    submitted = {
+        CONF_URL: "http://pdf.local",
+        CONF_API_KEY: "submitted-key",
+        CONF_USERNAME: "ha-user",
+        CONF_PASSWORD: "submitted-password",
+    }
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(side_effect=[StirlingPdfConnectionError("offline"), None]),
+    ) as validate:
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], submitted
+        )
+        assert result["errors"] == {"base": "cannot_connect"}
+        assert "submitted-password" not in repr(result["data_schema"])
+        assert "submitted-key" not in repr(result["data_schema"])
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                **submitted,
+                CONF_API_KEY: API_KEY_PLACEHOLDER,
+                CONF_PASSWORD: PASSWORD_PLACEHOLDER,
+            },
+        )
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["data"] == submitted
+    assert validate.await_args_list == [call(hass, submitted), call(hass, submitted)]
+
+
+@pytest.mark.parametrize(
+    "replacement",
+    [
+        {CONF_USERNAME: "stored-user", CONF_PASSWORD: PASSWORD_PLACEHOLDER},
+        {CONF_USERNAME: "new-user", CONF_PASSWORD: "new-password"},
+        {CONF_USERNAME: "", CONF_PASSWORD: ""},
+        {},
+    ],
+    ids=["keep", "replace", "clear-both", "frontend-omits-cleared-fields"],
+)
+async def test_reconfigure_preserves_replaces_or_clears_basic_auth(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    replacement: dict[str, str],
+) -> None:
+    hass.config_entries.async_update_entry(
+        mock_config_entry,
+        data={
+            **mock_config_entry.data,
+            CONF_USERNAME: "stored-user",
+            CONF_PASSWORD: "stored-password",
+        },
+    )
+    entry_id = mock_config_entry.entry_id
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": "reconfigure", "entry_id": entry_id},
+    )
+    assert "stored-password" not in repr(result["data_schema"])
+    assert "stored-secret" not in repr(result["data_schema"])
+    password_field = next(
+        field for field in result["data_schema"].schema if field.schema == CONF_PASSWORD
+    )
+    assert password_field.description == {"suggested_value": PASSWORD_PLACEHOLDER}
+    assert result["data_schema"]({}) == {CONF_URL: "http://pdf.local:8080"}
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(),
+    ) as validate:
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                CONF_URL: "http://pdf.local:8080",
+                CONF_API_KEY: API_KEY_PLACEHOLDER,
+                **replacement,
+            },
+        )
+    expected_password = replacement.get(CONF_PASSWORD, "")
+    if expected_password == PASSWORD_PLACEHOLDER:
+        expected_password = "stored-password"
+    assert result["reason"] == "reconfigure_successful"
+    assert mock_config_entry.entry_id == entry_id
+    assert mock_config_entry.data == {
+        CONF_URL: "http://pdf.local:8080",
+        CONF_API_KEY: "stored-secret",
+        CONF_USERNAME: replacement.get(CONF_USERNAME, ""),
+        CONF_PASSWORD: expected_password,
+    }
+    validate.assert_awaited_once_with(hass, dict(mock_config_entry.data))
+
+
+async def test_reconfigure_retry_retains_new_secrets_not_old_saved_secrets(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry
+) -> None:
+    original_data = dict(mock_config_entry.data)
+    submitted = {
+        CONF_URL: "http://pdf.local:8080",
+        CONF_API_KEY: "replacement-key",
+        CONF_USERNAME: "new-user",
+        CONF_PASSWORD: "replacement-password",
+    }
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": "reconfigure", "entry_id": mock_config_entry.entry_id},
+    )
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(side_effect=[StirlingPdfAuthError("denied"), None]),
+    ) as validate:
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], submitted
+        )
+        assert result["errors"] == {"base": "invalid_auth"}
+        assert mock_config_entry.data == original_data
+        assert "replacement-key" not in repr(result["data_schema"])
+        assert "replacement-password" not in repr(result["data_schema"])
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                **submitted,
+                CONF_API_KEY: API_KEY_PLACEHOLDER,
+                CONF_PASSWORD: PASSWORD_PLACEHOLDER,
+            },
+        )
+    assert result["reason"] == "reconfigure_successful"
+    assert mock_config_entry.data == submitted
+    assert validate.await_args_list == [call(hass, submitted), call(hass, submitted)]
+
+
+@pytest.mark.parametrize("api_key", ["", "replacement-key"])
+async def test_reauth_accepts_basic_or_combined_credentials(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry, api_key: str
+) -> None:
+    hass.config_entries.async_update_entry(
+        mock_config_entry,
+        data={
+            **mock_config_entry.data,
+            CONF_USERNAME: "old-user",
+            CONF_PASSWORD: "old-password",
+        },
+    )
+    original_data = dict(mock_config_entry.data)
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": "reauth", "entry_id": mock_config_entry.entry_id},
+        data=original_data,
+    )
+    assert result["step_id"] == "reauth_confirm"
+    assert "old-password" not in repr(result["data_schema"])
+    assert "stored-secret" not in repr(result["data_schema"])
+    assert PASSWORD_PLACEHOLDER not in repr(result["data_schema"])
+    assert result["data_schema"]({}) == {}
+    submitted = {
+        CONF_API_KEY: api_key,
+        CONF_USERNAME: "new-user",
+        CONF_PASSWORD: "replacement-password",
+    }
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(side_effect=[StirlingPdfAuthError("denied"), None]),
+    ) as validate:
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], submitted
+        )
+        assert result["errors"] == {"base": "invalid_auth"}
+        assert mock_config_entry.data == original_data
+        assert "replacement-password" not in repr(result["data_schema"])
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], submitted
+        )
+    expected = {CONF_URL: original_data[CONF_URL], **submitted}
+    assert result["reason"] == "reauth_successful"
+    assert mock_config_entry.data == expected
+    assert validate.await_args_list == [call(hass, expected), call(hass, expected)]

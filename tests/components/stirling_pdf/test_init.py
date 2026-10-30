@@ -6,6 +6,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 from homeassistant.config_entries import SOURCE_REAUTH, ConfigEntryState
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
@@ -66,6 +67,31 @@ async def test_setup_creates_expected_entities_and_device(
     assert device is not None
     assert device.manufacturer == "Stirling PDF"
     assert device.configuration_url == "http://pdf.local:8080"
+
+
+async def test_setup_passes_saved_basic_credentials_to_the_runtime_client(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    enable_custom_integrations: None,
+) -> None:
+    """Reusing an existing entry must load its optional HTTP credentials."""
+    hass.config_entries.async_update_entry(
+        mock_config_entry,
+        data={
+            **mock_config_entry.data,
+            CONF_USERNAME: "test-user",
+            CONF_PASSWORD: "test-password",
+        },
+    )
+    with patch(
+        "custom_components.stirling_pdf.api.StirlingPdfApiClient.async_validate_connection",
+        new=AsyncMock(return_value={"status": "UP", "version": "3.2.0"}),
+    ):
+        assert await hass.config_entries.async_setup(mock_config_entry.entry_id)
+        await hass.async_block_till_done()
+    headers = mock_config_entry.runtime_data.client._headers()
+    assert headers["X-API-KEY"] == "stored-secret"
+    assert headers["Authorization"] == "Basic dGVzdC11c2VyOnRlc3QtcGFzc3dvcmQ="
 
 
 async def test_local_statistics_remain_available_during_api_failure(

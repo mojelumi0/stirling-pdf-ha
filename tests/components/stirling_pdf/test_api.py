@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import sys
+from base64 import b64decode
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
 
@@ -44,6 +45,7 @@ StirlingPdfApiError = _api_module.StirlingPdfApiError
 StirlingPdfAuthError = _api_module.StirlingPdfAuthError
 StirlingPdfConnectionError = _api_module.StirlingPdfConnectionError
 StirlingPdfInvalidUrlError = _api_module.StirlingPdfInvalidUrlError
+StirlingPdfInvalidBasicAuthError = _api_module.StirlingPdfInvalidBasicAuthError
 StirlingPdfStatusEndpointDisabledError = (
     _api_module.StirlingPdfStatusEndpointDisabledError
 )
@@ -342,16 +344,100 @@ async def test_compress_rejects_invalid_level(session: MagicMock) -> None:
 
 
 @pytest.mark.asyncio
-async def test_post_error_includes_bounded_response_body(session: MagicMock) -> None:
+async def test_post_error_excludes_untrusted_response_body(session: MagicMock) -> None:
+    """A server may echo secrets; do not propagate its response body into logs."""
     session.post.return_value = _mock_response(
-        400, text_data="invalid parameters " + ("x" * 1000)
+        400, text_data="echoed-password echoed-api-key " + ("x" * 1000)
     )
     client = StirlingPdfApiClient(session, "http://127.0.0.1:8080")
 
-    with pytest.raises(StirlingPdfApiError, match="invalid parameters") as error:
+    with pytest.raises(StirlingPdfApiError, match="HTTP 400") as error:
         await client.async_compress("large.pdf", b"pdf", 5)
 
     assert len(str(error.value)) < 700
+    assert "echoed-password" not in str(error.value)
+    assert "echoed-api-key" not in str(error.value)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("api_key", [None, "combined-api-key"])
+async def test_basic_auth_is_sent_to_status_health_and_processing(
+    session: MagicMock, api_key: str | None
+) -> None:
+    """Use UTF-8 credentials on every route, optionally with an API key."""
+    session.get.return_value = _mock_response(200, json_data={"status": "UP"})
+    session.post.return_value = _mock_response(200, read_data=b"%PDF-result")
+    client = StirlingPdfApiClient(
+        session,
+        "https://pdf.local/stirling",
+        api_key,
+        username="test-üser",
+        password=" secret:pässword ",
+    )
+    await client.async_validate_connection()
+    await client.async_compress("input.pdf", b"pdf", 5)
+    assert client.base_url == "https://pdf.local/stirling"
+    assert session.get.call_count == 2
+    for request in [*session.get.call_args_list, session.post.call_args]:
+        headers = request.kwargs["headers"]
+        scheme, encoded = headers["Authorization"].split(" ", 1)
+        assert scheme == "Basic"
+        assert b64decode(encoded).decode("utf-8") == "test-üser: secret:pässword "
+        assert headers.get("X-API-KEY") == api_key
+        assert request.kwargs["allow_redirects"] is False
+    assert "test-üser" not in repr(client)
+    assert "pässword" not in repr(client)
+
+
+@pytest.mark.asyncio
+async def test_no_basic_authorization_header_without_credentials(
+    session: MagicMock,
+) -> None:
+    """Existing key-only and unauthenticated deployments remain supported."""
+    session.get.return_value = _mock_response(200, json_data={"status": "UP"})
+    client = StirlingPdfApiClient(session, "http://pdf.local", "existing-key")
+    await client.async_validate_connection()
+    for request in session.get.call_args_list:
+        assert "Authorization" not in request.kwargs["headers"]
+        assert request.kwargs["headers"]["X-API-KEY"] == "existing-key"
+
+
+@pytest.mark.parametrize(
+    ("username", "password"),
+    [("user", None), (None, "password"), ("user", ""), ("bad:user", "password")],
+)
+def test_invalid_basic_credentials_fail_before_network_access(
+    session: MagicMock, username: str | None, password: str | None
+) -> None:
+    with pytest.raises(StirlingPdfInvalidBasicAuthError):
+        StirlingPdfApiClient(
+            session, "http://pdf.local", username=username, password=password
+        )
+    session.get.assert_not_called()
+    session.post.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("route", ["status", "health", "compress"])
+@pytest.mark.parametrize("status", [301, 302, 303, 307, 308])
+async def test_authenticated_requests_never_follow_redirects(
+    session: MagicMock, route: str, status: int
+) -> None:
+    session.get.return_value = _mock_response(status, text_data="echoed-secret")
+    session.post.return_value = _mock_response(status, text_data="echoed-secret")
+    client = StirlingPdfApiClient(
+        session, "http://pdf.local", "api-secret", username="user", password="secret"
+    )
+    with pytest.raises(StirlingPdfApiError, match=f"HTTP {status}") as error:
+        if route == "status":
+            await client.async_get_status()
+        elif route == "health":
+            await client.async_check_authentication()
+        else:
+            await client.async_compress("input.pdf", b"pdf", 5)
+    request = session.post.call_args if route == "compress" else session.get.call_args
+    assert request.kwargs["allow_redirects"] is False
+    assert "echoed-secret" not in str(error.value)
 
 
 @pytest.mark.asyncio

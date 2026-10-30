@@ -4,31 +4,38 @@
     "step": {
       "user": {
         "title": "Mit Stirling PDF verbinden",
-        "description": "Gib die vollständige lokale URL deiner Stirling-PDF-Instanz ein. Wenn Stirling PDF seine API schützt, ist ein API-Key erforderlich, auch wenn die Statusseite öffentlich erreichbar ist.",
+        "description": "Gib die vollständige lokale URL von Stirling PDF ein. Nutze einen API-Key, falls Stirling PDF ihn benötigt. Für den direkten API-Port der Community-App trägst du deinen Home-Assistant-Benutzernamen und dein Passwort als HTTP-Basic-Zugangsdaten ein. Beide Methoden lassen sich kombinieren. Verwende Basic-Zugangsdaten nur über HTTPS oder in einem vertrauenswürdigen, isolierten Netzwerk.",
         "data": {
           "url": "URL",
-          "api_key": "API-Key (optional)"
+          "api_key": "API-Key (optional)",
+          "username": "HTTP-Basic-Benutzername (optional)",
+          "password": "HTTP-Basic-Passwort (optional)"
         }
       },
       "reconfigure": {
         "title": "Stirling PDF neu konfigurieren",
-        "description": "Ändere die Server-URL oder den API-Key. Der gespeicherte API-Key wird nie angezeigt: Lass den maskierten Platzhalter unverändert, um ihn zu behalten, gib einen neuen Key ein, um ihn zu ersetzen, oder leere das Feld, um ihn zu entfernen.",
+        "description": "Ändere die Server-URL oder Zugangsdaten. Gespeicherte Geheimnisse werden nie angezeigt. Lass einen maskierten Platzhalter unverändert, um das Geheimnis zu behalten, gib einen Ersatz ein oder leere das Feld zum Entfernen. Um HTTP Basic zu entfernen, leere Benutzername und Passwort. Änderungen werden erst nach erfolgreicher Prüfung gespeichert.",
         "data": {
           "url": "URL",
-          "api_key": "API-Key (optional)"
+          "api_key": "API-Key (optional)",
+          "username": "HTTP-Basic-Benutzername (optional)",
+          "password": "HTTP-Basic-Passwort (optional)"
         }
       },
       "reauth_confirm": {
         "title": "Authentifizierung aktualisieren",
-        "description": "Der Stirling-PDF-Server hat den konfigurierten API-Key abgelehnt. Gib einen gültigen Key ein.",
+        "description": "Der Server hat den Zugriff abgelehnt. Gib alle benötigten Zugangsdaten erneut ein: API-Key, HTTP-Basic-Benutzername und Passwort oder beides. Gespeicherte Geheimnisse sind nicht vorausgefüllt. Für die Community-App verwendest du deine Home-Assistant-Anmeldedaten, kein langlebiges Zugriffstoken.",
         "data": {
-          "api_key": "API-Key"
+          "api_key": "API-Key (optional)",
+          "username": "HTTP-Basic-Benutzername (optional)",
+          "password": "HTTP-Basic-Passwort (optional)"
         }
       }
     },
     "error": {
       "cannot_connect": "Verbindung fehlgeschlagen. Prüfe die URL und ob Stirling PDF läuft.",
-      "invalid_auth": "Der API-Key fehlt oder ist ungültig, oder Stirling PDF hat den Zugriff verweigert.",
+      "invalid_auth": "Der API-Key oder die HTTP-Basic-Zugangsdaten fehlen oder sind ungültig, oder der Server hat den Zugriff verweigert.",
+      "invalid_basic_auth": "Gib HTTP-Basic-Benutzernamen und Passwort gemeinsam ein oder lass beide leer. Der Benutzername darf keinen Doppelpunkt (:) enthalten.",
       "invalid_url": "Gib eine gültige HTTP- oder HTTPS-Basis-URL ein.",
       "status_endpoint_disabled": "Stirling PDF meldet, dass der Status-Endpunkt deaktiviert ist. Aktiviere den Status-Endpunkt in Stirling PDF und versuche es erneut.",
       "unknown": "Unerwarteter Fehler."
