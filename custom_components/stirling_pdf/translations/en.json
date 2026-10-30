@@ -56,7 +56,8 @@
           "merge": "Merge",
           "split": "Split",
           "ocr": "OCR",
-          "compress": "Compress"
+          "compress": "Compress",
+          "extract_pages": "Extract pages"
         }
       }
     },
@@ -70,6 +71,7 @@
     "path_not_allowed": { "message": "The path `{path}` is not allowed by Home Assistant. Add its parent directory to `allowlist_external_dirs`." },
     "invalid_extension": { "message": "The path `{path}` must use the `{extension}` extension." },
     "invalid_languages": { "message": "Enter at least one valid OCR language code, such as `eng` or `deu`." },
+    "invalid_page_numbers": { "message": "Enter positive page numbers or ascending ranges, for example `1,3-5`. Use at most 1024 characters. Expressions such as `all` or `2n+1` are not supported for extraction." },
     "output_exists": { "message": "The output file `{path}` already exists. Enable overwrite or choose another path." },
     "authentication_failed": { "message": "Stirling PDF rejected API access. Update authentication under Settings > Devices & services." },
     "processing_failed": { "message": "Stirling PDF could not process the document: {error}" },
@@ -102,6 +104,16 @@
         "file_path": { "name": "File path", "description": "Absolute path of the scanned PDF." },
         "languages": { "name": "Languages", "description": "Installed Tesseract language codes, for example `eng` and `deu`." },
         "output_path": { "name": "Output path", "description": "Absolute path for the searchable PDF." },
+        "overwrite": { "name": "Overwrite", "description": "Replace the output file if it already exists." }
+      }
+    },
+    "extract_pages": {
+      "name": "Extract PDF pages",
+      "description": "Save selected pages from one PDF into a new PDF.",
+      "fields": {
+        "file_path": { "name": "File path", "description": "Absolute path of the source PDF." },
+        "page_numbers": { "name": "Page numbers", "description": "Positive one-based pages and ascending ranges, for example `1,3-5`. Maximum 1024 characters. No `all` or function expressions." },
+        "output_path": { "name": "Output path", "description": "Absolute `.pdf` path for the selected pages." },
         "overwrite": { "name": "Overwrite", "description": "Replace the output file if it already exists." }
       }
     },

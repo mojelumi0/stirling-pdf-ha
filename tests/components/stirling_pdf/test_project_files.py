@@ -56,7 +56,7 @@ def test_service_and_translation_keys_match() -> None:
     english = _load_json(INTEGRATION / "translations" / "en.json")
     german = _load_json(INTEGRATION / "translations" / "de.json")
 
-    assert set(services) == {"merge", "split", "ocr", "compress"}
+    assert set(services) == {"merge", "split", "ocr", "compress", "extract_pages"}
     assert set(strings["services"]) == set(services)
     assert set(english["services"]) == set(services)
     assert set(german["services"]) == set(services)

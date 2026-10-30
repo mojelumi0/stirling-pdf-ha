@@ -30,6 +30,7 @@ from custom_components.stirling_pdf.const import (
     ATTR_PAGE_NUMBERS,
     DOMAIN,
     SERVICE_COMPRESS,
+    SERVICE_EXTRACT_PAGES,
     SERVICE_MERGE,
     SERVICE_OCR,
     SERVICE_SPLIT,
@@ -50,7 +51,7 @@ async def test_all_actions_write_results_and_update_statistics(
     loaded_entry: MockConfigEntry,
     tmp_path: Path,
 ) -> None:
-    """Test all four actions through Home Assistant's public service interface."""
+    """Test all actions through Home Assistant's public service interface."""
     _allow_test_directory(hass, tmp_path)
     first = tmp_path / "first.pdf"
     second = tmp_path / "second.pdf"
@@ -63,6 +64,7 @@ async def test_all_actions_write_results_and_update_statistics(
     client.async_split = AsyncMock(return_value=ZIP_RESULT)
     client.async_ocr = AsyncMock(return_value=PDF_RESULT)
     client.async_compress = AsyncMock(return_value=PDF_RESULT)
+    client.async_extract_pages = AsyncMock(return_value=PDF_RESULT)
 
     merged = tmp_path / "merged.pdf"
     await hass.services.async_call(
@@ -99,6 +101,18 @@ async def test_all_actions_write_results_and_update_statistics(
         blocking=True,
     )
 
+    extracted = tmp_path / "extracted.pdf"
+    await hass.services.async_call(
+        DOMAIN,
+        SERVICE_EXTRACT_PAGES,
+        {
+            ATTR_FILE_PATH: str(first),
+            ATTR_PAGE_NUMBERS: "1, 3 - 5",
+            ATTR_OUTPUT_PATH: str(extracted),
+        },
+        blocking=True,
+    )
+
     compressed = tmp_path / "compressed.pdf"
     response = await hass.services.async_call(
         DOMAIN,
@@ -116,6 +130,8 @@ async def test_all_actions_write_results_and_update_statistics(
     assert split.read_bytes() == ZIP_RESULT
     assert ocr.read_bytes() == PDF_RESULT
     assert compressed.read_bytes() == PDF_RESULT
+    assert extracted.read_bytes() == PDF_RESULT
+    client.async_extract_pages.assert_awaited_once_with("first.pdf", PDF_INPUT, "1,3-5")
     client.async_merge.assert_awaited_once_with(
         [("first.pdf", PDF_INPUT), ("second.pdf", PDF_INPUT)]
     )
@@ -128,7 +144,7 @@ async def test_all_actions_write_results_and_update_statistics(
         ATTR_OUTPUT_SIZE: len(PDF_RESULT),
         ATTR_INPUT_COUNT: 1,
     }
-    assert coordinator.jobs_processed == 4
+    assert coordinator.jobs_processed == 5
     assert coordinator.last_operation == SERVICE_COMPRESS
 
 
@@ -163,7 +179,14 @@ async def test_existing_output_requires_overwrite(
 
 
 @pytest.mark.parametrize(
-    "service", [SERVICE_MERGE, SERVICE_SPLIT, SERVICE_OCR, SERVICE_COMPRESS]
+    "service",
+    [
+        SERVICE_MERGE,
+        SERVICE_SPLIT,
+        SERVICE_OCR,
+        SERVICE_COMPRESS,
+        SERVICE_EXTRACT_PAGES,
+    ],
 )
 @pytest.mark.parametrize(
     ("failure", "expected_error"),
@@ -211,7 +234,7 @@ async def test_invalid_output_is_rejected_before_reading_or_uploading(
         data[ATTR_FILE_PATHS] = [str(first), str(second)]
     else:
         data[ATTR_FILE_PATH] = str(first)
-        if service == SERVICE_SPLIT:
+        if service in (SERVICE_SPLIT, SERVICE_EXTRACT_PAGES):
             data[ATTR_PAGE_NUMBERS] = "1"
 
     with (
@@ -551,3 +574,130 @@ async def test_failed_atomic_overwrite_preserves_output_and_cleans_temporary_fil
         "output.pdf",
     ]
     assert loaded_entry.runtime_data.jobs_processed == 0
+
+
+@pytest.mark.parametrize(
+    "selection",
+    [
+        " ",
+        "0",
+        "3-1",
+        "1,,2",
+        "all",
+        "1" * 1025,
+        " " * 1024 + "1",
+        "1" + " " * 1022 + ",2",
+    ],
+)
+async def test_invalid_extraction_selection_is_rejected_before_reading(
+    hass: HomeAssistant,
+    loaded_entry: MockConfigEntry,
+    tmp_path: Path,
+    selection: str,
+) -> None:
+    _allow_test_directory(hass, tmp_path)
+    source = tmp_path / "source.pdf"
+    source.write_bytes(PDF_INPUT)
+    output = tmp_path / "extracted.pdf"
+    process = AsyncMock(return_value=PDF_RESULT)
+    loaded_entry.runtime_data.client.async_extract_pages = process
+    with (
+        patch(
+            "custom_components.stirling_pdf._async_read_pdf", new_callable=AsyncMock
+        ) as read,
+        pytest.raises(ServiceValidationError) as error,
+    ):
+        await hass.services.async_call(
+            DOMAIN,
+            SERVICE_EXTRACT_PAGES,
+            {
+                ATTR_FILE_PATH: str(source),
+                ATTR_PAGE_NUMBERS: selection,
+                ATTR_OUTPUT_PATH: str(output),
+            },
+            blocking=True,
+        )
+    assert error.value.translation_key == "invalid_page_numbers"
+    read.assert_not_awaited()
+    process.assert_not_awaited()
+    assert not output.exists()
+    assert source.read_bytes() == PDF_INPUT
+    assert loaded_entry.runtime_data.jobs_processed == 0
+
+
+@pytest.mark.parametrize("overwrite", [False, True])
+async def test_extraction_overwrite_and_response(
+    hass: HomeAssistant,
+    loaded_entry: MockConfigEntry,
+    tmp_path: Path,
+    overwrite: bool,
+) -> None:
+    _allow_test_directory(hass, tmp_path)
+    source = tmp_path / "source.pdf"
+    source.write_bytes(PDF_INPUT)
+    output = tmp_path / "extracted.pdf"
+    output.write_bytes(b"original")
+    process = AsyncMock(return_value=PDF_RESULT)
+    loaded_entry.runtime_data.client.async_extract_pages = process
+    data = {
+        ATTR_FILE_PATH: str(source),
+        ATTR_PAGE_NUMBERS: "1",
+        ATTR_OUTPUT_PATH: str(output),
+        ATTR_OVERWRITE: overwrite,
+    }
+    if not overwrite:
+        with pytest.raises(ServiceValidationError) as error:
+            await hass.services.async_call(
+                DOMAIN, SERVICE_EXTRACT_PAGES, data, blocking=True, return_response=True
+            )
+        assert error.value.translation_key == "output_exists"
+        process.assert_not_awaited()
+        assert output.read_bytes() == b"original"
+        assert loaded_entry.runtime_data.jobs_processed == 0
+    else:
+        response = await hass.services.async_call(
+            DOMAIN, SERVICE_EXTRACT_PAGES, data, blocking=True, return_response=True
+        )
+        assert response == {
+            ATTR_OPERATION: SERVICE_EXTRACT_PAGES,
+            ATTR_OUTPUT_PATH: str(output),
+            ATTR_OUTPUT_SIZE: len(PDF_RESULT),
+            ATTR_INPUT_COUNT: 1,
+        }
+        assert output.read_bytes() == PDF_RESULT
+        assert loaded_entry.runtime_data.jobs_processed == 1
+        assert loaded_entry.runtime_data.last_operation == SERVICE_EXTRACT_PAGES
+    assert source.read_bytes() == PDF_INPUT
+
+
+@pytest.mark.parametrize(
+    "error", [StirlingPdfAuthError("denied"), StirlingPdfApiError("failed")]
+)
+async def test_extraction_api_failure_preserves_files_and_statistics(
+    hass: HomeAssistant,
+    loaded_entry: MockConfigEntry,
+    tmp_path: Path,
+    error: Exception,
+) -> None:
+    _allow_test_directory(hass, tmp_path)
+    source = tmp_path / "source.pdf"
+    source.write_bytes(PDF_INPUT)
+    output = tmp_path / "extracted.pdf"
+    output.write_bytes(b"original")
+    loaded_entry.runtime_data.client.async_extract_pages = AsyncMock(side_effect=error)
+    with pytest.raises(HomeAssistantError):
+        await hass.services.async_call(
+            DOMAIN,
+            SERVICE_EXTRACT_PAGES,
+            {
+                ATTR_FILE_PATH: str(source),
+                ATTR_PAGE_NUMBERS: "1",
+                ATTR_OUTPUT_PATH: str(output),
+                ATTR_OVERWRITE: True,
+            },
+            blocking=True,
+        )
+    assert output.read_bytes() == b"original"
+    assert source.read_bytes() == PDF_INPUT
+    assert loaded_entry.runtime_data.jobs_processed == 0
+    await hass.async_block_till_done()

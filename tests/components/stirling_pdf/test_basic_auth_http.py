@@ -53,6 +53,7 @@ async def test_all_routes_use_basic_auth_over_http(aiohttp_server, api_key) -> N
         await client.async_validate_connection()
         await client.async_merge([("a.pdf", b"%PDF-a"), ("b.pdf", b"%PDF-b")])
         await client.async_split("a.pdf", b"%PDF-a", "1")
+        await client.async_extract_pages("a.pdf", b"%PDF-a", "1")
         await client.async_ocr("a.pdf", b"%PDF-a", ["eng"])
         await client.async_compress("a.pdf", b"%PDF-a", 5)
     assert requests == [
@@ -60,12 +61,13 @@ async def test_all_routes_use_basic_auth_over_http(aiohttp_server, api_key) -> N
         "/stirling/api/v1/info/health",
         "/stirling/api/v1/general/merge-pdfs",
         "/stirling/api/v1/general/split-pages",
+        "/stirling/api/v1/general/rearrange-pages",
         "/stirling/api/v1/misc/ocr-pdf",
         "/stirling/api/v1/misc/compress-pdf",
     ]
 
 
-@pytest.mark.parametrize("route", ["status", "health", "compress"])
+@pytest.mark.parametrize("route", ["status", "health", "compress", "extract_pages"])
 @pytest.mark.parametrize("password", [None, "wrong-password"])
 async def test_server_rejects_missing_or_invalid_basic_credentials(
     aiohttp_server, route, password
@@ -90,11 +92,13 @@ async def test_server_rejects_missing_or_invalid_basic_credentials(
                 await client.async_get_status()
             elif route == "health":
                 await client.async_check_authentication()
+            elif route == "extract_pages":
+                await client.async_extract_pages("a.pdf", b"%PDF-a", "1")
             else:
                 await client.async_compress("a.pdf", b"%PDF-a", 5)
 
 
-@pytest.mark.parametrize("route", ["status", "health", "compress"])
+@pytest.mark.parametrize("route", ["status", "health", "compress", "extract_pages"])
 async def test_redirect_target_receives_neither_credentials_nor_documents(
     aiohttp_server, route
 ) -> None:
@@ -129,6 +133,8 @@ async def test_redirect_target_receives_neither_credentials_nor_documents(
                 await client.async_get_status()
             elif route == "health":
                 await client.async_check_authentication()
+            elif route == "extract_pages":
+                await client.async_extract_pages("a.pdf", b"%PDF-private-document", "1")
             else:
                 await client.async_compress("a.pdf", b"%PDF-private-document", 5)
     assert redirected_requests == []
