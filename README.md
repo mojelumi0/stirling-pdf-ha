@@ -296,9 +296,10 @@ data:
 ```
 
 Page numbers start at **1**. The action accepts positive page numbers and
-ascending ranges separated by commas, with at most 1024 characters. Spaces
-around commas and hyphens are allowed. A selection such as `4,1-2` requests
-that order. Stirling PDF may deduplicate repeated page numbers.
+ascending ranges separated by commas, with at most 1024 characters including
+whitespace in the original input. Spaces around commas and hyphens are allowed.
+A selection such as `4,1-2` requests that order. Stirling PDF may deduplicate
+repeated page numbers.
 
 Unlike `split`, extraction returns **one `.pdf` file**, not a ZIP. Its supported
 selection syntax is deliberately limited to explicit pages/ranges: `all`,
@@ -555,7 +556,7 @@ known words and a number. These added development checks must pass in CI before
 they can be counted as validation of the new release.
 The same jobs also exercise a synthetic HTTP Basic proxy in front of the real
 server, including combined API-key authentication and rejected Basic credentials.
-Local HTTP transport tests cover all four client operations and refusal to
+Local HTTP transport tests cover all five client operations and refusal to
 forward credentials or PDF uploads to redirect targets. These proxy/transport
 tests are not end-to-end tests of the Community App or Supervisor itself.
 These are real HTTP/API-client tests; Home Assistant action execution and

@@ -7,7 +7,7 @@ import json
 import sys
 from base64 import b64decode
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import aiohttp
 import pytest
@@ -311,10 +311,46 @@ async def test_split_posts_page_numbers(session: MagicMock) -> None:
 
 @pytest.mark.parametrize(
     ("selection", "expected"),
-    [("1", "1"), (" 1, 3 - 5 ", "1,3-5"), ("3,1-2", "3,1-2")],
+    [
+        ("1", "1"),
+        (" 1, 3 - 5 ", "1,3-5"),
+        ("3,1-2", "3,1-2"),
+        (" " * 1023 + "1", "1"),
+        ("1" + " " * 1023, "1"),
+        ("1" + " " * 1021 + ",2", "1,2"),
+    ],
 )
 def test_extraction_normalizes_positive_pages_and_ranges(selection, expected) -> None:
     assert normalize_page_selection(selection) == expected
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "selection",
+    [
+        pytest.param(" " * 1024 + "1", id="leading-whitespace"),
+        pytest.param("1" + " " * 1024, id="trailing-whitespace"),
+        pytest.param("1" + " " * 1022 + ",2", id="list-whitespace"),
+        pytest.param("1" + " " * 1022 + "-2", id="range-whitespace"),
+        pytest.param("1" + " " * 1023 + "2", id="invalid-inner-whitespace"),
+        pytest.param("1" * 1025, id="digits"),
+    ],
+)
+async def test_overlong_raw_selection_is_rejected_before_normalization_or_upload(
+    session: MagicMock, selection: str
+) -> None:
+    """Whitespace must not bypass the limit or reach regex processing first."""
+    assert len(selection) == 1025
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+    with (
+        patch.object(_api_module, "re") as regex,
+        pytest.raises(StirlingPdfInvalidPageNumbersError, match="1024"),
+    ):
+        regex.sub.side_effect = AssertionError("Normalization must not run")
+        await client.async_extract_pages("input.pdf", b"pdf", selection)
+    regex.sub.assert_not_called()
+    regex.fullmatch.assert_not_called()
+    session.post.assert_not_called()
 
 
 @pytest.mark.asyncio

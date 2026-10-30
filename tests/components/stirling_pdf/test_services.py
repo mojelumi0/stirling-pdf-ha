@@ -576,7 +576,19 @@ async def test_failed_atomic_overwrite_preserves_output_and_cleans_temporary_fil
     assert loaded_entry.runtime_data.jobs_processed == 0
 
 
-@pytest.mark.parametrize("selection", [" ", "0", "3-1", "1,,2", "all", "1" * 1025])
+@pytest.mark.parametrize(
+    "selection",
+    [
+        " ",
+        "0",
+        "3-1",
+        "1,,2",
+        "all",
+        "1" * 1025,
+        " " * 1024 + "1",
+        "1" + " " * 1022 + ",2",
+    ],
+)
 async def test_invalid_extraction_selection_is_rejected_before_reading(
     hass: HomeAssistant,
     loaded_entry: MockConfigEntry,

@@ -81,10 +81,15 @@ def normalize_page_selection(value: str) -> str:
     """Accept positive one-based pages and ascending ranges, not expressions.
 
     Stirling PDF determines whether selected pages exist in the document.
-    Limit selection text length, not the number of pages in the input PDF.
+    Limit raw selection text length, including whitespace, before normalization.
+    This does not limit the number of pages in the input PDF.
     """
+    if len(value) > 1024:
+        raise StirlingPdfInvalidPageNumbersError(
+            "Extraction page selection must not exceed 1024 characters"
+        )
     selection = re.sub(r"\s*([,-])\s*", r"\1", value.strip())
-    if len(selection) > 1024 or not re.fullmatch(
+    if not re.fullmatch(
         r"[1-9][0-9]*(?:-[1-9][0-9]*)?(?:,[1-9][0-9]*(?:-[1-9][0-9]*)?)*",
         selection,
     ):
