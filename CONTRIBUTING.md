@@ -45,6 +45,18 @@ Real-server contract tests live in `tests_live/` and use
 required test-server environment variables. They deliberately avoid real
 documents and run with both enabled and disabled server authentication.
 
+The real-server suite includes selected-page extraction and OCR from a committed
+image-only synthetic scan. Do not replace it with an already-searchable PDF or
+skip OCR when the pinned standard image lacks its expected capability. Fixture
+provenance and optional Node.js regeneration are documented in
+`tests_live/fixtures/README.md`; the generator is not a runtime/CI dependency.
+
+The native acceptance script is under `examples/`. Keep its name and report
+version-independent. CI validates its HA schema, renders templates and checks
+safe output targets, but real HA execution and manual trace/output checks remain
+required. Record evidence honestly in `docs/TESTING.md`, distinguishing historical
+release validation from pending tests for newly added behavior.
+
 ## Pull-request scope
 
 A new action should include:

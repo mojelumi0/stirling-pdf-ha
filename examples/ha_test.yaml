@@ -1,0 +1,420 @@
+alias: Stirling PDF - Integrationstest
+description: >-
+  Manueller Integrationstest mit a.pdf und b.pdf. Erstellt eigene Ergebnisdateien,
+  prueft Aktionsantworten und Statistik-Sensoren und zeigt einen Bericht.
+  Ueberschreibt nur eine zuvor selbst erstellte Testausgabe, nie a.pdf oder b.pdf.
+  Fuehrt keinen Reload oder Neustart durch und loescht keine Dateien.
+  Prueft die installierte Integrationsversion nicht automatisch.
+icon: mdi:file-document-check-outline
+mode: single
+fields:
+  include_extract_pages:
+    name: Seitenextraktion mitpruefen
+    description: Nur ausschalten, wenn die installierte Integration diese Aktion noch nicht unterstuetzt.
+    default: true
+    selector:
+      boolean:
+  reported_version:
+    name: Installierte Integrationsversion (manuelle Angabe)
+    description: Optional aus den Diagnosedaten uebernehmen. Wird nicht automatisch verifiziert.
+    default: ""
+    selector:
+      text:
+  deployment_label:
+    name: Testumgebung (freiwillige Angabe)
+    description: Zum Beispiel Community App oder eigener Server. Keine Zugangsdaten eintragen.
+    default: ""
+    selector:
+      text:
+  test_directory:
+    name: PDF-Testordner
+    description: HA-Pfad des bereits erlaubten Ordners mit a.pdf und b.pdf.
+    default: /config/pdf-test
+    selector:
+      text:
+sequence:
+  - alias: Testlauf und Sensorerkennung vorbereiten
+    variables:
+      directory: >-
+        {{ test_directory | default('/config/pdf-test', true)
+           | trim | regex_replace('/+$', '') }}
+      run_id: "{{ now().strftime('%Y%m%d_%H%M%S_%f') }}"
+      extract_enabled: "{{ include_extract_pages | default(true) | bool }}"
+      jobs_candidates: >-
+        {{ expand(integration_entities('stirling_pdf'))
+           | selectattr('attributes.state_class', 'defined')
+           | selectattr('attributes.state_class', 'eq', 'total_increasing')
+           | map(attribute='entity_id') | list }}
+      last_candidates: >-
+        {{ expand(integration_entities('stirling_pdf'))
+           | selectattr('attributes.device_class', 'defined')
+           | selectattr('attributes.device_class', 'eq', 'enum')
+           | map(attribute='entity_id') | list }}
+      reachable_candidates: >-
+        {{ expand(integration_entities('stirling_pdf'))
+           | selectattr('attributes.device_class', 'defined')
+           | selectattr('attributes.device_class', 'eq', 'connectivity')
+           | map(attribute='entity_id') | list }}
+      results: []
+      successful_operations: []
+  - alias: Bei unklarem Testordner oder fehlenden Sensoren sicher abbrechen
+    if: >-
+      {{ not directory.startswith('/config/')
+         or '..' in directory.split('/')
+         or jobs_candidates | count != 1
+         or last_candidates | count != 1
+         or reachable_candidates | count != 1 }}
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Stirling PDF - Test nicht gestartet
+          message: >-
+            Bitte einen Unterordner von /config angeben und beide
+            Statistik-Sensoren und den Erreichbarkeitssensor der Integration aktivieren.
+            Gefundene Auftragssensoren: {{ jobs_candidates }}.
+            Gefundene Sensoren fuer die letzte Aktion: {{ last_candidates }}.
+            Gefundene Erreichbarkeitssensoren: {{ reachable_candidates }}.
+      - stop: Testvoraussetzungen fehlen; keine PDF-Aktion ausgefuehrt.
+  - variables:
+      jobs_entity: "{{ jobs_candidates | first }}"
+      last_entity: "{{ last_candidates | first }}"
+      reachable_entity: "{{ reachable_candidates | first }}"
+      start_count: "{{ states(jobs_entity) | int(-1) }}"
+      prefix: "{{ directory }}/stirling_test_{{ run_id }}"
+      notification_id: "stirling_pdf_test_{{ run_id }}"
+  - if: "{{ start_count < 0 }}"
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Stirling PDF - Test nicht gestartet
+          message: "Der Auftragssensor {{ jobs_entity }} liefert keine Zahl."
+      - stop: Kein gueltiger Ausgangswert; keine PDF-Aktion ausgefuehrt.
+  - alias: Bei nicht bestaetigter Erreichbarkeit keine Testaktionen starten
+    if: "{{ not is_state(reachable_entity, 'on') }}"
+    then:
+      - action: persistent_notification.create
+        data:
+          title: Stirling PDF - Test nicht gestartet
+          message: >-
+            {{ reachable_entity }} meldet {{ states(reachable_entity) }}.
+            Bitte zuerst Verbindung und Zugangsdaten pruefen. Nach Wiederherstellung
+            bis zum naechsten Statusabruf warten (normalerweise etwa 60 Sekunden).
+            Keine PDF-Aktion wurde ausgefuehrt.
+      - stop: Erreichbarkeit nicht bestaetigt; keine PDF-Aktion ausgefuehrt.
+  - alias: Nur eigene Ergebnisdateien als Ausgabeziele verwenden
+    variables:
+      test_cases:
+        - name: Zusammenfuehren
+          operation: merge
+          expect: success
+          available: true
+          input_count: 2
+          data:
+            file_paths:
+              - "{{ directory }}/a.pdf"
+              - "{{ directory }}/b.pdf"
+            output_path: "{{ prefix }}_merged.pdf"
+            overwrite: false
+        - name: Aufteilen
+          operation: split
+          expect: success
+          available: true
+          requires: merge
+          input_count: 1
+          data:
+            file_path: "{{ prefix }}_merged.pdf"
+            page_numbers: "1"
+            output_path: "{{ prefix }}_split.zip"
+            overwrite: false
+        - name: OCR
+          operation: ocr
+          expect: success
+          available: true
+          requires: merge
+          input_count: 1
+          data:
+            file_path: "{{ directory }}/a.pdf"
+            languages:
+              - eng
+            output_path: "{{ prefix }}_ocr.pdf"
+            overwrite: false
+        - name: Komprimieren
+          operation: compress
+          expect: success
+          available: true
+          requires: merge
+          input_count: 1
+          data:
+            file_path: "{{ directory }}/a.pdf"
+            optimize_level: 5
+            output_path: "{{ prefix }}_compressed.pdf"
+            overwrite: false
+        - name: Vorhandene Testausgabe ohne Ueberschreiben
+          operation: compress
+          expect: rejection
+          available: true
+          requires: compress
+          expected_error: Die Ausgabedatei existiert bereits.
+          data:
+            file_path: "{{ directory }}/a.pdf"
+            output_path: "{{ prefix }}_compressed.pdf"
+            overwrite: false
+        - name: Bewusstes Ueberschreiben nur der eigenen Testausgabe
+          operation: compress
+          expect: success
+          available: true
+          requires: compress
+          input_count: 1
+          data:
+            file_path: "{{ directory }}/a.pdf"
+            optimize_level: 5
+            output_path: "{{ prefix }}_compressed.pdf"
+            overwrite: true
+        - name: Falsche Endung beim Komprimieren
+          operation: compress
+          expect: rejection
+          available: true
+          requires: compress
+          expected_error: Die Ausgabe muss die Endung .pdf verwenden.
+          data:
+            file_path: "{{ directory }}/a.pdf"
+            output_path: "{{ prefix }}_wrong_compress.zip"
+            overwrite: false
+        - name: Falsche Endung beim Aufteilen
+          operation: split
+          expect: rejection
+          available: true
+          requires: split
+          expected_error: Die Ausgabe muss die Endung .zip verwenden.
+          data:
+            file_path: "{{ directory }}/a.pdf"
+            page_numbers: "1"
+            output_path: "{{ prefix }}_wrong_split.pdf"
+            overwrite: false
+        - name: Fehlender Ausgabeordner
+          operation: compress
+          expect: rejection
+          available: true
+          requires: compress
+          expected_error: Datei konnte nicht gelesen oder geschrieben werden.
+          data:
+            file_path: "{{ directory }}/a.pdf"
+            output_path: "{{ prefix }}_missing_directory/result.pdf"
+            overwrite: false
+        - name: Ausgabe ausserhalb der erlaubten Ordner
+          operation: compress
+          expect: rejection
+          available: true
+          requires: compress
+          expected_error: Der Pfad ist in Home Assistant nicht erlaubt.
+          data:
+            file_path: "{{ directory }}/a.pdf"
+            output_path: "/stirling_pdf_test_{{ run_id }}/outside.pdf"
+            overwrite: false
+        - name: Fehlende Eingabedatei
+          operation: compress
+          expect: rejection
+          available: true
+          requires: compress
+          expected_error: Datei konnte nicht gelesen oder geschrieben werden.
+          data:
+            file_path: "{{ prefix }}_does_not_exist.pdf"
+            output_path: "{{ prefix }}_missing_input.pdf"
+            overwrite: false
+        - name: Seiten extrahieren
+          operation: extract_pages
+          expect: success
+          available: "{{ extract_enabled }}"
+          requires: merge
+          input_count: 1
+          data:
+            file_path: "{{ prefix }}_merged.pdf"
+            page_numbers: "1"
+            output_path: "{{ prefix }}_extracted.pdf"
+            overwrite: false
+        - name: Falsche Endung beim Extrahieren
+          operation: extract_pages
+          expect: rejection
+          available: "{{ extract_enabled }}"
+          requires: extract_pages
+          expected_error: Die Ausgabe muss die Endung .pdf verwenden.
+          data:
+            file_path: "{{ directory }}/a.pdf"
+            page_numbers: "1"
+            output_path: "{{ prefix }}_wrong_extract.zip"
+            overwrite: false
+        - name: Ungueltige Seitenauswahl beim Extrahieren
+          operation: extract_pages
+          expect: rejection
+          available: "{{ extract_enabled }}"
+          requires: extract_pages
+          expected_error: Nur positive Seitenzahlen und aufsteigende Bereiche sind erlaubt.
+          data:
+            file_path: "{{ directory }}/a.pdf"
+            page_numbers: "0"
+            output_path: "{{ prefix }}_invalid_selection.pdf"
+            overwrite: false
+  - variables:
+      expected_successes: >-
+        {{ test_cases | selectattr('available') | selectattr('expect', 'eq', 'success') | list | count }}
+      expected_rejections: >-
+        {{ test_cases | selectattr('available') | selectattr('expect', 'eq', 'rejection') | list | count }}
+  - action: persistent_notification.create
+    data:
+      notification_id: "{{ notification_id }}"
+      title: Stirling PDF - Test laeuft
+      message: >-
+        Ordner: {{ directory }}. Eingaben: a.pdf und b.pdf.
+        Ausgangszaehler: {{ start_count }}.
+        Bitte waehrenddessen keine anderen PDF-Aktionen starten.
+        Erwartete Fehler erscheinen absichtlich im Trace und Protokoll.
+        OCR kann mehrere Minuten dauern. Die installierte Integrationsversion
+        wird nicht automatisch erkannt; der Skriptname bestaetigt keine Version.
+  - alias: Testfaelle nacheinander ausfuehren
+    repeat:
+      for_each: "{{ test_cases }}"
+      sequence:
+        - if: >-
+            {{ not repeat.item.available
+               or (repeat.item.get('requires', '') != ''
+                   and repeat.item.requires not in successful_operations) }}
+          then:
+            - variables:
+                results: >-
+                  {{ results + [dict(name=repeat.item.name,
+                     status='UEBERSPRUNGEN',
+                     detail=('Testoption deaktiviert: ' ~ repeat.item.operation
+                       if not repeat.item.available else
+                       'Voraussetzung nicht erfolgreich: ' ~ repeat.item.requires))] }}
+          else:
+            - variables:
+                before_count: "{{ states(jobs_entity) | int(-1) }}"
+                before_last: "{{ states(last_entity) }}"
+                before_time: "{{ state_attr(last_entity, 'last_run') }}"
+                reply: {}
+            - alias: PDF-Aktion mit aufgezeichneter Antwort aufrufen
+              action: "stirling_pdf.{{ repeat.item.operation }}"
+              data: "{{ repeat.item.data }}"
+              response_variable: reply
+              continue_on_error: true
+            - if: "{{ reply is mapping and reply | count > 0 }}"
+              then:
+                - wait_template: >-
+                    {{ states(jobs_entity) | int(-1) == before_count + 1
+                       and is_state(last_entity, repeat.item.operation)
+                       and state_attr(last_entity, 'last_run') != before_time }}
+                  timeout: "00:00:05"
+                  continue_on_timeout: true
+              else:
+                - delay:
+                    milliseconds: 500
+            - variables:
+                after_count: "{{ states(jobs_entity) | int(-1) }}"
+                success_observed: >-
+                  {{ before_count >= 0 and reply is mapping
+                     and reply.get('operation') == repeat.item.operation
+                     and reply.get('output_path') == repeat.item.data.output_path
+                     and reply.get('output_size', 0) | int(0) > 0
+                     and reply.get('input_count', 0) | int(0)
+                       == repeat.item.get('input_count', -1)
+                     and after_count == before_count + 1
+                     and is_state(last_entity, repeat.item.operation)
+                     and state_attr(last_entity, 'last_run') is not none
+                     and state_attr(last_entity, 'last_run') != before_time }}
+                rejection_observed: >-
+                  {{ before_count >= 0 and reply is mapping
+                     and reply | count == 0 and after_count == before_count
+                     and states(last_entity) == before_last
+                     and state_attr(last_entity, 'last_run') == before_time }}
+                result_status: >-
+                  {% if repeat.item.expect == 'success' and success_observed %}
+                    OK
+                  {% elif repeat.item.expect == 'rejection' and rejection_observed %}
+                    ABGEWIESEN
+                  {% else %}
+                    FEHLER
+                  {% endif %}
+                successful_operations: >-
+                  {{ successful_operations + [repeat.item.operation]
+                     if result_status == 'OK' else successful_operations }}
+                results: >-
+                  {{ results + [dict(name=repeat.item.name, status=result_status,
+                     before=before_count, after=after_count,
+                     size=reply.get('output_size', 0) if reply is mapping else 0,
+                     expected=repeat.item.get('expected_error', ''),
+                     path=repeat.item.data.output_path)] }}
+        - alias: Fortschritt auch bei spaeterem Abbruch sichtbar halten
+          action: persistent_notification.create
+          data:
+            notification_id: "{{ notification_id }}"
+            title: Stirling PDF - Test laeuft
+            message: |-
+              {{ results | count }} / {{ test_cases | count }} Testfaelle bearbeitet.
+
+              {% for row in results %}
+              - {{ row.status }}: {{ row.name }}
+              {% endfor %}
+  - alias: Abschlussbericht mit Grenzen der automatischen Auswertung
+    action: persistent_notification.create
+    data:
+      notification_id: "{{ notification_id }}"
+      title: Stirling PDF - Testbericht
+      message: |-
+        **Testlauf:** {{ run_id }}
+        **Ordner:** `{{ directory }}`
+        **Installierte Integrationsversion:** nicht automatisch geprueft.
+        **Versionsangabe des Nutzers:** {{ reported_version | default('', true) or 'nicht angegeben' }} (nicht verifiziert).
+        **Testumgebung:** {{ deployment_label | default('', true) or 'nicht angegeben' }}.
+        **Seitenextraktion angefordert:** {{ extract_enabled }}.
+
+        **Erfolgreich:** {{ results | selectattr('status', 'eq', 'OK') | list | count }} / {{ expected_successes }}
+        **Abgewiesen, Fehlergrund noch im Trace pruefen:** {{ results | selectattr('status', 'eq', 'ABGEWIESEN') | list | count }} / {{ expected_rejections }}
+        **Fehler:** {{ results | selectattr('status', 'eq', 'FEHLER') | list | count }}
+        **Uebersprungen:** {{ results | selectattr('status', 'eq', 'UEBERSPRUNGEN') | list | count }}
+
+        {% for row in results %}
+        **{{ loop.index }}. {{ row.name }}: {{ row.status }}**
+        {% if row.status == 'UEBERSPRUNGEN' %}
+        {{ row.detail }}
+        {% else %}
+        Auftraege: {{ row.before }} -> {{ row.after }}. Antwortgroesse: {{ row.size }} Bytes.
+        {% if row.expected %}
+        Erwarteter Fehlergrund: {{ row.expected }}
+        {% endif %}
+        {% endif %}
+
+        {% endfor %}
+        **Zaehler:** {{ start_count }} -> {{ states(jobs_entity) }}; bei komplett erfolgreichem Lauf erwartet: {{ start_count + expected_successes }}.
+        **Letzte Aktion:** {{ states(last_entity) }}
+        **Zeit:** {{ state_attr(last_entity, 'last_run') }}
+        **Sensoren:** `{{ jobs_entity }}`, `{{ last_entity }}`
+        **Erreichbarkeit am Ende:** {{ states(reachable_entity) }}
+
+        **Falls der erste normale Test fehlschlaegt:** Den Fehler im Trace bei
+        "PDF-Aktion mit aufgezeichneter Antwort aufrufen", Iteration 1, kopieren.
+        Abhaengige Tests werden dann uebersprungen, nicht als bestanden gewertet.
+
+        **Diese Ergebnisse bitte oeffnen:**
+        - `{{ prefix }}_merged.pdf`
+        - `{{ prefix }}_split.zip`
+        - `{{ prefix }}_ocr.pdf`
+        - `{{ prefix }}_compressed.pdf`
+        {% if extract_enabled %}
+        - `{{ prefix }}_extracted.pdf`
+        {% endif %}
+
+        **Grenzen:** ABGEWIESEN bedeutet nur: keine Erfolgsantwort und keine Aenderung der Statistik. Den konkreten Fehlergrund im Trace pruefen; ein Verbindungsfehler koennte sonst aehnlich aussehen. Erwartete Fehler stehen absichtlich im Protokoll.
+
+        Dateiinhalte, unveraenderte Dateibytes, OCR-Qualitaet, installierte Integrationsversion, Diagnose-Redaktion und Persistenz nach Reload/Neustart wurden nicht automatisch geprueft. Dieser Bericht ist keine automatische Merge-Freigabe.
+
+        **Danach:** Bericht kopieren, alle erzeugten Ausgaben ansehen und die konkreten
+        Gruende aller absichtlichen Abweisungen im Trace pruefen. Die extrahierte
+        PDF muss genau die erste Seite der zusammengefuehrten PDF enthalten. Dann den
+        Endzaehler, die letzte Aktion und ihren Zeitpunkt notieren. Integration
+        manuell neu laden und HA manuell neu starten; die drei Werte muessen
+        jeweils erhalten bleiben. Das Skript dafuer nicht erneut starten.
+
+        **Noch separat manuell pruefen:** Tatsaechlich installierte Version in den
+        Diagnosedaten, Neukonfiguration mit unveraenderten maskierten Geheimnissen,
+        Diagnose-Redaktion und Erhalt der bisherigen Entity-IDs. Die Integration
+        fuer diesen Test nicht loeschen, weil das ihre lokale Statistik entfernt.

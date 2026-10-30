@@ -29,7 +29,14 @@ SERVICE_MERGE = "merge"
 SERVICE_SPLIT = "split"
 SERVICE_OCR = "ocr"
 SERVICE_COMPRESS = "compress"
-SERVICES = (SERVICE_MERGE, SERVICE_SPLIT, SERVICE_OCR, SERVICE_COMPRESS)
+SERVICE_EXTRACT_PAGES = "extract_pages"
+SERVICES = (
+    SERVICE_MERGE,
+    SERVICE_SPLIT,
+    SERVICE_OCR,
+    SERVICE_COMPRESS,
+    SERVICE_EXTRACT_PAGES,
+)
 
 ENDPOINT_STATUS = "/api/v1/info/status"
 ENDPOINT_HEALTH = "/api/v1/info/health"
@@ -37,6 +44,7 @@ ENDPOINT_MERGE = "/api/v1/general/merge-pdfs"
 ENDPOINT_SPLIT = "/api/v1/general/split-pages"
 ENDPOINT_OCR = "/api/v1/misc/ocr-pdf"
 ENDPOINT_COMPRESS = "/api/v1/misc/compress-pdf"
+ENDPOINT_EXTRACT_PAGES = "/api/v1/general/rearrange-pages"
 
 HEADER_API_KEY = "X-API-KEY"
 

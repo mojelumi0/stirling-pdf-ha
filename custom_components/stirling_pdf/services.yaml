@@ -66,6 +66,28 @@ ocr:
       selector:
         boolean:
 
+extract_pages:
+  fields:
+    file_path:
+      required: true
+      example: "/config/pdf/document.pdf"
+      selector:
+        text:
+    page_numbers:
+      required: true
+      example: "1,3-5"
+      selector:
+        text:
+    output_path:
+      required: true
+      example: "/config/pdf/selected_pages.pdf"
+      selector:
+        text:
+    overwrite:
+      default: false
+      selector:
+        boolean:
+
 compress:
   fields:
     file_path:

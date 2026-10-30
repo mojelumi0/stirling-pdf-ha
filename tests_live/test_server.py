@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib
 import io
 import os
+import re
 import sys
 from collections.abc import AsyncIterator
 from pathlib import Path
@@ -27,6 +28,8 @@ sys.modules[_PACKAGE_NAME] = _package
 _api = importlib.import_module(f"{_PACKAGE_NAME}.api")
 StirlingPdfApiClient = _api.StirlingPdfApiClient
 StirlingPdfAuthError = _api.StirlingPdfAuthError
+
+_OCR_FIXTURE = Path(__file__).parent / "fixtures" / "ocr_scan.pdf"
 
 
 def _pdf(*markers: str) -> bytes:
@@ -132,6 +135,56 @@ async def test_compress_preserves_pages_and_text(client) -> None:
     assert len(compressed) < len(source)
 
 
+@pytest.mark.parametrize(
+    ("selection", "expected"),
+    [
+        ("2", ["A2"]),
+        ("1,3-4", ["A1", "A3", "A4"]),
+        ("4,1-2", ["A4", "A1", "A2"]),
+    ],
+)
+async def test_extract_pages_preserves_selected_content_and_order(
+    client, selection: str, expected: list[str]
+) -> None:
+    """Check page count, text content and requested ordering on a real server."""
+    result = await client.async_extract_pages(
+        "four-pages.pdf", _pdf("A1", "A2", "A3", "A4"), selection
+    )
+    assert _markers(result) == expected
+
+
+def test_ocr_fixture_is_an_image_without_searchable_text() -> None:
+    """A searchable source would let skip-text mode pass without doing OCR."""
+    reader = PdfReader(_OCR_FIXTURE)
+    assert len(reader.pages) == 1
+    page = reader.pages[0]
+    assert not (page.extract_text() or "").strip()
+    image_objects = page["/Resources"]["/XObject"].get_object()
+    images = [value.get_object() for value in image_objects.values()]
+    assert sum(image["/Subtype"] == "/Image" for image in images) == 1
+    assert any(
+        image["/Subtype"] == "/Image"
+        and image["/Width"] >= 2000
+        and image["/Height"] >= 3000
+        for image in images
+    )
+
+
+async def test_real_ocr_adds_searchable_text(client) -> None:
+    """Require actual recognition from the committed synthetic scanned page."""
+    source = _OCR_FIXTURE.read_bytes()
+    assert _markers(source) == [""]
+    result = await client.async_ocr("synthetic-scan.pdf", source, ["eng"])
+    reader = PdfReader(io.BytesIO(result))
+    assert len(reader.pages) == 1
+    recognized = re.sub(
+        r"[^A-Z0-9]", "", (reader.pages[0].extract_text() or "").upper()
+    )
+    for expected in ("STIRLING", "INVOICE", "12345"):
+        assert expected in recognized
+    assert _OCR_FIXTURE.read_bytes() == source
+
+
 @pytest.mark.parametrize("api_key", [None, "invalid-test-key"])
 async def test_missing_and_invalid_keys_follow_server_security(
     session: aiohttp.ClientSession,
@@ -203,7 +256,7 @@ async def basic_auth_proxy(server_url: str, unused_tcp_port: int) -> AsyncIterat
 async def test_processing_through_a_basic_protected_proxy(
     session: aiohttp.ClientSession, basic_auth_proxy: str
 ) -> None:
-    """Run real merge/split/compress with Basic auth plus optional server auth."""
+    """Run real processing/extraction with Basic auth plus optional server auth."""
     client = StirlingPdfApiClient(
         session,
         basic_auth_proxy,
@@ -229,6 +282,9 @@ async def test_processing_through_a_basic_protected_proxy(
     compressed = await client.async_compress("padded.pdf", _pdf("A1", "A2"), 5)
     assert _markers(compressed) == ["A1", "A2"]
 
+    extracted = await client.async_extract_pages("merged.pdf", merged, "3,1")
+    assert _markers(extracted) == ["A2", "B1"]
+
 
 @pytest.mark.parametrize("password", [None, "incorrect-ci-password"])
 async def test_proxy_rejects_missing_or_incorrect_basic_credentials(
@@ -245,3 +301,5 @@ async def test_proxy_rejects_missing_or_incorrect_basic_credentials(
         await client.async_validate_connection()
     with pytest.raises(StirlingPdfAuthError):
         await client.async_merge([("a.pdf", _pdf("A1")), ("b.pdf", _pdf("B1"))])
+    with pytest.raises(StirlingPdfAuthError):
+        await client.async_extract_pages("a.pdf", _pdf("A1"), "1")

@@ -116,13 +116,15 @@ async def test_local_statistics_remain_available_during_api_failure(
     assert "last_run" in _state(hass, last_operation).attributes
 
 
+@pytest.mark.parametrize("operation", ["ocr", "extract_pages"])
 async def test_local_statistics_persist_across_reload(
     hass: HomeAssistant,
     loaded_entry: MockConfigEntry,
+    operation: str,
 ) -> None:
     """Test successful-operation statistics survive an integration reload."""
     coordinator = loaded_entry.runtime_data
-    coordinator.record_operation("ocr")
+    coordinator.record_operation(operation)
     recorded_time = coordinator.last_operation_time
 
     assert await hass.config_entries.async_unload(loaded_entry.entry_id)
@@ -137,7 +139,7 @@ async def test_local_statistics_persist_across_reload(
 
     restored = loaded_entry.runtime_data
     assert restored.jobs_processed == 1
-    assert restored.last_operation == "ocr"
+    assert restored.last_operation == operation
     assert restored.last_operation_time == recorded_time
 
 

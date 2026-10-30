@@ -28,7 +28,13 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.typing import ConfigType
 
-from .api import StirlingPdfApiClient, StirlingPdfApiError, StirlingPdfAuthError
+from .api import (
+    StirlingPdfApiClient,
+    StirlingPdfApiError,
+    StirlingPdfAuthError,
+    StirlingPdfInvalidPageNumbersError,
+    normalize_page_selection,
+)
 from .const import (
     ATTR_FILE_PATH,
     ATTR_FILE_PATHS,
@@ -44,6 +50,7 @@ from .const import (
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
     SERVICE_COMPRESS,
+    SERVICE_EXTRACT_PAGES,
     SERVICE_MERGE,
     SERVICE_OCR,
     SERVICE_SPLIT,
@@ -106,6 +113,7 @@ _SERVICE_SCHEMAS = {
     SERVICE_SPLIT: _SPLIT_SCHEMA,
     SERVICE_OCR: _OCR_SCHEMA,
     SERVICE_COMPRESS: _COMPRESS_SCHEMA,
+    SERVICE_EXTRACT_PAGES: _SPLIT_SCHEMA,
 }
 
 
@@ -287,7 +295,7 @@ def _normalize_languages(values: list[str]) -> list[str]:
 
 
 async def _async_handle_action(call: ServiceCall) -> ServiceResponse | None:
-    """Handle one of the four Stirling PDF service actions."""
+    """Handle a Stirling PDF service action."""
     coordinator = _get_coordinator(call.hass)
     overwrite = call.data[ATTR_OVERWRITE]
     output_suffix = ".zip" if call.service == SERVICE_SPLIT else ".pdf"
@@ -307,6 +315,15 @@ async def _async_handle_action(call: ServiceCall) -> ServiceResponse | None:
             ]
             result = await coordinator.client.async_merge(files)
             input_count = len(files)
+        elif call.service == SERVICE_EXTRACT_PAGES:
+            page_numbers = normalize_page_selection(call.data[ATTR_PAGE_NUMBERS])
+            filename, content = await _async_read_pdf(
+                call.hass, call.data[ATTR_FILE_PATH]
+            )
+            result = await coordinator.client.async_extract_pages(
+                filename, content, page_numbers
+            )
+            input_count = 1
         else:
             filename, content = await _async_read_pdf(
                 call.hass, call.data[ATTR_FILE_PATH]
@@ -352,6 +369,11 @@ async def _async_handle_action(call: ServiceCall) -> ServiceResponse | None:
         raise HomeAssistantError(
             translation_domain=DOMAIN,
             translation_key="authentication_failed",
+        ) from err
+    except StirlingPdfInvalidPageNumbersError as err:
+        raise ServiceValidationError(
+            translation_domain=DOMAIN,
+            translation_key="invalid_page_numbers",
         ) from err
     except StirlingPdfApiError as err:
         raise HomeAssistantError(

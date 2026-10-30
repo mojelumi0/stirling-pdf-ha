@@ -7,7 +7,14 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for helping improve the integration. Never attach private PDFs, API keys, or unredacted logs.
+        Thanks for helping improve the integration. Never attach private PDFs, usernames, passwords, API keys, or unredacted logs. Version numbers and authentication types are enough; do not include credential values.
+  - type: input
+    id: integration_version
+    attributes:
+      label: Stirling PDF integration version
+      description: Copy the integration version from its Home Assistant diagnostics, not the server or Community App version.
+    validations:
+      required: true
   - type: input
     id: home_assistant_version
     attributes:
@@ -33,12 +40,31 @@ body:
     validations:
       required: true
   - type: dropdown
+    id: server_installation
+    attributes:
+      label: Stirling PDF server deployment
+      options:
+        - Standalone Docker server
+        - Home Assistant Community App
+        - Other self-hosted deployment
+        - Unsure
+    validations:
+      required: true
+  - type: input
+    id: community_app_version
+    attributes:
+      label: Community App version (if applicable)
+      description: This is separate from the Stirling PDF server version above.
+  - type: dropdown
     id: authentication
     attributes:
-      label: Stirling PDF authentication
+      label: API authentication method
       options:
-        - No API key
-        - API key enabled
+        - No authentication
+        - Stirling PDF API key only
+        - HTTP Basic username/password only
+        - HTTP Basic and Stirling PDF API key
+        - Unsure
     validations:
       required: true
   - type: textarea
@@ -62,7 +88,7 @@ body:
     id: logs
     attributes:
       label: Sanitized logs
-      description: Remove API keys, private URLs, filenames, paths, and document content.
+      description: Remove usernames, passwords, Authorization headers, API keys, private URLs, filenames, paths, and document content.
       render: text
   - type: checkboxes
     id: checks

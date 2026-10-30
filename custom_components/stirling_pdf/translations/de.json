@@ -56,7 +56,8 @@
           "merge": "Zusammenführen",
           "split": "Teilen",
           "ocr": "OCR",
-          "compress": "Komprimieren"
+          "compress": "Komprimieren",
+          "extract_pages": "Seiten extrahieren"
         }
       }
     },
@@ -70,6 +71,7 @@
     "path_not_allowed": { "message": "Der Pfad `{path}` ist in Home Assistant nicht erlaubt. Füge den übergeordneten Ordner zu `allowlist_external_dirs` hinzu." },
     "invalid_extension": { "message": "Der Pfad `{path}` muss die Dateiendung `{extension}` verwenden." },
     "invalid_languages": { "message": "Gib mindestens einen gültigen OCR-Sprachcode ein, beispielsweise `eng` oder `deu`." },
+    "invalid_page_numbers": { "message": "Gib positive Seitenzahlen oder aufsteigende Bereiche ein, zum Beispiel `1,3-5`. Verwende höchstens 1024 Zeichen. Ausdrücke wie `all` oder `2n+1` werden beim Extrahieren nicht unterstützt." },
     "output_exists": { "message": "Die Ausgabedatei `{path}` existiert bereits. Aktiviere Überschreiben oder wähle einen anderen Pfad." },
     "authentication_failed": { "message": "Stirling PDF hat den API-Zugriff abgelehnt. Aktualisiere die Authentifizierung unter Einstellungen > Geräte & Dienste." },
     "processing_failed": { "message": "Stirling PDF konnte das Dokument nicht verarbeiten: {error}" },
@@ -103,6 +105,16 @@
         "languages": { "name": "Sprachen", "description": "Installierte Tesseract-Sprachcodes, beispielsweise `eng` und `deu`." },
         "output_path": { "name": "Ausgabepfad", "description": "Absoluter Pfad für das durchsuchbare PDF." },
         "overwrite": { "name": "Überschreiben", "description": "Ersetze die Ausgabedatei, wenn sie bereits existiert." }
+      }
+    },
+    "extract_pages": {
+      "name": "PDF-Seiten extrahieren",
+      "description": "Speichere ausgewählte Seiten einer PDF in einer neuen PDF.",
+      "fields": {
+        "file_path": { "name": "Dateipfad", "description": "Absoluter Pfad der Quell-PDF." },
+        "page_numbers": { "name": "Seitenzahlen", "description": "Positive Seitenzahlen ab 1 und aufsteigende Bereiche, zum Beispiel `1,3-5`. Höchstens 1024 Zeichen. Keine Ausdrücke wie `all` oder Funktionen." },
+        "output_path": { "name": "Ausgabepfad", "description": "Absoluter `.pdf`-Pfad für die ausgewählten Seiten." },
+        "overwrite": { "name": "Überschreiben", "description": "Ersetze eine bereits vorhandene Ausgabedatei." }
       }
     },
     "compress": {

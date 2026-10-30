@@ -46,6 +46,8 @@ StirlingPdfAuthError = _api_module.StirlingPdfAuthError
 StirlingPdfConnectionError = _api_module.StirlingPdfConnectionError
 StirlingPdfInvalidUrlError = _api_module.StirlingPdfInvalidUrlError
 StirlingPdfInvalidBasicAuthError = _api_module.StirlingPdfInvalidBasicAuthError
+StirlingPdfInvalidPageNumbersError = _api_module.StirlingPdfInvalidPageNumbersError
+normalize_page_selection = _api_module.normalize_page_selection
 StirlingPdfStatusEndpointDisabledError = (
     _api_module.StirlingPdfStatusEndpointDisabledError
 )
@@ -305,6 +307,56 @@ async def test_split_posts_page_numbers(session: MagicMock) -> None:
     assert await client.async_split("input.pdf", b"pdf", "2,5") == b"PK\x03\x04zip"
     assert session.post.call_args.args[0].endswith("/api/v1/general/split-pages")
     assert ("pageNumbers", "2,5") in _form_fields(session)
+
+
+@pytest.mark.parametrize(
+    ("selection", "expected"),
+    [("1", "1"), (" 1, 3 - 5 ", "1,3-5"), ("3,1-2", "3,1-2")],
+)
+def test_extraction_normalizes_positive_pages_and_ranges(selection, expected) -> None:
+    assert normalize_page_selection(selection) == expected
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "selection",
+    ["", " ", "0", "-1", "1,0", "3-1", "1,,2", "1 2", "all", "2n+1", "1" * 1025],
+)
+async def test_invalid_extraction_selection_never_uploads(
+    session: MagicMock, selection: str
+) -> None:
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+    with pytest.raises(StirlingPdfInvalidPageNumbersError):
+        await client.async_extract_pages("input.pdf", b"pdf", selection)
+    session.post.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_extract_pages_uses_documented_custom_rearrangement(
+    session: MagicMock,
+) -> None:
+    session.post.return_value = _mock_response(200, read_data=b"%PDF-extracted")
+    client = StirlingPdfApiClient(session, "https://pdf.local/stirling", "secret")
+    result = await client.async_extract_pages("input.pdf", b"pdf", " 3, 1 - 2 ")
+    assert result == b"%PDF-extracted"
+    assert session.post.call_args.args[0] == (
+        "https://pdf.local/stirling/api/v1/general/rearrange-pages"
+    )
+    assert ("pageNumbers", "3,1-2") in _form_fields(session)
+    assert ("customMode", "CUSTOM") in _form_fields(session)
+    assert session.post.call_args.kwargs["headers"]["X-API-KEY"] == "secret"
+    assert session.post.call_args.kwargs["allow_redirects"] is False
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("content", [b"", b"PK\x03\x04zip", b"<html>Login</html>"])
+async def test_extraction_rejects_non_pdf_output(
+    session: MagicMock, content: bytes
+) -> None:
+    session.post.return_value = _mock_response(200, read_data=content)
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+    with pytest.raises(StirlingPdfApiError, match="not a PDF"):
+        await client.async_extract_pages("input.pdf", b"pdf", "1")
 
 
 @pytest.mark.asyncio

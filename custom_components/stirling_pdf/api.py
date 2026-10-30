@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Mapping, Sequence
 from typing import Any
 
@@ -15,6 +16,7 @@ from .const import (
     DEFAULT_OPERATION_TIMEOUT,
     DEFAULT_STATUS_TIMEOUT,
     ENDPOINT_COMPRESS,
+    ENDPOINT_EXTRACT_PAGES,
     ENDPOINT_HEALTH,
     ENDPOINT_MERGE,
     ENDPOINT_OCR,
@@ -36,6 +38,10 @@ class StirlingPdfAuthError(StirlingPdfApiError):
 
 class StirlingPdfInvalidBasicAuthError(StirlingPdfAuthError):
     """Raised when HTTP Basic credentials are incomplete or invalid."""
+
+
+class StirlingPdfInvalidPageNumbersError(StirlingPdfApiError):
+    """Raised when an extraction selection is not positive pages/ranges."""
 
 
 class StirlingPdfConnectionError(StirlingPdfApiError):
@@ -69,6 +75,28 @@ def normalize_base_url(value: str) -> str:
 
     normalized_path = url.path.rstrip("/")
     return str(url.with_path(normalized_path))
+
+
+def normalize_page_selection(value: str) -> str:
+    """Accept positive one-based pages and ascending ranges, not expressions.
+
+    Stirling PDF determines whether selected pages exist in the document.
+    Limit selection text length, not the number of pages in the input PDF.
+    """
+    selection = re.sub(r"\s*([,-])\s*", r"\1", value.strip())
+    if len(selection) > 1024 or not re.fullmatch(
+        r"[1-9][0-9]*(?:-[1-9][0-9]*)?(?:,[1-9][0-9]*(?:-[1-9][0-9]*)?)*",
+        selection,
+    ):
+        raise StirlingPdfInvalidPageNumbersError("Invalid extraction page selection")
+    for part in selection.split(","):
+        if "-" in part:
+            start, end = part.split("-")
+            if int(start) > int(end):
+                raise StirlingPdfInvalidPageNumbersError(
+                    "Extraction page ranges must be ascending"
+                )
+    return selection
 
 
 class StirlingPdfApiClient:
@@ -283,6 +311,19 @@ class StirlingPdfApiClient:
             data={"pageNumbers": page_numbers},
         )
         self._ensure_zip(result)
+        return result
+
+    async def async_extract_pages(
+        self, filename: str, content: bytes, page_numbers: str
+    ) -> bytes:
+        """Keep selected pages in a single PDF using documented custom order."""
+        selection = normalize_page_selection(page_numbers)
+        result = await self._async_post_files(
+            ENDPOINT_EXTRACT_PAGES,
+            [(filename, content)],
+            data={"pageNumbers": selection, "customMode": "CUSTOM"},
+        )
+        self._ensure_pdf(result)
         return result
 
     async def async_ocr(

@@ -28,7 +28,7 @@ Assistant actions, ready for scripts and automations.
 - Optional Stirling PDF API-key authentication
 - Optional HTTP Basic authentication for protected proxies and the Community App
 - Automatic connection validation and reauthentication
-- Merge, split, OCR, and compression actions
+- Merge, split, OCR, compression, and page-extraction actions
 - Optional response data for scripts and automations
 - Connectivity, version, and persistent local operation-status entities
 - Privacy-aware diagnostics for easier troubleshooting
@@ -98,7 +98,8 @@ entry only if no other integration or automation still needs that directory.
 
 ## Connecting to Stirling PDF
 
-The setup form asks for the complete root URL and an optional API key.
+The setup form asks for the complete root URL and optional API-key or HTTP Basic
+credentials. Use only the authentication methods required by your deployment.
 
 | Field | Description | Example |
 |---|---|---|
@@ -254,6 +255,7 @@ statistics; deleting the integration entry removes them.
 | `stirling_pdf.split` | Split a PDF after page numbers or expressions | ZIP containing PDFs |
 | `stirling_pdf.ocr` | Make a scanned PDF searchable | PDF |
 | `stirling_pdf.compress` | Reduce PDF file size with levels 1 through 9 | PDF |
+| `stirling_pdf.extract_pages` | Save selected pages in a new PDF | PDF |
 
 ### Merge PDFs
 
@@ -281,6 +283,34 @@ data:
 Stirling PDF also accepts split expressions such as `all`, ranges, and
 functions such as `2n+1`. Support can vary between Stirling PDF versions, so
 check the Swagger UI of the installed server when using advanced expressions.
+
+### Extract selected pages
+
+```yaml
+action: stirling_pdf.extract_pages
+data:
+  file_path: /config/pdf/document.pdf
+  page_numbers: "1,3-5"
+  output_path: /config/pdf/selected-pages.pdf
+  overwrite: false
+```
+
+Page numbers start at **1**. The action accepts positive page numbers and
+ascending ranges separated by commas, with at most 1024 characters. Spaces
+around commas and hyphens are allowed. A selection such as `4,1-2` requests
+that order. Stirling PDF may deduplicate repeated page numbers.
+
+Unlike `split`, extraction returns **one `.pdf` file**, not a ZIP. Its supported
+selection syntax is deliberately limited to explicit pages/ranges: `all`,
+functions such as `2n+1`, zero/negative pages and descending ranges are not
+accepted. The existing split action's server-supported expressions are unchanged.
+
+This uses the official `/api/v1/general/rearrange-pages` endpoint with
+`customMode=CUSTOM`. The API contract was checked in Stirling PDF 2.14.3 and
+3.2.0 source. That is not a claim that the development feature already passed
+manual testing on every deployment. The integration validates syntax, not the
+source PDF's page count. Inspect outputs when selecting pages beyond its length;
+page-count handling is delegated to the server and can vary by version.
 
 ### Run OCR
 
@@ -367,7 +397,8 @@ for the exact API supported by the installed Stirling PDF version.
 - Open `<STIRLING-PDF-URL>/api/v1/info/status` from the Home Assistant network.
 - Use the complete URL including `http://` or `https://` and the port.
 - Do not use `localhost` for a different container or computer.
-- Check the API key when Stirling PDF security is enabled.
+- Check the API key when Stirling PDF security is enabled, and HTTP Basic
+  credentials when using the Community App or a protected proxy.
 
 ### The status endpoint is disabled
 
@@ -385,6 +416,20 @@ Starting with 0.1.4-alpha, setup, reconfiguration, reauthentication, and periodi
 updates also check the health endpoint when available. If a PDF action returns
 HTTP 401 or 403, Home Assistant starts a reauthentication flow. Open
 **Settings → Devices & services** and enter a valid Stirling PDF API key.
+
+For the Community App, HTTP Basic authentication is separate from a Stirling
+API key. Re-enter the actual HA login username and password in the Basic fields.
+Leave the app's authentication enabled. After a rejected login, check the stored
+configuration and use reauthentication/reconfiguration rather than deleting the
+integration. Do not repeatedly retry invalid credentials or share their values.
+
+### Extraction rejects a page selection
+
+Use explicit positive pages or ascending ranges such as `1,3-5`. Extraction
+does not accept `all` or function expressions. Clear accidental trailing commas
+and do not use spaces inside a number. The server determines which selected
+pages actually exist; a successful response alone does not prove all requested
+pages were present.
 The failed action is not automatically retried and does not increase the local
 job counter. After updating the key, run the action again.
 
@@ -421,23 +466,39 @@ logger:
 ```
 
 Restart Home Assistant, reproduce the problem, and remove debug logging when
-finished. Never publish logs containing API keys, private URLs, or document
-information.
+finished. Never publish logs containing usernames, passwords, Authorization
+headers, API keys, private URLs, or document information.
 
 ### Download diagnostics
 
 Open **Settings → Devices & services → Stirling PDF**, open the three-dot menu,
 and select **Download diagnostics**. The diagnostic file includes status and
-local operation information while automatically removing the API key and
-configured server URL. Review diagnostic files before sharing them publicly.
+local operation information while automatically removing the API key, HTTP Basic
+username/password, known Authorization header fields and configured server URL.
+Review diagnostic files before sharing them publicly.
+
+## Testing your installation
+
+Use the [native Home Assistant test script](examples/README.md) with copies of
+`a.pdf` and `b.pdf` in an allowlisted test folder. It generates a report and
+uniquely named outputs without deleting files, reloading the integration or
+restarting HA. Its filename is independent of the installed integration version.
+
+Keep page extraction enabled when accepting this development feature. With it
+enabled, the complete run expects 6 successes, 8 deliberate rejections and a
+counter increase of 6. Exact rejection reasons, output contents, credentials,
+diagnostics, installed version and reload/restart persistence still need manual
+inspection; the script is not an automatic merge/release approval.
+
+See [testing and compatibility evidence](docs/TESTING.md) for the distinction
+between released observations, CI checks and pending development validation.
 
 ## Known limitations
 
 - Only one Stirling PDF instance can currently be configured.
 - Operation statistics only count actions started through this integration.
 - There is no browser-based file picker for Home Assistant host paths.
-- Password, watermark, and office-document conversion actions are not part of
-  the first version.
+- Password, watermark, and office-document conversion actions are not implemented.
 - Compatibility with additional Home Assistant and Stirling PDF versions still
   needs broader community testing.
 
@@ -487,16 +548,20 @@ The `Stirling PDF server tests` workflow starts a disposable, version-pinned
 Stirling PDF 3.2.0 container with login enabled and disabled. It runs on pushes,
 pull requests, manual dispatch, and weekly. It checks public status versus
 protected health, missing and invalid API keys, merge ordering, Unicode
-filenames, split ZIP contents, and compression while preserving page text.
+filenames, split ZIP contents, compression and selected-page extraction while
+checking page content and order. A synthetic image-only scanned PDF exercises
+real English OCR; the source has no searchable text and recognition must produce
+known words and a number. These added development checks must pass in CI before
+they can be counted as validation of the new release.
 The same jobs also exercise a synthetic HTTP Basic proxy in front of the real
 server, including combined API-key authentication and rejected Basic credentials.
 Local HTTP transport tests cover all four client operations and refusal to
 forward credentials or PDF uploads to redirect targets. These proxy/transport
 tests are not end-to-end tests of the Community App or Supervisor itself.
 These are real HTTP/API-client tests; Home Assistant action execution and
-file handling are covered separately by the Home Assistant suite. OCR is
-currently covered by client/service tests and the documented manual tests,
-not by this container workflow.
+file handling are covered separately by the Home Assistant suite. OCR is also
+covered by client/service and manual tests; one synthetic English scan does not
+prove OCR quality for every document or installed language.
 
 To run the server tests locally, use a separate virtual environment with
 `requirements-live.txt`, start a disposable Stirling PDF 3.2.0 server, and set:
@@ -535,6 +600,8 @@ version, installation method, action used, and sanitized error message.
 - [Home Assistant config flow](https://developers.home-assistant.io/docs/core/integration/config_flow/)
 - [Stirling PDF 3.2.0 status and health controller](https://github.com/Stirling-Tools/Stirling-PDF/blob/v3.2.0/app/core/src/main/java/stirling/software/SPDF/controller/web/MetricsController.java)
 - [Stirling PDF 3.2.0 authentication filter](https://github.com/Stirling-Tools/Stirling-PDF/blob/v3.2.0/app/proprietary/src/main/java/stirling/software/proprietary/security/filter/UserAuthenticationFilter.java)
+- [Stirling PDF 2.14.3 page selection controller](https://github.com/Stirling-Tools/Stirling-PDF/blob/v2.14.3/app/core/src/main/java/stirling/software/SPDF/controller/api/RearrangePagesPDFController.java)
+- [Stirling PDF 3.2.0 page selection controller](https://github.com/Stirling-Tools/Stirling-PDF/blob/v3.2.0/app/core/src/main/java/stirling/software/SPDF/controller/api/RearrangePagesPDFController.java)
 - [HACS integration repository requirements](https://hacs.xyz/docs/publish/integration/)
 - [Home Assistant config-flow test coverage](https://contributors.home-assistant.io/core/quality-scale/config-flow-test-coverage/)
 - [Home Assistant per-module test coverage](https://contributors.home-assistant.io/core/quality-scale/test-coverage/)

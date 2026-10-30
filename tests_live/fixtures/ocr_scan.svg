@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="612" height="792" viewBox="0 0 612 792">
+  <rect width="612" height="792" fill="white"/>
+  <g fill="black" font-family="Arial, Liberation Sans, sans-serif">
+    <text x="54" y="170" font-size="31" font-weight="bold">STIRLING PDF OCR TEST</text>
+    <text x="54" y="255" font-size="25">INVOICE NUMBER 12345</text>
+    <text x="54" y="320" font-size="20">LOCAL DOCUMENT PROCESSING</text>
+    <text x="54" y="420" font-size="17">SYNTHETIC TEST DOCUMENT</text>
+    <text x="54" y="460" font-size="17">NO PRIVATE INFORMATION</text>
+  </g>
+</svg>
