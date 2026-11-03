@@ -249,7 +249,7 @@
           "boolean": {}
         }
       },
-      "detectionMode": {
+      "detection_mode": {
         "required": false,
         "default": "auto",
         "selector": {
@@ -263,7 +263,7 @@
           }
         }
       },
-      "confidenceThreshold": {
+      "confidence_threshold": {
         "required": false,
         "default": 14,
         "selector": {
@@ -275,20 +275,20 @@
           }
         }
       },
-      "dryRun": {
+      "dry_run": {
         "required": false,
         "selector": {
           "boolean": {}
         }
       },
-      "inferUndetected": {
+      "infer_undetected": {
         "required": false,
         "default": true,
         "selector": {
           "boolean": {}
         }
       },
-      "pageRotations": {
+      "page_rotations": {
         "required": false,
         "selector": {
           "object": {}
@@ -323,7 +323,7 @@
           "boolean": {}
         }
       },
-      "pageNumbers": {
+      "page_numbers": {
         "required": false,
         "default": "all",
         "selector": {
@@ -359,7 +359,7 @@
           "boolean": {}
         }
       },
-      "pageNumbers": {
+      "page_numbers": {
         "required": false,
         "default": "all",
         "selector": {
@@ -410,13 +410,13 @@
           }
         }
       },
-      "removeDataOutsideCrop": {
+      "remove_data_outside_crop": {
         "required": false,
         "selector": {
           "boolean": {}
         }
       },
-      "autoCrop": {
+      "auto_crop": {
         "required": false,
         "selector": {
           "boolean": {}
@@ -451,7 +451,7 @@
           "boolean": {}
         }
       },
-      "pageSize": {
+      "page_size": {
         "required": false,
         "default": "KEEP",
         "selector": {
@@ -485,7 +485,7 @@
           }
         }
       },
-      "scaleFactor": {
+      "scale_factor": {
         "required": false,
         "default": 1,
         "selector": {
@@ -538,7 +538,7 @@
           }
         }
       },
-      "whitePercent": {
+      "white_percent": {
         "required": true,
         "default": 99.9,
         "selector": {
@@ -608,7 +608,7 @@
           "boolean": {}
         }
       },
-      "splitType": {
+      "split_type": {
         "required": false,
         "default": "0",
         "selector": {
@@ -622,7 +622,7 @@
           }
         }
       },
-      "splitValue": {
+      "split_value": {
         "required": false,
         "default": "10MB",
         "selector": {
@@ -658,21 +658,21 @@
           "boolean": {}
         }
       },
-      "includeMetadata": {
+      "include_metadata": {
         "required": false,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "allowDuplicates": {
+      "allow_duplicates": {
         "required": false,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "bookmarkLevel": {
+      "bookmark_level": {
         "required": false,
         "default": 1,
         "selector": {
@@ -713,7 +713,7 @@
           "boolean": {}
         }
       },
-      "duplexMode": {
+      "duplex_mode": {
         "required": false,
         "default": false,
         "selector": {
@@ -749,13 +749,13 @@
           "boolean": {}
         }
       },
-      "pageNumbers": {
+      "page_numbers": {
         "required": false,
         "selector": {
           "text": {}
         }
       },
-      "splitMode": {
+      "split_mode": {
         "required": false,
         "selector": {
           "select": {
@@ -770,7 +770,7 @@
           }
         }
       },
-      "horizontalDivisions": {
+      "horizontal_divisions": {
         "required": true,
         "default": 0,
         "selector": {
@@ -782,7 +782,7 @@
           }
         }
       },
-      "verticalDivisions": {
+      "vertical_divisions": {
         "required": true,
         "default": 1,
         "selector": {
@@ -830,7 +830,7 @@
           "boolean": {}
         }
       },
-      "pageSize": {
+      "page_size": {
         "required": true,
         "selector": {
           "select": {
@@ -846,14 +846,14 @@
           }
         }
       },
-      "rightToLeft": {
+      "right_to_left": {
         "required": false,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "xFactor": {
+      "x_factor": {
         "required": false,
         "default": 2,
         "selector": {
@@ -865,7 +865,7 @@
           }
         }
       },
-      "yFactor": {
+      "y_factor": {
         "required": false,
         "default": 2,
         "selector": {
@@ -906,7 +906,7 @@
           "boolean": {}
         }
       },
-      "pagesPerSheet": {
+      "pages_per_sheet": {
         "required": true,
         "default": "2",
         "selector": {
@@ -918,13 +918,13 @@
           }
         }
       },
-      "addBorder": {
+      "add_border": {
         "required": false,
         "selector": {
           "boolean": {}
         }
       },
-      "spineLocation": {
+      "spine_location": {
         "required": false,
         "default": "LEFT",
         "selector": {
@@ -937,13 +937,13 @@
           }
         }
       },
-      "addGutter": {
+      "add_gutter": {
         "required": false,
         "selector": {
           "boolean": {}
         }
       },
-      "gutterSize": {
+      "gutter_size": {
         "required": false,
         "default": 12,
         "selector": {
@@ -955,13 +955,13 @@
           }
         }
       },
-      "doubleSided": {
+      "double_sided": {
         "required": false,
         "selector": {
           "boolean": {}
         }
       },
-      "duplexPass": {
+      "duplex_pass": {
         "required": false,
         "default": "BOTH",
         "selector": {
@@ -975,7 +975,7 @@
           }
         }
       },
-      "flipOnShortEdge": {
+      "flip_on_short_edge": {
         "required": false,
         "selector": {
           "boolean": {}
@@ -1023,7 +1023,7 @@
           }
         }
       },
-      "pagesPerSheet": {
+      "pages_per_sheet": {
         "required": false,
         "selector": {
           "select": {
@@ -1050,7 +1050,7 @@
           }
         }
       },
-      "readingDirection": {
+      "reading_direction": {
         "required": false,
         "default": "LTR",
         "selector": {
@@ -1100,7 +1100,7 @@
           }
         }
       },
-      "innerMargin": {
+      "inner_margin": {
         "required": false,
         "default": 0,
         "selector": {
@@ -1112,7 +1112,7 @@
           }
         }
       },
-      "topMargin": {
+      "top_margin": {
         "required": false,
         "default": 0,
         "selector": {
@@ -1124,7 +1124,7 @@
           }
         }
       },
-      "bottomMargin": {
+      "bottom_margin": {
         "required": false,
         "default": 0,
         "selector": {
@@ -1136,7 +1136,7 @@
           }
         }
       },
-      "leftMargin": {
+      "left_margin": {
         "required": false,
         "default": 0,
         "selector": {
@@ -1148,7 +1148,7 @@
           }
         }
       },
-      "rightMargin": {
+      "right_margin": {
         "required": false,
         "default": 0,
         "selector": {
@@ -1160,7 +1160,7 @@
           }
         }
       },
-      "borderWidth": {
+      "border_width": {
         "required": false,
         "default": 1,
         "selector": {
@@ -1172,7 +1172,7 @@
           }
         }
       },
-      "addBorder": {
+      "add_border": {
         "required": false,
         "selector": {
           "boolean": {}
@@ -1236,7 +1236,7 @@
           "boolean": {}
         }
       },
-      "overlayFiles": {
+      "overlay_files": {
         "required": true,
         "selector": {
           "text": {
@@ -1244,7 +1244,7 @@
           }
         }
       },
-      "overlayMode": {
+      "overlay_mode": {
         "required": true,
         "selector": {
           "select": {
@@ -1265,7 +1265,7 @@
           }
         }
       },
-      "overlayPosition": {
+      "overlay_position": {
         "required": true,
         "selector": {
           "select": {
@@ -1306,14 +1306,14 @@
           "boolean": {}
         }
       },
-      "pageNumbers": {
+      "page_numbers": {
         "required": false,
         "default": "all",
         "selector": {
           "text": {}
         }
       },
-      "fontType": {
+      "font_type": {
         "required": true,
         "selector": {
           "select": {
@@ -1346,21 +1346,21 @@
           }
         }
       },
-      "customText": {
+      "custom_text": {
         "required": false,
         "default": "{n}",
         "selector": {
           "text": {}
         }
       },
-      "pagesToNumber": {
+      "pages_to_number": {
         "required": false,
         "default": "all",
         "selector": {
           "text": {}
         }
       },
-      "startingNumber": {
+      "starting_number": {
         "required": false,
         "default": 1,
         "selector": {
@@ -1372,7 +1372,7 @@
           }
         }
       },
-      "fontSize": {
+      "font_size": {
         "required": false,
         "default": 12,
         "selector": {
@@ -1384,14 +1384,14 @@
           }
         }
       },
-      "fontColor": {
+      "font_color": {
         "required": false,
         "default": "#000000",
         "selector": {
           "text": {}
         }
       },
-      "customMargin": {
+      "custom_margin": {
         "required": false,
         "default": "medium",
         "selector": {
@@ -1406,7 +1406,7 @@
           }
         }
       },
-      "zeroPad": {
+      "zero_pad": {
         "required": false,
         "default": 0,
         "selector": {
@@ -1447,13 +1447,13 @@
           "boolean": {}
         }
       },
-      "watermarkImage": {
+      "watermark_image": {
         "required": false,
         "selector": {
           "text": {}
         }
       },
-      "watermarkType": {
+      "watermark_type": {
         "required": false,
         "selector": {
           "select": {
@@ -1465,7 +1465,7 @@
           }
         }
       },
-      "watermarkText": {
+      "watermark_text": {
         "required": false,
         "selector": {
           "text": {}
@@ -1488,7 +1488,7 @@
           }
         }
       },
-      "fontSize": {
+      "font_size": {
         "required": false,
         "default": 12,
         "selector": {
@@ -1524,21 +1524,21 @@
           }
         }
       },
-      "customColor": {
+      "custom_color": {
         "required": false,
         "default": "#d3d3d3",
         "selector": {
           "text": {}
         }
       },
-      "convertPDFToImage": {
+      "convert_pdf_to_image": {
         "required": false,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "widthSpacer": {
+      "width_spacer": {
         "required": false,
         "default": 50,
         "selector": {
@@ -1550,7 +1550,7 @@
           }
         }
       },
-      "heightSpacer": {
+      "height_spacer": {
         "required": false,
         "default": 50,
         "selector": {
@@ -1591,20 +1591,20 @@
           "boolean": {}
         }
       },
-      "stampImage": {
+      "stamp_image": {
         "required": false,
         "selector": {
           "text": {}
         }
       },
-      "pageNumbers": {
+      "page_numbers": {
         "required": false,
         "default": "all",
         "selector": {
           "text": {}
         }
       },
-      "stampType": {
+      "stamp_type": {
         "required": false,
         "selector": {
           "select": {
@@ -1617,7 +1617,7 @@
           }
         }
       },
-      "stampText": {
+      "stamp_text": {
         "required": false,
         "selector": {
           "text": {}
@@ -1643,7 +1643,7 @@
           }
         }
       },
-      "fontSize": {
+      "font_size": {
         "required": false,
         "default": 40,
         "selector": {
@@ -1667,7 +1667,7 @@
           }
         }
       },
-      "customColor": {
+      "custom_color": {
         "required": false,
         "default": "#d3d3d3",
         "selector": {
@@ -1703,7 +1703,7 @@
           }
         }
       },
-      "overrideX": {
+      "override_x": {
         "required": false,
         "default": -1,
         "selector": {
@@ -1715,7 +1715,7 @@
           }
         }
       },
-      "overrideY": {
+      "override_y": {
         "required": false,
         "default": -1,
         "selector": {
@@ -1727,7 +1727,7 @@
           }
         }
       },
-      "customMargin": {
+      "custom_margin": {
         "required": false,
         "default": "medium",
         "selector": {
@@ -1771,7 +1771,7 @@
           "boolean": {}
         }
       },
-      "imageFile": {
+      "image_file": {
         "required": true,
         "selector": {
           "text": {}
@@ -1801,7 +1801,7 @@
           }
         }
       },
-      "everyPage": {
+      "every_page": {
         "required": true,
         "default": false,
         "selector": {
@@ -1872,7 +1872,7 @@
           "boolean": {}
         }
       },
-      "pageNumbers": {
+      "page_numbers": {
         "required": false,
         "default": "all",
         "selector": {
@@ -1885,7 +1885,7 @@
           "object": {}
         }
       },
-      "wholeWordSearch": {
+      "whole_word_search": {
         "required": false,
         "default": false,
         "selector": {
@@ -1921,7 +1921,7 @@
           "boolean": {}
         }
       },
-      "deleteAll": {
+      "delete_all": {
         "required": true,
         "default": false,
         "selector": {
@@ -1934,7 +1934,7 @@
           "text": {}
         }
       },
-      "creationDate": {
+      "creation_date": {
         "required": false,
         "selector": {
           "text": {}
@@ -1952,7 +1952,7 @@
           "text": {}
         }
       },
-      "modificationDate": {
+      "modification_date": {
         "required": false,
         "selector": {
           "text": {}
@@ -1989,7 +1989,7 @@
           }
         }
       },
-      "allRequestParams": {
+      "all_request_params": {
         "required": false,
         "selector": {
           "object": {}
@@ -2053,13 +2053,13 @@
           "boolean": {}
         }
       },
-      "bookmarkData": {
+      "bookmark_data": {
         "required": false,
         "selector": {
           "text": {}
         }
       },
-      "replaceExisting": {
+      "replace_existing": {
         "required": false,
         "selector": {
           "boolean": {}
@@ -2123,7 +2123,7 @@
           "boolean": {}
         }
       },
-      "replaceAndInvertOption": {
+      "replace_and_invert_option": {
         "required": true,
         "default": "HIGH_CONTRAST_COLOR",
         "selector": {
@@ -2138,7 +2138,7 @@
           }
         }
       },
-      "highContrastColorCombination": {
+      "high_contrast_color_combination": {
         "required": true,
         "default": "WHITE_TEXT_ON_BLACK",
         "selector": {
@@ -2153,13 +2153,13 @@
           }
         }
       },
-      "backGroundColor": {
+      "back_ground_color": {
         "required": false,
         "selector": {
           "text": {}
         }
       },
-      "textColor": {
+      "text_color": {
         "required": false,
         "selector": {
           "text": {}
@@ -2233,7 +2233,7 @@
           }
         }
       },
-      "advancedEnabled": {
+      "advanced_enabled": {
         "required": false,
         "selector": {
           "boolean": {}
@@ -2316,7 +2316,7 @@
           }
         }
       },
-      "rotateVariance": {
+      "rotate_variance": {
         "required": false,
         "selector": {
           "number": {
@@ -2333,7 +2333,7 @@
           "boolean": {}
         }
       },
-      "rotationValue": {
+      "rotation_value": {
         "required": false,
         "selector": {
           "number": {
@@ -2402,7 +2402,7 @@
           "boolean": {}
         }
       },
-      "useFirstTextAsFallback": {
+      "use_first_text_as_fallback": {
         "required": false,
         "default": false,
         "selector": {
@@ -2481,7 +2481,7 @@
           "boolean": {}
         }
       },
-      "angleThreshold": {
+      "angle_threshold": {
         "required": true,
         "default": 10,
         "selector": {
@@ -2505,7 +2505,7 @@
           }
         }
       },
-      "minArea": {
+      "min_area": {
         "required": true,
         "default": 10000,
         "selector": {
@@ -2517,7 +2517,7 @@
           }
         }
       },
-      "minContourArea": {
+      "min_contour_area": {
         "required": true,
         "default": 500,
         "selector": {
@@ -2529,7 +2529,7 @@
           }
         }
       },
-      "borderSize": {
+      "border_size": {
         "required": true,
         "default": 1,
         "selector": {
@@ -2636,7 +2636,7 @@
           }
         }
       },
-      "convertToPdfA3b": {
+      "convert_to_pdf_a3b": {
         "required": false,
         "default": false,
         "selector": {
@@ -2672,7 +2672,7 @@
           "boolean": {}
         }
       },
-      "attachmentName": {
+      "attachment_name": {
         "required": true,
         "selector": {
           "text": {}
@@ -2707,13 +2707,13 @@
           "boolean": {}
         }
       },
-      "attachmentName": {
+      "attachment_name": {
         "required": true,
         "selector": {
           "text": {}
         }
       },
-      "newName": {
+      "new_name": {
         "required": true,
         "selector": {
           "text": {}
@@ -2756,13 +2756,13 @@
           }
         }
       },
-      "opsJson": {
+      "ops_json": {
         "required": false,
         "selector": {
           "text": {}
         }
       },
-      "convertToPdfA3b": {
+      "convert_to_pdf_a3b": {
         "required": false,
         "selector": {
           "boolean": {}
@@ -2799,7 +2799,7 @@
           "boolean": {}
         }
       },
-      "coverTitle": {
+      "cover_title": {
         "required": false,
         "default": "PDF Portfolio",
         "selector": {
@@ -2864,14 +2864,14 @@
           "boolean": {}
         }
       },
-      "flattenOnlyForms": {
+      "flatten_only_forms": {
         "required": true,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "renderDpi": {
+      "render_dpi": {
         "required": false,
         "selector": {
           "number": {
@@ -2942,7 +2942,7 @@
           "boolean": {}
         }
       },
-      "fitOption": {
+      "fit_option": {
         "required": true,
         "default": "fillPage",
         "selector": {
@@ -2957,7 +2957,7 @@
           }
         }
       },
-      "colorType": {
+      "color_type": {
         "required": true,
         "default": "color",
         "selector": {
@@ -2971,7 +2971,7 @@
           }
         }
       },
-      "autoRotate": {
+      "auto_rotate": {
         "required": true,
         "default": false,
         "selector": {
@@ -3007,14 +3007,14 @@
           "boolean": {}
         }
       },
-      "pageNumbers": {
+      "page_numbers": {
         "required": false,
         "default": "all",
         "selector": {
           "text": {}
         }
       },
-      "imageFormat": {
+      "image_format": {
         "required": true,
         "default": "png",
         "selector": {
@@ -3030,7 +3030,7 @@
           }
         }
       },
-      "singleOrMultiple": {
+      "single_or_multiple": {
         "required": true,
         "default": "multiple",
         "selector": {
@@ -3043,7 +3043,7 @@
           }
         }
       },
-      "colorType": {
+      "color_type": {
         "required": true,
         "default": "color",
         "selector": {
@@ -3069,7 +3069,7 @@
           }
         }
       },
-      "includeAnnotations": {
+      "include_annotations": {
         "required": false,
         "default": false,
         "selector": {
@@ -3105,7 +3105,7 @@
           "boolean": {}
         }
       },
-      "outputFormat": {
+      "output_format": {
         "required": true,
         "selector": {
           "select": {
@@ -3125,7 +3125,7 @@
           }
         }
       },
-      "pdfUa": {
+      "pdf_ua": {
         "required": false,
         "default": false,
         "selector": {
@@ -3167,7 +3167,7 @@
           "boolean": {}
         }
       },
-      "outputFormat": {
+      "output_format": {
         "required": true,
         "selector": {
           "select": {
@@ -3179,7 +3179,7 @@
           }
         }
       },
-      "useStirlingOfficeConvert": {
+      "use_stirling_office_convert": {
         "required": false,
         "selector": {
           "boolean": {}
@@ -3214,7 +3214,7 @@
           "boolean": {}
         }
       },
-      "outputFormat": {
+      "output_format": {
         "required": true,
         "selector": {
           "select": {
@@ -3227,7 +3227,7 @@
           }
         }
       },
-      "useStirlingOfficeConvert": {
+      "use_stirling_office_convert": {
         "required": false,
         "selector": {
           "boolean": {}
@@ -3262,7 +3262,7 @@
           "boolean": {}
         }
       },
-      "useStirlingOfficeConvert": {
+      "use_stirling_office_convert": {
         "required": false,
         "selector": {
           "boolean": {}
@@ -3297,7 +3297,7 @@
           "boolean": {}
         }
       },
-      "outputFormat": {
+      "output_format": {
         "required": true,
         "selector": {
           "select": {
@@ -3310,7 +3310,7 @@
           }
         }
       },
-      "useStirlingOfficeConvert": {
+      "use_stirling_office_convert": {
         "required": false,
         "selector": {
           "boolean": {}
@@ -3345,7 +3345,7 @@
           "boolean": {}
         }
       },
-      "pageNumbers": {
+      "page_numbers": {
         "required": false,
         "default": "all",
         "selector": {
@@ -3381,14 +3381,14 @@
           "boolean": {}
         }
       },
-      "pageNumbers": {
+      "page_numbers": {
         "required": false,
         "default": "all",
         "selector": {
           "text": {}
         }
       },
-      "useStirlingOfficeConvert": {
+      "use_stirling_office_convert": {
         "required": false,
         "selector": {
           "boolean": {}
@@ -3580,13 +3580,13 @@
           "boolean": {}
         }
       },
-      "includeAttachments": {
+      "include_attachments": {
         "required": false,
         "selector": {
           "boolean": {}
         }
       },
-      "maxAttachmentSizeMB": {
+      "max_attachment_size_mb": {
         "required": false,
         "selector": {
           "number": {
@@ -3597,13 +3597,13 @@
           }
         }
       },
-      "downloadHtml": {
+      "download_html": {
         "required": false,
         "selector": {
           "boolean": {}
         }
       },
-      "includeAllRecipients": {
+      "include_all_recipients": {
         "required": false,
         "selector": {
           "boolean": {}
@@ -3640,7 +3640,7 @@
           "boolean": {}
         }
       },
-      "combineIntoSinglePdf": {
+      "combine_into_single_pdf": {
         "required": true,
         "default": false,
         "selector": {
@@ -3676,28 +3676,28 @@
           "boolean": {}
         }
       },
-      "embedAllFonts": {
+      "embed_all_fonts": {
         "required": true,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "includeTableOfContents": {
+      "include_table_of_contents": {
         "required": true,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "includePageNumbers": {
+      "include_page_numbers": {
         "required": true,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "optimizeForEbook": {
+      "optimize_for_ebook": {
         "required": false,
         "default": false,
         "selector": {
@@ -3733,14 +3733,14 @@
           "boolean": {}
         }
       },
-      "detectChapters": {
+      "detect_chapters": {
         "required": false,
         "default": true,
         "selector": {
           "boolean": {}
         }
       },
-      "targetDevice": {
+      "target_device": {
         "required": false,
         "default": "TABLET_PHONE_IMAGES",
         "selector": {
@@ -3753,7 +3753,7 @@
           }
         }
       },
-      "outputFormat": {
+      "output_format": {
         "required": false,
         "default": "EPUB",
         "selector": {
@@ -3795,7 +3795,7 @@
           "boolean": {}
         }
       },
-      "optimizeForEbook": {
+      "optimize_for_ebook": {
         "required": false,
         "default": false,
         "selector": {
@@ -3831,7 +3831,7 @@
           "boolean": {}
         }
       },
-      "optimizeForEbook": {
+      "optimize_for_ebook": {
         "required": false,
         "default": false,
         "selector": {
@@ -3947,7 +3947,7 @@
           "boolean": {}
         }
       },
-      "outputFormat": {
+      "output_format": {
         "required": false,
         "default": "eps",
         "selector": {
@@ -3998,7 +3998,7 @@
           "boolean": {}
         }
       },
-      "outputFormat": {
+      "output_format": {
         "required": false,
         "default": "eps",
         "selector": {
@@ -4075,14 +4075,14 @@
           "text": {}
         }
       },
-      "overrideLanguage": {
+      "override_language": {
         "required": false,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "existingTags": {
+      "existing_tags": {
         "required": false,
         "default": "auto",
         "selector": {
@@ -4096,7 +4096,7 @@
           }
         }
       },
-      "figurePolicy": {
+      "figure_policy": {
         "required": false,
         "default": "require-alt",
         "selector": {
@@ -4109,14 +4109,14 @@
           }
         }
       },
-      "embedFonts": {
+      "embed_fonts": {
         "required": false,
         "default": true,
         "selector": {
           "boolean": {}
         }
       },
-      "altText": {
+      "alt_text": {
         "required": false,
         "selector": {
           "text": {}
@@ -4145,7 +4145,7 @@
           "boolean": {}
         }
       },
-      "urlInput": {
+      "url_input": {
         "required": true,
         "selector": {
           "text": {}
@@ -4441,7 +4441,7 @@
           "boolean": {}
         }
       },
-      "pageNumbers": {
+      "page_numbers": {
         "required": false,
         "default": "all",
         "selector": {
@@ -4483,7 +4483,7 @@
           "boolean": {}
         }
       },
-      "pageNumbers": {
+      "page_numbers": {
         "required": false,
         "default": "all",
         "selector": {
@@ -4532,7 +4532,7 @@
           }
         }
       },
-      "pageCount": {
+      "page_count": {
         "required": true,
         "default": 0,
         "selector": {
@@ -4586,7 +4586,7 @@
           }
         }
       },
-      "standardPageSize": {
+      "standard_page_size": {
         "required": true,
         "default": "A4",
         "selector": {
@@ -4648,7 +4648,7 @@
           }
         }
       },
-      "fileSize": {
+      "file_size": {
         "required": true,
         "default": 0,
         "selector": {
@@ -4989,7 +4989,7 @@
           "object": {}
         }
       },
-      "includeFields": {
+      "include_fields": {
         "required": false,
         "default": false,
         "selector": {
@@ -5060,7 +5060,7 @@
           "boolean": {}
         }
       },
-      "confThreshold": {
+      "conf_threshold": {
         "required": false,
         "selector": {
           "number": {
@@ -5071,7 +5071,7 @@
           }
         }
       },
-      "applyToPdf": {
+      "apply_to_pdf": {
         "required": false,
         "default": true,
         "selector": {
@@ -5107,7 +5107,7 @@
           "boolean": {}
         }
       },
-      "ownerPassword": {
+      "owner_password": {
         "required": false,
         "selector": {
           "text": {
@@ -5123,7 +5123,7 @@
           }
         }
       },
-      "sourcePassword": {
+      "source_password": {
         "required": false,
         "selector": {
           "text": {
@@ -5131,14 +5131,14 @@
           }
         }
       },
-      "preserveExisting": {
+      "preserve_existing": {
         "required": false,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "keyLength": {
+      "key_length": {
         "required": false,
         "default": "256",
         "selector": {
@@ -5152,56 +5152,56 @@
           }
         }
       },
-      "preventAssembly": {
+      "prevent_assembly": {
         "required": false,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "preventExtractContent": {
+      "prevent_extract_content": {
         "required": false,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "preventExtractForAccessibility": {
+      "prevent_extract_for_accessibility": {
         "required": false,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "preventFillInForm": {
+      "prevent_fill_in_form": {
         "required": false,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "preventModify": {
+      "prevent_modify": {
         "required": false,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "preventModifyAnnotations": {
+      "prevent_modify_annotations": {
         "required": false,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "preventPrinting": {
+      "prevent_printing": {
         "required": false,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "preventPrintingFaithful": {
+      "prevent_printing_faithful": {
         "required": false,
         "default": false,
         "selector": {
@@ -5245,14 +5245,14 @@
           }
         }
       },
-      "removeAll": {
+      "remove_all": {
         "required": false,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "ownerPassword": {
+      "owner_password": {
         "required": false,
         "selector": {
           "text": {
@@ -5260,7 +5260,7 @@
           }
         }
       },
-      "sourcePassword": {
+      "source_password": {
         "required": false,
         "selector": {
           "text": {
@@ -5268,7 +5268,7 @@
           }
         }
       },
-      "retainedOpeningPassword": {
+      "retained_opening_password": {
         "required": false,
         "selector": {
           "text": {
@@ -5305,41 +5305,41 @@
           "boolean": {}
         }
       },
-      "listOfText": {
+      "list_of_text": {
         "required": true,
         "selector": {
           "text": {}
         }
       },
-      "useRegex": {
+      "use_regex": {
         "required": true,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "wholeWordSearch": {
+      "whole_word_search": {
         "required": true,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "caseSensitive": {
+      "case_sensitive": {
         "required": false,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "redactColor": {
+      "redact_color": {
         "required": true,
         "default": "#000000",
         "selector": {
           "text": {}
         }
       },
-      "customPadding": {
+      "custom_padding": {
         "required": true,
         "default": 0,
         "selector": {
@@ -5351,7 +5351,7 @@
           }
         }
       },
-      "convertPDFToImage": {
+      "convert_pdf_to_image": {
         "required": true,
         "default": false,
         "selector": {
@@ -5387,7 +5387,7 @@
           "boolean": {}
         }
       },
-      "pageNumbers": {
+      "page_numbers": {
         "required": false,
         "selector": {
           "text": {}
@@ -5399,14 +5399,14 @@
           "object": {}
         }
       },
-      "convertPDFToImage": {
+      "convert_pdf_to_image": {
         "required": true,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "pageRedactionColor": {
+      "page_redaction_color": {
         "required": true,
         "default": "#000000",
         "selector": {
@@ -5442,7 +5442,7 @@
           "boolean": {}
         }
       },
-      "textValues": {
+      "text_values": {
         "required": false,
         "selector": {
           "text": {
@@ -5450,7 +5450,7 @@
           }
         }
       },
-      "regexPatterns": {
+      "regex_patterns": {
         "required": false,
         "selector": {
           "text": {
@@ -5458,7 +5458,7 @@
           }
         }
       },
-      "wipePages": {
+      "wipe_pages": {
         "required": false,
         "selector": {
           "text": {
@@ -5472,13 +5472,13 @@
           "object": {}
         }
       },
-      "imageBoxes": {
+      "image_boxes": {
         "required": false,
         "selector": {
           "object": {}
         }
       },
-      "redactImagePages": {
+      "redact_image_pages": {
         "required": false,
         "selector": {
           "text": {
@@ -5521,31 +5521,31 @@
           "boolean": {}
         }
       },
-      "privateKeyFile": {
+      "private_key_file": {
         "required": false,
         "selector": {
           "text": {}
         }
       },
-      "certFile": {
+      "cert_file": {
         "required": false,
         "selector": {
           "text": {}
         }
       },
-      "p12File": {
+      "p12_file": {
         "required": false,
         "selector": {
           "text": {}
         }
       },
-      "jksFile": {
+      "jks_file": {
         "required": false,
         "selector": {
           "text": {}
         }
       },
-      "certType": {
+      "cert_type": {
         "required": true,
         "selector": {
           "select": {
@@ -5573,7 +5573,7 @@
           "text": {}
         }
       },
-      "showSignature": {
+      "show_signature": {
         "required": true,
         "default": false,
         "selector": {
@@ -5598,7 +5598,7 @@
           "text": {}
         }
       },
-      "pageNumber": {
+      "page_number": {
         "required": false,
         "default": 1,
         "selector": {
@@ -5610,7 +5610,7 @@
           }
         }
       },
-      "showLogo": {
+      "show_logo": {
         "required": true,
         "default": true,
         "selector": {
@@ -5646,7 +5646,7 @@
           "boolean": {}
         }
       },
-      "tsaUrl": {
+      "tsa_url": {
         "required": false,
         "selector": {
           "text": {}
@@ -5710,42 +5710,42 @@
           "boolean": {}
         }
       },
-      "removeJavaScript": {
+      "remove_java_script": {
         "required": true,
         "default": true,
         "selector": {
           "boolean": {}
         }
       },
-      "removeEmbeddedFiles": {
+      "remove_embedded_files": {
         "required": true,
         "default": true,
         "selector": {
           "boolean": {}
         }
       },
-      "removeXMPMetadata": {
+      "remove_xmp_metadata": {
         "required": true,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "removeMetadata": {
+      "remove_metadata": {
         "required": true,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "removeLinks": {
+      "remove_links": {
         "required": true,
         "default": false,
         "selector": {
           "boolean": {}
         }
       },
-      "removeFonts": {
+      "remove_fonts": {
         "required": true,
         "default": false,
         "selector": {
@@ -5781,7 +5781,7 @@
           "boolean": {}
         }
       },
-      "certFile": {
+      "cert_file": {
         "required": false,
         "selector": {
           "text": {}

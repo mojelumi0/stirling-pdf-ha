@@ -17,7 +17,9 @@ Edit in YAML**, as for the main script below. Do not wrap either file in
 `ha_test.yaml` is a single script for Home Assistant's UI YAML editor. Its
 filename and title do not contain an integration version. Optional version and
 deployment labels are user-provided information, not automatically verified
-facts. Script progress and report messages are in German.
+facts. Both scripts use English field labels, progress messages, reports and
+script-authored errors. Home Assistant's own error messages may still follow
+its configured UI language. The scripts do not change that language setting.
 
 ## Before running
 
@@ -31,7 +33,7 @@ facts. Script progress and report messages are in German.
 5. Ensure Stirling PDF is reachable and authenticated. Only use OCR languages
    installed on that server; this script requests English (`eng`).
 6. Do not run other PDF actions during this test, as it compares job counters.
-7. With multiple servers, select **Stirling-PDF-Server** when running the script.
+7. With multiple servers, select **Stirling PDF server** when running the script.
    It discovers only that entry's entities and sends every action to that entry.
    An omitted selection with multiple matching sensor sets stops before uploads.
    Run separately for each server and verify that the other's count is unchanged.
@@ -42,7 +44,7 @@ facts. Script progress and report messages are in German.
 2. Select **Edit in YAML** and replace the editor content with `ha_test.yaml`.
    Do not add an outer `script:` or script-ID wrapper.
 3. Save and run it with the existing test folder.
-4. Leave **Seitenextraktion mitpruefen** enabled when testing the new extraction
+4. Leave **Include page extraction** enabled when testing the new extraction
    action. Disable it only for a legacy integration without that action.
    This option does not automatically detect or certify an installed version.
 5. Optionally supply the installed version copied from diagnostics and a label
@@ -65,9 +67,13 @@ diagnostic redaction, exact failure reasons, or persistence across restarts.
   output. The script performs no deletions, reloads or restarts.
 - Unreachable or ambiguous integrations stop before PDF processing.
 - A failed prerequisite skips dependent cases instead of counting them as passed.
-- `ABGEWIESEN` means no success response and unchanged statistics, not proof of
+- `REJECTED` means no success response and unchanged statistics, not proof of
   the expected rejection reason. Check every such case in the HA trace. A
   connection failure could otherwise look like a successful negative test.
+
+The report uses `OK`, `REJECTED`, `FAILED` and `SKIPPED`. When investigating the
+first normal action, open the trace step **Call PDF action and capture response**,
+iteration 1. The additional script uses **Call additional tool and capture response**.
 
 Open every generated PDF and ZIP. The extracted PDF must contain exactly the
 first page of the merged PDF. Check OCR searchability visually as well as file

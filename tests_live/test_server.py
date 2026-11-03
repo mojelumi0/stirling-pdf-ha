@@ -164,19 +164,31 @@ async def test_representative_additional_tools_preserve_page_content(
         assert reader.metadata.title == "Synthetic test title"
 
 
-async def test_additional_analysis_and_filter_non_match(client) -> None:
+async def test_additional_analysis_page_count(client) -> None:
     status, content = await client.async_process(
         "/api/v1/analysis/page-count", [("a.pdf", _pdf("A1", "A2"))], {}
     )
     assert status == 200
     assert json.loads(content)["pageCount"] == 2
+
+
+@pytest.mark.parametrize(
+    ("text", "expected_status"), [("A1", 200), ("UNIQUE_ABSENT_MARKER", 204)]
+)
+async def test_additional_text_filter_match_and_non_match(
+    client, text, expected_status
+) -> None:
+    """Send the documented page selection; the server does not default null."""
     status, content = await client.async_process(
         "/api/v1/filter/filter-contains-text",
         [("a.pdf", _pdf("A1"))],
-        {"text": "UNIQUE_ABSENT_MARKER"},
+        {"text": text, "pageNumbers": "all"},
     )
-    assert status == 204
-    assert content == b""
+    assert status == expected_status
+    if expected_status == 204:
+        assert content == b""
+    else:
+        assert _markers(content) == ["A1"]
 
 
 @pytest.mark.parametrize(

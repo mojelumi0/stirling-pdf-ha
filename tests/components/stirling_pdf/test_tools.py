@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
@@ -27,6 +28,7 @@ from custom_components.stirling_pdf.tools import (
     _read_file,
     async_handle_tool,
     field_validator,
+    ha_field_name,
     tool_schema,
     validate_remote_url,
     validate_result,
@@ -87,25 +89,25 @@ async def test_each_contract_can_be_validated_and_executed(
         # Include optional parts too, to exercise mixed upload field names.
         source = tmp_path / (key + spec["extensions"][0])
         source.write_bytes(b"synthetic extra file")
-        payload[key] = [str(source)] if spec["multiple"] else str(source)
+        payload[ha_field_name(key)] = [str(source)] if spec["multiple"] else str(source)
     for key, spec in operation["fields"].items():
         if "default" in spec:
             continue
-        payload[key] = (
+        payload[ha_field_name(key)] = (
             spec["enum"][0]
             if "enum" in spec
             else {
                 "json": {},
                 "array": [1] if spec.get("items") == "integer" else ["test"],
-                "integer": 1,
-                "number": 1,
+                "integer": spec.get("minimum", min(1, spec.get("maximum", 1))),
+                "number": spec.get("minimum", min(1, spec.get("maximum", 1))),
                 "boolean": False,
             }.get(spec["type"], "test")
         )
     if name == "url_to_pdf":
-        payload["urlInput"] = "https://allowed.example/page"
+        payload["url_input"] = "https://allowed.example/page"
     if name == "timestamp":
-        payload["tsaUrl"] = "https://allowed.example/tsa"
+        payload["tsa_url"] = "https://allowed.example/tsa"
     suffix = operation["suffixes"][0]
     payload["output_path"] = str(tmp_path / ("result" + suffix))
     coordinator = _coordinator(
@@ -127,9 +129,45 @@ async def test_each_contract_can_be_validated_and_executed(
     coordinator.record_operation.assert_called_once_with(name)
     args = coordinator.client.async_process.await_args.args
     assert args[0] == operation["endpoint"]
+    assert set(args[2]) == set(operation["fields"])
+    validated = tool_schema(operation)(payload)
+    for api_name, spec in operation["fields"].items():
+        expected = validated[ha_field_name(api_name)]
+        if spec["type"] == "json":
+            expected = json.dumps(expected, allow_nan=False)
+        assert args[2][api_name] == expected
     assert args[4] == operation["primary"]
     assert [part[0] for part in args[3]] == list(operation["files"])
     write.assert_awaited_once()
+
+
+@pytest.mark.parametrize(
+    ("api_name", "public_name"),
+    [
+        ("advancedEnabled", "advanced_enabled"),
+        ("renderDpi", "render_dpi"),
+        ("pageNumbers", "page_numbers"),
+        ("imageFile", "image_file"),
+        ("convertPDFToImage", "convert_pdf_to_image"),
+        ("useStirlingOfficeConvert", "use_stirling_office_convert"),
+        ("PDFVersion", "pdf_version"),
+        ("urlInput", "url_input"),
+        ("tsaUrl", "tsa_url"),
+        ("already_snake_case", "already_snake_case"),
+    ],
+)
+def test_public_field_names_preserve_api_mapping(api_name, public_name) -> None:
+    assert ha_field_name(api_name) == public_name
+
+
+def test_flatten_render_dpi_keeps_its_lower_bound() -> None:
+    schema = tool_schema(OPERATIONS["flatten"])
+    payload = {"file_path": "/a.pdf", "output_path": "/out.pdf"}
+    assert schema({**payload, "render_dpi": 72})["render_dpi"] == 72
+    with pytest.raises(vol.Invalid):
+        schema({**payload, "render_dpi": 71})
+    with pytest.raises(vol.Invalid):
+        schema({**payload, "renderDpi": 72})
 
 
 @pytest.mark.parametrize(
@@ -261,8 +299,8 @@ async def test_opt_in_is_checked_before_files_or_network(hass: HomeAssistant) ->
         {
             "file_path": "/not/allowed.pdf",
             "output_path": "/not/out.docx",
-            "outputFormat": "docx",
-            "useStirlingOfficeConvert": True,
+            "output_format": "docx",
+            "use_stirling_office_convert": True,
         },
     )
     with pytest.raises(ServiceValidationError):
@@ -475,7 +513,7 @@ async def test_bounded_inputs_and_invalid_structured_fields(
                     {
                         "file_path": str(source),
                         "output_path": str(tmp_path / "out.pdf"),
-                        "imageFile": str(image),
+                        "image_file": str(image),
                     },
                 ),
                 coordinator,

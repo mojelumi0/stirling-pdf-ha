@@ -490,24 +490,24 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "detectionMode": {
-          "name": "Detection Mode",
+        "detection_mode": {
+          "name": "Detection mode",
           "description": "Stirling PDF field: detectionMode. Values: auto, text, osd."
         },
-        "confidenceThreshold": {
-          "name": "Confidence Threshold",
+        "confidence_threshold": {
+          "name": "Confidence threshold",
           "description": "Stirling PDF field: confidenceThreshold."
         },
-        "dryRun": {
-          "name": "Dry Run",
+        "dry_run": {
+          "name": "Dry run",
           "description": "Stirling PDF field: dryRun."
         },
-        "inferUndetected": {
-          "name": "Infer Undetected",
+        "infer_undetected": {
+          "name": "Infer undetected",
           "description": "Stirling PDF field: inferUndetected."
         },
-        "pageRotations": {
-          "name": "Page Rotations",
+        "page_rotations": {
+          "name": "Page rotations",
           "description": "Stirling PDF field: pageRotations."
         }
       }
@@ -532,8 +532,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling PDF field: pageNumbers."
         }
       }
@@ -558,8 +558,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling PDF field: pageNumbers."
         },
         "x": {
@@ -578,12 +578,12 @@
           "name": "Height",
           "description": "Stirling PDF field: height."
         },
-        "removeDataOutsideCrop": {
-          "name": "Remove Data Outside Crop",
+        "remove_data_outside_crop": {
+          "name": "Remove data outside crop",
           "description": "Stirling PDF field: removeDataOutsideCrop."
         },
-        "autoCrop": {
-          "name": "Auto Crop",
+        "auto_crop": {
+          "name": "Auto crop",
           "description": "Stirling PDF field: autoCrop."
         }
       }
@@ -608,16 +608,16 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "pageSize": {
-          "name": "Page Size",
+        "page_size": {
+          "name": "Page size",
           "description": "Stirling PDF field: pageSize. Values: A0, A1, A2, A3, A4, A5, A6, LETTER, LEGAL, KEEP."
         },
         "orientation": {
           "name": "Orientation",
           "description": "Stirling PDF field: orientation. Values: PORTRAIT, LANDSCAPE."
         },
-        "scaleFactor": {
-          "name": "Scale Factor",
+        "scale_factor": {
+          "name": "Scale factor",
           "description": "Stirling PDF field: scaleFactor."
         }
       }
@@ -646,8 +646,8 @@
           "name": "Threshold",
           "description": "Stirling PDF field: threshold."
         },
-        "whitePercent": {
-          "name": "White Percent",
+        "white_percent": {
+          "name": "White percent",
           "description": "Stirling PDF field: whitePercent."
         }
       }
@@ -694,12 +694,12 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "splitType": {
-          "name": "Split Type",
+        "split_type": {
+          "name": "Split type",
           "description": "Stirling PDF field: splitType. Values: 0, 1, 2."
         },
-        "splitValue": {
-          "name": "Split Value",
+        "split_value": {
+          "name": "Split value",
           "description": "Stirling PDF field: splitValue."
         }
       }
@@ -724,16 +724,16 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "includeMetadata": {
-          "name": "Include Metadata",
+        "include_metadata": {
+          "name": "Include metadata",
           "description": "Stirling PDF field: includeMetadata."
         },
-        "allowDuplicates": {
-          "name": "Allow Duplicates",
+        "allow_duplicates": {
+          "name": "Allow duplicates",
           "description": "Stirling PDF field: allowDuplicates."
         },
-        "bookmarkLevel": {
-          "name": "Bookmark Level",
+        "bookmark_level": {
+          "name": "Bookmark level",
           "description": "Stirling PDF field: bookmarkLevel."
         }
       }
@@ -758,8 +758,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "duplexMode": {
-          "name": "Duplex Mode",
+        "duplex_mode": {
+          "name": "Duplex mode",
           "description": "Stirling PDF field: duplexMode."
         }
       }
@@ -784,20 +784,20 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling PDF field: pageNumbers."
         },
-        "splitMode": {
-          "name": "Split Mode",
+        "split_mode": {
+          "name": "Split mode",
           "description": "Stirling PDF field: splitMode. Values: CUSTOM, SPLIT_ALL_EXCEPT_FIRST_AND_LAST, SPLIT_ALL_EXCEPT_FIRST, SPLIT_ALL_EXCEPT_LAST, SPLIT_ALL."
         },
-        "horizontalDivisions": {
-          "name": "Horizontal Divisions",
+        "horizontal_divisions": {
+          "name": "Horizontal divisions",
           "description": "Stirling PDF field: horizontalDivisions."
         },
-        "verticalDivisions": {
-          "name": "Vertical Divisions",
+        "vertical_divisions": {
+          "name": "Vertical divisions",
           "description": "Stirling PDF field: verticalDivisions."
         },
         "merge": {
@@ -826,20 +826,20 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "pageSize": {
-          "name": "Page Size",
+        "page_size": {
+          "name": "Page size",
           "description": "Stirling PDF field: pageSize. Values: A4, Letter, A3, A5, Legal, Tabloid."
         },
-        "rightToLeft": {
-          "name": "Right To Left",
+        "right_to_left": {
+          "name": "Right to left",
           "description": "Stirling PDF field: rightToLeft."
         },
-        "xFactor": {
-          "name": "X Factor",
+        "x_factor": {
+          "name": "X factor",
           "description": "Stirling PDF field: xFactor."
         },
-        "yFactor": {
-          "name": "Y Factor",
+        "y_factor": {
+          "name": "Y factor",
           "description": "Stirling PDF field: yFactor."
         }
       }
@@ -864,36 +864,36 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "pagesPerSheet": {
-          "name": "Pages Per Sheet",
+        "pages_per_sheet": {
+          "name": "Pages per sheet",
           "description": "Stirling PDF field: pagesPerSheet. Values: 2."
         },
-        "addBorder": {
-          "name": "Add Border",
+        "add_border": {
+          "name": "Add border",
           "description": "Stirling PDF field: addBorder."
         },
-        "spineLocation": {
-          "name": "Spine Location",
+        "spine_location": {
+          "name": "Spine location",
           "description": "Stirling PDF field: spineLocation. Values: LEFT, RIGHT."
         },
-        "addGutter": {
-          "name": "Add Gutter",
+        "add_gutter": {
+          "name": "Add gutter",
           "description": "Stirling PDF field: addGutter."
         },
-        "gutterSize": {
-          "name": "Gutter Size",
+        "gutter_size": {
+          "name": "Gutter size",
           "description": "Stirling PDF field: gutterSize."
         },
-        "doubleSided": {
-          "name": "Double Sided",
+        "double_sided": {
+          "name": "Double sided",
           "description": "Stirling PDF field: doubleSided."
         },
-        "duplexPass": {
-          "name": "Duplex Pass",
+        "duplex_pass": {
+          "name": "Duplex pass",
           "description": "Stirling PDF field: duplexPass. Values: BOTH, FIRST, SECOND."
         },
-        "flipOnShortEdge": {
-          "name": "Flip On Short Edge",
+        "flip_on_short_edge": {
+          "name": "Flip on short edge",
           "description": "Stirling PDF field: flipOnShortEdge."
         }
       }
@@ -922,16 +922,16 @@
           "name": "Mode",
           "description": "Stirling PDF field: mode. Values: DEFAULT, CUSTOM."
         },
-        "pagesPerSheet": {
-          "name": "Pages Per Sheet",
+        "pages_per_sheet": {
+          "name": "Pages per sheet",
           "description": "Stirling PDF field: pagesPerSheet. Values: 2, 4, 9, 16."
         },
         "arrangement": {
           "name": "Arrangement",
           "description": "Stirling PDF field: arrangement. Values: BY_ROWS, BY_COLUMNS."
         },
-        "readingDirection": {
-          "name": "Reading Direction",
+        "reading_direction": {
+          "name": "Reading direction",
           "description": "Stirling PDF field: readingDirection. Values: LTR, RTL."
         },
         "rows": {
@@ -946,32 +946,32 @@
           "name": "Orientation",
           "description": "Stirling PDF field: orientation. Values: PORTRAIT, LANDSCAPE."
         },
-        "innerMargin": {
-          "name": "Inner Margin",
+        "inner_margin": {
+          "name": "Inner margin",
           "description": "Stirling PDF field: innerMargin."
         },
-        "topMargin": {
-          "name": "Top Margin",
+        "top_margin": {
+          "name": "Top margin",
           "description": "Stirling PDF field: topMargin."
         },
-        "bottomMargin": {
-          "name": "Bottom Margin",
+        "bottom_margin": {
+          "name": "Bottom margin",
           "description": "Stirling PDF field: bottomMargin."
         },
-        "leftMargin": {
-          "name": "Left Margin",
+        "left_margin": {
+          "name": "Left margin",
           "description": "Stirling PDF field: leftMargin."
         },
-        "rightMargin": {
-          "name": "Right Margin",
+        "right_margin": {
+          "name": "Right margin",
           "description": "Stirling PDF field: rightMargin."
         },
-        "borderWidth": {
-          "name": "Border Width",
+        "border_width": {
+          "name": "Border width",
           "description": "Stirling PDF field: borderWidth."
         },
-        "addBorder": {
-          "name": "Add Border",
+        "add_border": {
+          "name": "Add border",
           "description": "Stirling PDF field: addBorder."
         }
       }
@@ -1018,20 +1018,20 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "overlayFiles": {
-          "name": "Overlay Files",
+        "overlay_files": {
+          "name": "Overlay files",
           "description": "Absolute allowlisted local file path(s). Allowed extensions: .pdf."
         },
-        "overlayMode": {
-          "name": "Overlay Mode",
+        "overlay_mode": {
+          "name": "Overlay mode",
           "description": "Stirling PDF field: overlayMode. Values: SequentialOverlay, InterleavedOverlay, FixedRepeatOverlay."
         },
         "counts": {
           "name": "Counts",
           "description": "Stirling PDF field: counts."
         },
-        "overlayPosition": {
-          "name": "Overlay Position",
+        "overlay_position": {
+          "name": "Overlay position",
           "description": "Stirling PDF field: overlayPosition. Values: 0, 1."
         }
       }
@@ -1056,44 +1056,44 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling PDF field: pageNumbers."
         },
-        "fontType": {
-          "name": "Font Type",
+        "font_type": {
+          "name": "Font type",
           "description": "Stirling PDF field: fontType. Values: helvetica, courier, times."
         },
         "position": {
           "name": "Position",
           "description": "Stirling PDF field: position. Values: 1, 2, 3, 4, 5, 6, 7, 8, 9."
         },
-        "customText": {
-          "name": "Custom Text",
+        "custom_text": {
+          "name": "Custom text",
           "description": "Stirling PDF field: customText."
         },
-        "pagesToNumber": {
-          "name": "Pages To Number",
+        "pages_to_number": {
+          "name": "Pages to number",
           "description": "Stirling PDF field: pagesToNumber."
         },
-        "startingNumber": {
-          "name": "Starting Number",
+        "starting_number": {
+          "name": "Starting number",
           "description": "Stirling PDF field: startingNumber."
         },
-        "fontSize": {
-          "name": "Font Size",
+        "font_size": {
+          "name": "Font size",
           "description": "Stirling PDF field: fontSize."
         },
-        "fontColor": {
-          "name": "Font Color",
+        "font_color": {
+          "name": "Font color",
           "description": "Stirling PDF field: fontColor."
         },
-        "customMargin": {
-          "name": "Custom Margin",
+        "custom_margin": {
+          "name": "Custom margin",
           "description": "Stirling PDF field: customMargin. Values: small, medium, large, x-large."
         },
-        "zeroPad": {
-          "name": "Zero Pad",
+        "zero_pad": {
+          "name": "Zero pad",
           "description": "Stirling PDF field: zeroPad."
         }
       }
@@ -1118,24 +1118,24 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "watermarkImage": {
-          "name": "Watermark Image",
+        "watermark_image": {
+          "name": "Watermark image",
           "description": "Absolute allowlisted local file path(s). Allowed extensions: .png, .jpg, .jpeg, .gif, .webp."
         },
-        "watermarkType": {
-          "name": "Watermark Type",
+        "watermark_type": {
+          "name": "Watermark type",
           "description": "Stirling PDF field: watermarkType. Values: text, image."
         },
-        "watermarkText": {
-          "name": "Watermark Text",
+        "watermark_text": {
+          "name": "Watermark text",
           "description": "Stirling PDF field: watermarkText."
         },
         "alphabet": {
           "name": "Alphabet",
           "description": "Stirling PDF field: alphabet. Values: roman, arabic, japanese, korean, chinese, thai."
         },
-        "fontSize": {
-          "name": "Font Size",
+        "font_size": {
+          "name": "Font size",
           "description": "Stirling PDF field: fontSize."
         },
         "rotation": {
@@ -1146,20 +1146,20 @@
           "name": "Opacity",
           "description": "Stirling PDF field: opacity."
         },
-        "customColor": {
-          "name": "Custom Color",
+        "custom_color": {
+          "name": "Custom color",
           "description": "Stirling PDF field: customColor."
         },
-        "convertPDFToImage": {
-          "name": "Convert PDFTo Image",
+        "convert_pdf_to_image": {
+          "name": "Convert pdf to image",
           "description": "Stirling PDF field: convertPDFToImage."
         },
-        "widthSpacer": {
-          "name": "Width Spacer",
+        "width_spacer": {
+          "name": "Width spacer",
           "description": "Stirling PDF field: widthSpacer."
         },
-        "heightSpacer": {
-          "name": "Height Spacer",
+        "height_spacer": {
+          "name": "Height spacer",
           "description": "Stirling PDF field: heightSpacer."
         }
       }
@@ -1184,36 +1184,36 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "stampImage": {
-          "name": "Stamp Image",
+        "stamp_image": {
+          "name": "Stamp image",
           "description": "Absolute allowlisted local file path(s). Allowed extensions: .png, .jpg, .jpeg, .gif, .webp."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling PDF field: pageNumbers."
         },
-        "stampType": {
-          "name": "Stamp Type",
+        "stamp_type": {
+          "name": "Stamp type",
           "description": "Stirling PDF field: stampType. Values: text, image, qr."
         },
-        "stampText": {
-          "name": "Stamp Text",
+        "stamp_text": {
+          "name": "Stamp text",
           "description": "Stirling PDF field: stampText."
         },
         "position": {
           "name": "Position",
           "description": "Stirling PDF field: position. Values: 1, 2, 3, 4, 5, 6, 7, 8, 9."
         },
-        "fontSize": {
-          "name": "Font Size",
+        "font_size": {
+          "name": "Font size",
           "description": "Stirling PDF field: fontSize."
         },
         "opacity": {
           "name": "Opacity",
           "description": "Stirling PDF field: opacity."
         },
-        "customColor": {
-          "name": "Custom Color",
+        "custom_color": {
+          "name": "Custom color",
           "description": "Stirling PDF field: customColor."
         },
         "rotation": {
@@ -1224,16 +1224,16 @@
           "name": "Alphabet",
           "description": "Stirling PDF field: alphabet. Values: roman, arabic, japanese, korean, chinese, thai."
         },
-        "overrideX": {
-          "name": "Override X",
+        "override_x": {
+          "name": "Override x",
           "description": "Stirling PDF field: overrideX."
         },
-        "overrideY": {
-          "name": "Override Y",
+        "override_y": {
+          "name": "Override y",
           "description": "Stirling PDF field: overrideY."
         },
-        "customMargin": {
-          "name": "Custom Margin",
+        "custom_margin": {
+          "name": "Custom margin",
           "description": "Stirling PDF field: customMargin. Values: small, medium, large, x-large."
         }
       }
@@ -1258,8 +1258,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "imageFile": {
-          "name": "Image File",
+        "image_file": {
+          "name": "Image file",
           "description": "Absolute allowlisted local file path(s). Allowed extensions: .png, .jpg, .jpeg, .gif, .webp."
         },
         "x": {
@@ -1270,8 +1270,8 @@
           "name": "Y",
           "description": "Stirling PDF field: y."
         },
-        "everyPage": {
-          "name": "Every Page",
+        "every_page": {
+          "name": "Every page",
           "description": "Stirling PDF field: everyPage."
         }
       }
@@ -1322,16 +1322,16 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling PDF field: pageNumbers."
         },
         "edits": {
           "name": "Edits",
           "description": "Stirling PDF field: edits."
         },
-        "wholeWordSearch": {
-          "name": "Whole Word Search",
+        "whole_word_search": {
+          "name": "Whole word search",
           "description": "Stirling PDF field: wholeWordSearch."
         }
       }
@@ -1356,16 +1356,16 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "deleteAll": {
-          "name": "Delete All",
+        "delete_all": {
+          "name": "Delete all",
           "description": "Stirling PDF field: deleteAll."
         },
         "author": {
           "name": "Author",
           "description": "Stirling PDF field: author."
         },
-        "creationDate": {
-          "name": "Creation Date",
+        "creation_date": {
+          "name": "Creation date",
           "description": "Stirling PDF field: creationDate."
         },
         "creator": {
@@ -1376,8 +1376,8 @@
           "name": "Keywords",
           "description": "Stirling PDF field: keywords."
         },
-        "modificationDate": {
-          "name": "Modification Date",
+        "modification_date": {
+          "name": "Modification date",
           "description": "Stirling PDF field: modificationDate."
         },
         "producer": {
@@ -1396,8 +1396,8 @@
           "name": "Trapped",
           "description": "Stirling PDF field: trapped. Values: True, False, Unknown."
         },
-        "allRequestParams": {
-          "name": "All Request Params",
+        "all_request_params": {
+          "name": "All request params",
           "description": "Stirling PDF field: allRequestParams."
         }
       }
@@ -1444,12 +1444,12 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "bookmarkData": {
-          "name": "Bookmark Data",
+        "bookmark_data": {
+          "name": "Bookmark data",
           "description": "Stirling PDF field: bookmarkData."
         },
-        "replaceExisting": {
-          "name": "Replace Existing",
+        "replace_existing": {
+          "name": "Replace existing",
           "description": "Stirling PDF field: replaceExisting."
         }
       }
@@ -1496,20 +1496,20 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "replaceAndInvertOption": {
-          "name": "Replace And Invert Option",
+        "replace_and_invert_option": {
+          "name": "Replace and invert option",
           "description": "Stirling PDF field: replaceAndInvertOption. Values: HIGH_CONTRAST_COLOR, CUSTOM_COLOR, FULL_INVERSION, COLOR_SPACE_CONVERSION."
         },
-        "highContrastColorCombination": {
-          "name": "High Contrast Color Combination",
+        "high_contrast_color_combination": {
+          "name": "High contrast color combination",
           "description": "Stirling PDF field: highContrastColorCombination. Values: WHITE_TEXT_ON_BLACK, BLACK_TEXT_ON_WHITE, YELLOW_TEXT_ON_BLACK, GREEN_TEXT_ON_BLACK."
         },
-        "backGroundColor": {
-          "name": "Back Ground Color",
+        "back_ground_color": {
+          "name": "Back ground color",
           "description": "Stirling PDF field: backGroundColor."
         },
-        "textColor": {
-          "name": "Text Color",
+        "text_color": {
+          "name": "Text color",
           "description": "Stirling PDF field: textColor."
         }
       }
@@ -1546,8 +1546,8 @@
           "name": "Colorspace",
           "description": "Stirling PDF field: colorspace. Values: grayscale, color."
         },
-        "advancedEnabled": {
-          "name": "Advanced Enabled",
+        "advanced_enabled": {
+          "name": "Advanced enabled",
           "description": "Stirling PDF field: advancedEnabled."
         },
         "brightness": {
@@ -1578,16 +1578,16 @@
           "name": "Rotate",
           "description": "Stirling PDF field: rotate."
         },
-        "rotateVariance": {
-          "name": "Rotate Variance",
+        "rotate_variance": {
+          "name": "Rotate variance",
           "description": "Stirling PDF field: rotateVariance."
         },
         "yellowish": {
           "name": "Yellowish",
           "description": "Stirling PDF field: yellowish."
         },
-        "rotationValue": {
-          "name": "Rotation Value",
+        "rotation_value": {
+          "name": "Rotation value",
           "description": "Stirling PDF field: rotationValue."
         }
       }
@@ -1634,8 +1634,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "useFirstTextAsFallback": {
-          "name": "Use First Text As Fallback",
+        "use_first_text_as_fallback": {
+          "name": "Use first text as fallback",
           "description": "Stirling PDF field: useFirstTextAsFallback."
         }
       }
@@ -1686,24 +1686,24 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "angleThreshold": {
-          "name": "Angle Threshold",
+        "angle_threshold": {
+          "name": "Angle threshold",
           "description": "Stirling PDF field: angleThreshold."
         },
         "tolerance": {
           "name": "Tolerance",
           "description": "Stirling PDF field: tolerance."
         },
-        "minArea": {
-          "name": "Min Area",
+        "min_area": {
+          "name": "Min area",
           "description": "Stirling PDF field: minArea."
         },
-        "minContourArea": {
-          "name": "Min Contour Area",
+        "min_contour_area": {
+          "name": "Min contour area",
           "description": "Stirling PDF field: minContourArea."
         },
-        "borderSize": {
-          "name": "Border Size",
+        "border_size": {
+          "name": "Border size",
           "description": "Stirling PDF field: borderSize."
         }
       }
@@ -1776,8 +1776,8 @@
           "name": "Attachments",
           "description": "Absolute allowlisted local file path(s). Allowed extensions: .pdf, .txt, .csv, .json, .png, .jpg, .docx, .xlsx, .zip."
         },
-        "convertToPdfA3b": {
-          "name": "Convert To Pdf A3b",
+        "convert_to_pdf_a3b": {
+          "name": "Convert to pdf a3b",
           "description": "Stirling PDF field: convertToPdfA3b."
         }
       }
@@ -1802,8 +1802,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "attachmentName": {
-          "name": "Attachment Name",
+        "attachment_name": {
+          "name": "Attachment name",
           "description": "Stirling PDF field: attachmentName."
         }
       }
@@ -1828,12 +1828,12 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "attachmentName": {
-          "name": "Attachment Name",
+        "attachment_name": {
+          "name": "Attachment name",
           "description": "Stirling PDF field: attachmentName."
         },
-        "newName": {
-          "name": "New Name",
+        "new_name": {
+          "name": "New name",
           "description": "Stirling PDF field: newName."
         }
       }
@@ -1862,12 +1862,12 @@
           "name": "Attachments",
           "description": "Absolute allowlisted local file path(s). Allowed extensions: .pdf, .txt, .csv, .json, .png, .jpg, .docx, .xlsx, .zip."
         },
-        "opsJson": {
-          "name": "Ops Json",
+        "ops_json": {
+          "name": "Ops json",
           "description": "Stirling PDF field: opsJson."
         },
-        "convertToPdfA3b": {
-          "name": "Convert To Pdf A3b",
+        "convert_to_pdf_a3b": {
+          "name": "Convert to pdf a3b",
           "description": "Stirling PDF field: convertToPdfA3b."
         }
       }
@@ -1892,8 +1892,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "coverTitle": {
-          "name": "Cover Title",
+        "cover_title": {
+          "name": "Cover title",
           "description": "Stirling PDF field: coverTitle."
         }
       }
@@ -1940,12 +1940,12 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "flattenOnlyForms": {
-          "name": "Flatten Only Forms",
+        "flatten_only_forms": {
+          "name": "Flatten only forms",
           "description": "Stirling PDF field: flattenOnlyForms."
         },
-        "renderDpi": {
-          "name": "Render Dpi",
+        "render_dpi": {
+          "name": "Render dpi",
           "description": "Stirling PDF field: renderDpi."
         }
       }
@@ -1992,16 +1992,16 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "fitOption": {
-          "name": "Fit Option",
+        "fit_option": {
+          "name": "Fit option",
           "description": "Stirling PDF field: fitOption. Values: fillPage, fitDocumentToImage, fitDocumentToPage, maintainAspectRatio."
         },
-        "colorType": {
-          "name": "Color Type",
+        "color_type": {
+          "name": "Color type",
           "description": "Stirling PDF field: colorType. Values: color, greyscale, blackwhite."
         },
-        "autoRotate": {
-          "name": "Auto Rotate",
+        "auto_rotate": {
+          "name": "Auto rotate",
           "description": "Stirling PDF field: autoRotate."
         }
       }
@@ -2026,28 +2026,28 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling PDF field: pageNumbers."
         },
-        "imageFormat": {
-          "name": "Image Format",
+        "image_format": {
+          "name": "Image format",
           "description": "Stirling PDF field: imageFormat. Values: png, jpeg, jpg, gif, webp."
         },
-        "singleOrMultiple": {
-          "name": "Single Or Multiple",
+        "single_or_multiple": {
+          "name": "Single or multiple",
           "description": "Stirling PDF field: singleOrMultiple. Values: single, multiple."
         },
-        "colorType": {
-          "name": "Color Type",
+        "color_type": {
+          "name": "Color type",
           "description": "Stirling PDF field: colorType. Values: color, greyscale, blackwhite."
         },
         "dpi": {
           "name": "Dpi",
           "description": "Stirling PDF field: dpi."
         },
-        "includeAnnotations": {
-          "name": "Include Annotations",
+        "include_annotations": {
+          "name": "Include annotations",
           "description": "Stirling PDF field: includeAnnotations."
         }
       }
@@ -2072,12 +2072,12 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "outputFormat": {
-          "name": "Output Format",
+        "output_format": {
+          "name": "Output format",
           "description": "Stirling PDF field: outputFormat. Values: pdfa, pdfa-1, pdfa-2, pdfa-2b, pdfa-3, pdfa-3b, pdfa-1a, pdfa-2a, pdfa-3a, pdfx."
         },
-        "pdfUa": {
-          "name": "Pdf Ua",
+        "pdf_ua": {
+          "name": "Pdf ua",
           "description": "Stirling PDF field: pdfUa."
         },
         "strict": {
@@ -2106,12 +2106,12 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "outputFormat": {
-          "name": "Output Format",
+        "output_format": {
+          "name": "Output format",
           "description": "Stirling PDF field: outputFormat. Values: rtf, txt."
         },
-        "useStirlingOfficeConvert": {
-          "name": "Use Stirling Office Convert",
+        "use_stirling_office_convert": {
+          "name": "Use stirling office convert",
           "description": "Stirling PDF field: useStirlingOfficeConvert."
         }
       }
@@ -2136,12 +2136,12 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "outputFormat": {
-          "name": "Output Format",
+        "output_format": {
+          "name": "Output format",
           "description": "Stirling PDF field: outputFormat. Values: doc, docx, odt."
         },
-        "useStirlingOfficeConvert": {
-          "name": "Use Stirling Office Convert",
+        "use_stirling_office_convert": {
+          "name": "Use stirling office convert",
           "description": "Stirling PDF field: useStirlingOfficeConvert."
         }
       }
@@ -2166,8 +2166,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "useStirlingOfficeConvert": {
-          "name": "Use Stirling Office Convert",
+        "use_stirling_office_convert": {
+          "name": "Use stirling office convert",
           "description": "Stirling PDF field: useStirlingOfficeConvert."
         }
       }
@@ -2192,12 +2192,12 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "outputFormat": {
-          "name": "Output Format",
+        "output_format": {
+          "name": "Output format",
           "description": "Stirling PDF field: outputFormat. Values: ppt, pptx, odp."
         },
-        "useStirlingOfficeConvert": {
-          "name": "Use Stirling Office Convert",
+        "use_stirling_office_convert": {
+          "name": "Use stirling office convert",
           "description": "Stirling PDF field: useStirlingOfficeConvert."
         }
       }
@@ -2222,8 +2222,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling PDF field: pageNumbers."
         }
       }
@@ -2248,12 +2248,12 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling PDF field: pageNumbers."
         },
-        "useStirlingOfficeConvert": {
-          "name": "Use Stirling Office Convert",
+        "use_stirling_office_convert": {
+          "name": "Use stirling office convert",
           "description": "Stirling PDF field: useStirlingOfficeConvert."
         }
       }
@@ -2392,20 +2392,20 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "includeAttachments": {
-          "name": "Include Attachments",
+        "include_attachments": {
+          "name": "Include attachments",
           "description": "Stirling PDF field: includeAttachments."
         },
-        "maxAttachmentSizeMB": {
-          "name": "Max Attachment Size MB",
+        "max_attachment_size_mb": {
+          "name": "Max attachment size mb",
           "description": "Stirling PDF field: maxAttachmentSizeMB."
         },
-        "downloadHtml": {
-          "name": "Download Html",
+        "download_html": {
+          "name": "Download html",
           "description": "Stirling PDF field: downloadHtml."
         },
-        "includeAllRecipients": {
-          "name": "Include All Recipients",
+        "include_all_recipients": {
+          "name": "Include all recipients",
           "description": "Stirling PDF field: includeAllRecipients."
         }
       }
@@ -2430,8 +2430,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "combineIntoSinglePdf": {
-          "name": "Combine Into Single Pdf",
+        "combine_into_single_pdf": {
+          "name": "Combine into single pdf",
           "description": "Stirling PDF field: combineIntoSinglePdf."
         }
       }
@@ -2456,20 +2456,20 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "embedAllFonts": {
-          "name": "Embed All Fonts",
+        "embed_all_fonts": {
+          "name": "Embed all fonts",
           "description": "Stirling PDF field: embedAllFonts. Values: true, false."
         },
-        "includeTableOfContents": {
-          "name": "Include Table Of Contents",
+        "include_table_of_contents": {
+          "name": "Include table of contents",
           "description": "Stirling PDF field: includeTableOfContents. Values: true, false."
         },
-        "includePageNumbers": {
-          "name": "Include Page Numbers",
+        "include_page_numbers": {
+          "name": "Include page numbers",
           "description": "Stirling PDF field: includePageNumbers. Values: true, false."
         },
-        "optimizeForEbook": {
-          "name": "Optimize For Ebook",
+        "optimize_for_ebook": {
+          "name": "Optimize for ebook",
           "description": "Stirling PDF field: optimizeForEbook. Values: true, false."
         }
       }
@@ -2494,16 +2494,16 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "detectChapters": {
-          "name": "Detect Chapters",
+        "detect_chapters": {
+          "name": "Detect chapters",
           "description": "Stirling PDF field: detectChapters. Values: true, false."
         },
-        "targetDevice": {
-          "name": "Target Device",
+        "target_device": {
+          "name": "Target device",
           "description": "Stirling PDF field: targetDevice. Values: TABLET_PHONE_IMAGES, KINDLE_EINK_TEXT."
         },
-        "outputFormat": {
-          "name": "Output Format",
+        "output_format": {
+          "name": "Output format",
           "description": "Stirling PDF field: outputFormat. Values: EPUB, AZW3."
         }
       }
@@ -2528,8 +2528,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "optimizeForEbook": {
-          "name": "Optimize For Ebook",
+        "optimize_for_ebook": {
+          "name": "Optimize for ebook",
           "description": "Stirling PDF field: optimizeForEbook."
         }
       }
@@ -2554,8 +2554,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "optimizeForEbook": {
-          "name": "Optimize For Ebook",
+        "optimize_for_ebook": {
+          "name": "Optimize for ebook",
           "description": "Stirling PDF field: optimizeForEbook."
         }
       }
@@ -2632,8 +2632,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "outputFormat": {
-          "name": "Output Format",
+        "output_format": {
+          "name": "Output format",
           "description": "Stirling PDF field: outputFormat. Values: eps, ps, pcl, xps."
         },
         "prepress": {
@@ -2662,8 +2662,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "outputFormat": {
-          "name": "Output Format",
+        "output_format": {
+          "name": "Output format",
           "description": "Stirling PDF field: outputFormat. Values: eps, ps, pcl, xps."
         },
         "prepress": {
@@ -2704,24 +2704,24 @@
           "name": "Language",
           "description": "Stirling PDF field: language."
         },
-        "overrideLanguage": {
-          "name": "Override Language",
+        "override_language": {
+          "name": "Override language",
           "description": "Stirling PDF field: overrideLanguage."
         },
-        "existingTags": {
-          "name": "Existing Tags",
+        "existing_tags": {
+          "name": "Existing tags",
           "description": "Stirling PDF field: existingTags. Values: auto, keep, rebuild."
         },
-        "figurePolicy": {
-          "name": "Figure Policy",
+        "figure_policy": {
+          "name": "Figure policy",
           "description": "Stirling PDF field: figurePolicy. Values: require-alt, mark-decorative."
         },
-        "embedFonts": {
-          "name": "Embed Fonts",
+        "embed_fonts": {
+          "name": "Embed fonts",
           "description": "Stirling PDF field: embedFonts."
         },
-        "altText": {
-          "name": "Alt Text",
+        "alt_text": {
+          "name": "Alt text",
           "description": "Stirling PDF field: altText."
         }
       }
@@ -2742,8 +2742,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "urlInput": {
-          "name": "Url Input",
+        "url_input": {
+          "name": "Url input",
           "description": "Stirling PDF field: urlInput."
         }
       }
@@ -2966,8 +2966,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling PDF field: pageNumbers."
         },
         "text": {
@@ -2996,8 +2996,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling PDF field: pageNumbers."
         }
       }
@@ -3026,8 +3026,8 @@
           "name": "Comparator",
           "description": "Stirling PDF field: comparator. Values: Greater, Equal, Less."
         },
-        "pageCount": {
-          "name": "Page Count",
+        "page_count": {
+          "name": "Page count",
           "description": "Stirling PDF field: pageCount."
         }
       }
@@ -3056,8 +3056,8 @@
           "name": "Comparator",
           "description": "Stirling PDF field: comparator. Values: Greater, Equal, Less."
         },
-        "standardPageSize": {
-          "name": "Standard Page Size",
+        "standard_page_size": {
+          "name": "Standard page size",
           "description": "Stirling PDF field: standardPageSize. Values: A0, A1, A2, A3, A4, A5, A6, LETTER, LEGAL."
         }
       }
@@ -3086,8 +3086,8 @@
           "name": "Comparator",
           "description": "Stirling PDF field: comparator. Values: Greater, Equal, Less."
         },
-        "fileSize": {
-          "name": "File Size",
+        "file_size": {
+          "name": "File size",
           "description": "Stirling PDF field: fileSize."
         }
       }
@@ -3324,8 +3324,8 @@
           "name": "Edits",
           "description": "Stirling PDF field: edits."
         },
-        "includeFields": {
-          "name": "Include Fields",
+        "include_fields": {
+          "name": "Include fields",
           "description": "Stirling PDF field: includeFields."
         }
       }
@@ -3376,12 +3376,12 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "confThreshold": {
-          "name": "Conf Threshold",
+        "conf_threshold": {
+          "name": "Conf threshold",
           "description": "Stirling PDF field: confThreshold."
         },
-        "applyToPdf": {
-          "name": "Apply To Pdf",
+        "apply_to_pdf": {
+          "name": "Apply to pdf",
           "description": "Stirling PDF field: applyToPdf."
         }
       }
@@ -3406,56 +3406,56 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "ownerPassword": {
-          "name": "Owner Password",
+        "owner_password": {
+          "name": "Owner password",
           "description": "Stirling PDF field: ownerPassword. Warning: automation configuration and traces may retain this secret."
         },
         "password": {
           "name": "Password",
           "description": "Stirling PDF field: password. Warning: automation configuration and traces may retain this secret."
         },
-        "sourcePassword": {
-          "name": "Source Password",
+        "source_password": {
+          "name": "Source password",
           "description": "Stirling PDF field: sourcePassword. Warning: automation configuration and traces may retain this secret."
         },
-        "preserveExisting": {
-          "name": "Preserve Existing",
+        "preserve_existing": {
+          "name": "Preserve existing",
           "description": "Stirling PDF field: preserveExisting."
         },
-        "keyLength": {
-          "name": "Key Length",
+        "key_length": {
+          "name": "Key length",
           "description": "Stirling PDF field: keyLength. Values: 40, 128, 256."
         },
-        "preventAssembly": {
-          "name": "Prevent Assembly",
+        "prevent_assembly": {
+          "name": "Prevent assembly",
           "description": "Stirling PDF field: preventAssembly."
         },
-        "preventExtractContent": {
-          "name": "Prevent Extract Content",
+        "prevent_extract_content": {
+          "name": "Prevent extract content",
           "description": "Stirling PDF field: preventExtractContent."
         },
-        "preventExtractForAccessibility": {
-          "name": "Prevent Extract For Accessibility",
+        "prevent_extract_for_accessibility": {
+          "name": "Prevent extract for accessibility",
           "description": "Stirling PDF field: preventExtractForAccessibility."
         },
-        "preventFillInForm": {
-          "name": "Prevent Fill In Form",
+        "prevent_fill_in_form": {
+          "name": "Prevent fill in form",
           "description": "Stirling PDF field: preventFillInForm."
         },
-        "preventModify": {
-          "name": "Prevent Modify",
+        "prevent_modify": {
+          "name": "Prevent modify",
           "description": "Stirling PDF field: preventModify."
         },
-        "preventModifyAnnotations": {
-          "name": "Prevent Modify Annotations",
+        "prevent_modify_annotations": {
+          "name": "Prevent modify annotations",
           "description": "Stirling PDF field: preventModifyAnnotations."
         },
-        "preventPrinting": {
-          "name": "Prevent Printing",
+        "prevent_printing": {
+          "name": "Prevent printing",
           "description": "Stirling PDF field: preventPrinting."
         },
-        "preventPrintingFaithful": {
-          "name": "Prevent Printing Faithful",
+        "prevent_printing_faithful": {
+          "name": "Prevent printing faithful",
           "description": "Stirling PDF field: preventPrintingFaithful."
         }
       }
@@ -3484,20 +3484,20 @@
           "name": "Password",
           "description": "Stirling PDF field: password. Warning: automation configuration and traces may retain this secret."
         },
-        "removeAll": {
-          "name": "Remove All",
+        "remove_all": {
+          "name": "Remove all",
           "description": "Stirling PDF field: removeAll."
         },
-        "ownerPassword": {
-          "name": "Owner Password",
+        "owner_password": {
+          "name": "Owner password",
           "description": "Stirling PDF field: ownerPassword. Warning: automation configuration and traces may retain this secret."
         },
-        "sourcePassword": {
-          "name": "Source Password",
+        "source_password": {
+          "name": "Source password",
           "description": "Stirling PDF field: sourcePassword. Warning: automation configuration and traces may retain this secret."
         },
-        "retainedOpeningPassword": {
-          "name": "Retained Opening Password",
+        "retained_opening_password": {
+          "name": "Retained opening password",
           "description": "Stirling PDF field: retainedOpeningPassword. Warning: automation configuration and traces may retain this secret."
         }
       }
@@ -3522,32 +3522,32 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "listOfText": {
-          "name": "List Of Text",
+        "list_of_text": {
+          "name": "List of text",
           "description": "Stirling PDF field: listOfText."
         },
-        "useRegex": {
-          "name": "Use Regex",
+        "use_regex": {
+          "name": "Use regex",
           "description": "Stirling PDF field: useRegex."
         },
-        "wholeWordSearch": {
-          "name": "Whole Word Search",
+        "whole_word_search": {
+          "name": "Whole word search",
           "description": "Stirling PDF field: wholeWordSearch."
         },
-        "caseSensitive": {
-          "name": "Case Sensitive",
+        "case_sensitive": {
+          "name": "Case sensitive",
           "description": "Stirling PDF field: caseSensitive."
         },
-        "redactColor": {
-          "name": "Redact Color",
+        "redact_color": {
+          "name": "Redact color",
           "description": "Stirling PDF field: redactColor."
         },
-        "customPadding": {
-          "name": "Custom Padding",
+        "custom_padding": {
+          "name": "Custom padding",
           "description": "Stirling PDF field: customPadding."
         },
-        "convertPDFToImage": {
-          "name": "Convert PDFTo Image",
+        "convert_pdf_to_image": {
+          "name": "Convert pdf to image",
           "description": "Stirling PDF field: convertPDFToImage."
         }
       }
@@ -3572,20 +3572,20 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling PDF field: pageNumbers."
         },
         "redactions": {
           "name": "Redactions",
           "description": "Stirling PDF field: redactions."
         },
-        "convertPDFToImage": {
-          "name": "Convert PDFTo Image",
+        "convert_pdf_to_image": {
+          "name": "Convert pdf to image",
           "description": "Stirling PDF field: convertPDFToImage."
         },
-        "pageRedactionColor": {
-          "name": "Page Redaction Color",
+        "page_redaction_color": {
+          "name": "Page redaction color",
           "description": "Stirling PDF field: pageRedactionColor."
         }
       }
@@ -3610,28 +3610,28 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "textValues": {
-          "name": "Text Values",
+        "text_values": {
+          "name": "Text values",
           "description": "Stirling PDF field: textValues."
         },
-        "regexPatterns": {
-          "name": "Regex Patterns",
+        "regex_patterns": {
+          "name": "Regex patterns",
           "description": "Stirling PDF field: regexPatterns."
         },
-        "wipePages": {
-          "name": "Wipe Pages",
+        "wipe_pages": {
+          "name": "Wipe pages",
           "description": "Stirling PDF field: wipePages."
         },
         "ranges": {
           "name": "Ranges",
           "description": "Stirling PDF field: ranges."
         },
-        "imageBoxes": {
-          "name": "Image Boxes",
+        "image_boxes": {
+          "name": "Image boxes",
           "description": "Stirling PDF field: imageBoxes."
         },
-        "redactImagePages": {
-          "name": "Redact Image Pages",
+        "redact_image_pages": {
+          "name": "Redact image pages",
           "description": "Stirling PDF field: redactImagePages."
         },
         "style": {
@@ -3660,24 +3660,24 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "privateKeyFile": {
-          "name": "Private Key File",
+        "private_key_file": {
+          "name": "Private key file",
           "description": "Absolute allowlisted local file path(s). Allowed extensions: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
         },
-        "certFile": {
-          "name": "Cert File",
+        "cert_file": {
+          "name": "Cert file",
           "description": "Absolute allowlisted local file path(s). Allowed extensions: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
         },
-        "p12File": {
-          "name": "P12File",
+        "p12_file": {
+          "name": "P12 file",
           "description": "Absolute allowlisted local file path(s). Allowed extensions: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
         },
-        "jksFile": {
-          "name": "Jks File",
+        "jks_file": {
+          "name": "Jks file",
           "description": "Absolute allowlisted local file path(s). Allowed extensions: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
         },
-        "certType": {
-          "name": "Cert Type",
+        "cert_type": {
+          "name": "Cert type",
           "description": "Stirling PDF field: certType. Values: PEM, PKCS12, PFX, JKS."
         },
         "password": {
@@ -3688,8 +3688,8 @@
           "name": "Alias",
           "description": "Stirling PDF field: alias."
         },
-        "showSignature": {
-          "name": "Show Signature",
+        "show_signature": {
+          "name": "Show signature",
           "description": "Stirling PDF field: showSignature."
         },
         "reason": {
@@ -3704,12 +3704,12 @@
           "name": "Name",
           "description": "Stirling PDF field: name."
         },
-        "pageNumber": {
-          "name": "Page Number",
+        "page_number": {
+          "name": "Page number",
           "description": "Stirling PDF field: pageNumber."
         },
-        "showLogo": {
-          "name": "Show Logo",
+        "show_logo": {
+          "name": "Show logo",
           "description": "Stirling PDF field: showLogo."
         }
       }
@@ -3734,8 +3734,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "tsaUrl": {
-          "name": "Tsa Url",
+        "tsa_url": {
+          "name": "Tsa url",
           "description": "Stirling PDF field: tsaUrl."
         }
       }
@@ -3782,28 +3782,28 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "removeJavaScript": {
-          "name": "Remove Java Script",
+        "remove_java_script": {
+          "name": "Remove java script",
           "description": "Stirling PDF field: removeJavaScript."
         },
-        "removeEmbeddedFiles": {
-          "name": "Remove Embedded Files",
+        "remove_embedded_files": {
+          "name": "Remove embedded files",
           "description": "Stirling PDF field: removeEmbeddedFiles."
         },
-        "removeXMPMetadata": {
-          "name": "Remove XMPMetadata",
+        "remove_xmp_metadata": {
+          "name": "Remove xmp metadata",
           "description": "Stirling PDF field: removeXMPMetadata."
         },
-        "removeMetadata": {
-          "name": "Remove Metadata",
+        "remove_metadata": {
+          "name": "Remove metadata",
           "description": "Stirling PDF field: removeMetadata."
         },
-        "removeLinks": {
-          "name": "Remove Links",
+        "remove_links": {
+          "name": "Remove links",
           "description": "Stirling PDF field: removeLinks."
         },
-        "removeFonts": {
-          "name": "Remove Fonts",
+        "remove_fonts": {
+          "name": "Remove fonts",
           "description": "Stirling PDF field: removeFonts."
         }
       }
@@ -3828,8 +3828,8 @@
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
         },
-        "certFile": {
-          "name": "Cert File",
+        "cert_file": {
+          "name": "Cert file",
           "description": "Absolute allowlisted local file path(s). Allowed extensions: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
         }
       }

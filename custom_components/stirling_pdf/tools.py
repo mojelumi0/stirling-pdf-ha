@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 from collections.abc import Awaitable, Callable
 from pathlib import Path
 from typing import Any
@@ -33,6 +34,12 @@ _GROUP_OPTIONS = {
 _MAX_FILES = 32
 _MAX_INPUT_BYTES = 64 * 1024 * 1024
 _MAX_JSON_BYTES = 4 * 1024 * 1024
+
+
+def ha_field_name(api_name: str) -> str:
+    """Use HA-compatible public names without changing multipart API names."""
+    words = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", api_name)
+    return re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", words).lower()
 
 
 def field_validator(spec: dict[str, Any]) -> Callable:
@@ -80,7 +87,7 @@ def tool_schema(operation: dict[str, Any]) -> vol.Schema:
     fields[marker("output_path")] = cv.string
     for name, spec in operation["files"].items():
         marker = vol.Required if spec["required"] else vol.Optional
-        fields[marker(name)] = (
+        fields[marker(ha_field_name(name))] = (
             vol.All(cv.ensure_list, [cv.string], vol.Length(min=1, max=_MAX_FILES))
             if spec["multiple"]
             else cv.string
@@ -88,7 +95,9 @@ def tool_schema(operation: dict[str, Any]) -> vol.Schema:
     for name, spec in operation["fields"].items():
         marker = vol.Required if spec["required"] else vol.Optional
         key = (
-            marker(name, default=spec["default"]) if "default" in spec else marker(name)
+            marker(ha_field_name(name), default=spec["default"])
+            if "default" in spec
+            else marker(ha_field_name(name))
         )
         fields[key] = field_validator(spec)
     return vol.Schema(fields)
@@ -220,7 +229,7 @@ async def async_handle_tool(
         raise ServiceValidationError(
             translation_domain=DOMAIN, translation_key="action_group_disabled"
         )
-    if call.data.get("useStirlingOfficeConvert") and not entry.options.get(
+    if call.data.get("use_stirling_office_convert") and not entry.options.get(
         CONF_EXTERNAL_ACTIONS, False
     ):
         raise ServiceValidationError(
@@ -243,13 +252,13 @@ async def async_handle_tool(
             await call.hass.async_add_executor_job(
                 validate_output, call.hass, output_path, suffix, overwrite
             )
-        for name in ("urlInput", "tsaUrl"):
+        for name in ("url_input", "tsa_url"):
             if name in call.data:
                 validate_remote_url(
                     call.data[name], entry.options.get(CONF_ALLOWED_URL_HOSTS, "")
                 )
         # Never silently use a vendor timestamp service as an unapproved host.
-        if call.service == "timestamp" and not call.data.get("tsaUrl"):
+        if call.service == "timestamp" and not call.data.get("tsa_url"):
             raise ServiceValidationError(
                 translation_domain=DOMAIN, translation_key="remote_host_not_allowed"
             )
@@ -270,8 +279,13 @@ async def async_handle_tool(
                 remaining -= len(files[-1][1])
         extra_files = []
         for name, spec in operation["files"].items():
-            if name in call.data:
-                paths = call.data[name] if spec["multiple"] else [call.data[name]]
+            public_name = ha_field_name(name)
+            if public_name in call.data:
+                paths = (
+                    call.data[public_name]
+                    if spec["multiple"]
+                    else [call.data[public_name]]
+                )
                 for path in paths:
                     filename, content = await _read_file(
                         call.hass, path, spec["extensions"], remaining
@@ -287,8 +301,9 @@ async def async_handle_tool(
             )
         data = {}
         for name, spec in operation["fields"].items():
-            if name in call.data:
-                value = call.data[name]
+            public_name = ha_field_name(name)
+            if public_name in call.data:
+                value = call.data[public_name]
                 if spec["type"] == "json":
                     value = json.dumps(value, allow_nan=False)
                     if len(value.encode()) > _MAX_JSON_BYTES:

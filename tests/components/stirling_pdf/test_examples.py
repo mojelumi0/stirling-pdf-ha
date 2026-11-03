@@ -13,6 +13,9 @@ from homeassistant.components.script.config import SCRIPT_ENTITY_SCHEMA
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.template import Template
 
+from custom_components.stirling_pdf.operations import OPERATIONS
+from custom_components.stirling_pdf.tools import tool_schema
+
 ROOT = Path(__file__).resolve().parents[3]
 
 
@@ -79,6 +82,9 @@ async def test_extended_example_schema_and_safe_cases(hass: HomeAssistant) -> No
     }
     for case in cases:
         assert case["data"]["file_path"] == "/config/pdf-test/a.pdf"
+        tool_schema(OPERATIONS[case["operation"]])(
+            {**case["data"], "config_entry_id": "selected-entry", "overwrite": False}
+        )
         if "output_path" in case["data"]:
             assert case["data"]["output_path"].startswith(context["prefix"])
     action = next(step for step in example["sequence"] if "repeat" in step)["repeat"][
@@ -91,6 +97,92 @@ async def test_extended_example_schema_and_safe_cases(hass: HomeAssistant) -> No
     )
     assert rendered["config_entry_id"] == "selected-entry"
     assert rendered["overwrite"] is False
+
+
+@pytest.mark.parametrize(
+    ("filename", "title"),
+    [
+        ("ha_test.yaml", "Stirling PDF - Integration test"),
+        ("ha_tools_test.yaml", "Stirling PDF - Additional tool test"),
+    ],
+)
+def test_example_names_and_server_labels_are_english(filename: str, title: str) -> None:
+    script = yaml.safe_load((ROOT / "examples" / filename).read_text("utf-8"))
+    assert script["alias"] == title
+    assert script["fields"]["config_entry_id"]["name"] == "Stirling PDF server"
+
+
+@pytest.mark.parametrize(
+    ("expect", "success", "rejected", "status"),
+    [
+        ("success", True, False, "OK"),
+        ("rejection", False, True, "REJECTED"),
+        ("success", False, False, "FAILED"),
+        ("rejection", True, False, "FAILED"),
+    ],
+)
+async def test_english_result_labels_keep_the_same_classification(
+    hass: HomeAssistant,
+    example: dict[str, Any],
+    expect: str,
+    success: bool,
+    rejected: bool,
+    status: str,
+) -> None:
+    loop = next(step["repeat"] for step in example["sequence"] if "repeat" in step)
+    execute = loop["sequence"][0]["else"]
+    values = next(
+        step["variables"]
+        for step in execute
+        if "result_status" in step.get("variables", {})
+    )
+    assert (
+        _render(
+            hass,
+            values["result_status"],
+            {
+                "repeat": {"item": {"expect": expect}},
+                "success_observed": success,
+                "rejection_observed": rejected,
+            },
+        )
+        == status
+    )
+
+
+async def test_additional_tool_report_renders_english_safety_notes(
+    hass: HomeAssistant,
+) -> None:
+    script = yaml.safe_load(
+        (ROOT / "examples" / "ha_tools_test.yaml").read_text("utf-8")
+    )
+    context = {
+        "directory": "/config/pdf-test",
+        "prefix": "/config/pdf-test/stirling_tools_fixture",
+        "run_id": "fixture",
+        "selected_server": "selected-entry",
+        "jobs_entity": "sensor.example_jobs",
+        "start_count": 0,
+    }
+    cases = _render(hass, _case_variables(script)["test_cases"], context)
+    context["test_cases"] = cases
+    context["results"] = [
+        {
+            "operation": case["operation"],
+            "ok": True,
+            "before": index,
+            "after": index + 1,
+            "output": case["data"].get("output_path", ""),
+        }
+        for index, case in enumerate(cases)
+    ]
+    hass.states.async_set(context["jobs_entity"], "6")
+    report = _render(hass, script["sequence"][-1]["data"]["message"], context)
+    assert "**OK:** 6 / 6" in report
+    assert "**Counter:** 0 -> 6" in report
+    assert "not the entire catalog" in report
+    assert "Do not rerun this script for persistence checks" in report
+    assert "no automatic" in report
 
 
 @pytest.mark.parametrize("extract_enabled", [True, False])
@@ -161,7 +253,7 @@ async def test_example_summary_renders_with_ha_and_retains_manual_check_warnings
     for case in cases:
         if not case["available"]:
             results.append(
-                {"name": case["name"], "status": "UEBERSPRUNGEN", "detail": "disabled"}
+                {"name": case["name"], "status": "SKIPPED", "detail": "disabled"}
             )
             continue
         before = count
@@ -170,7 +262,7 @@ async def test_example_summary_renders_with_ha_and_retains_manual_check_warnings
         results.append(
             {
                 "name": case["name"],
-                "status": "OK" if success else "ABGEWIESEN",
+                "status": "OK" if success else "REJECTED",
                 "before": before,
                 "after": count,
                 "size": 100 if success else 0,
@@ -187,14 +279,14 @@ async def test_example_summary_renders_with_ha_and_retains_manual_check_warnings
     hass.states.async_set(context["reachable_entity"], "on")
     report = _render(hass, example["sequence"][-1]["data"]["message"], context)
     expected_rejections = 8 if extract_enabled else 6
-    assert f"**Erfolgreich:** {count} / {count}" in report
+    assert f"**Successful:** {count} / {count}" in report
     assert (
-        "**Abgewiesen, Fehlergrund noch im Trace pruefen:** "
+        "**Rejected, check the reason in the trace:** "
         f"{expected_rejections} / {expected_rejections}" in report
     )
-    assert "**Fehler:** 0" in report
-    assert "**Installierte Integrationsversion:** nicht automatisch geprueft." in report
-    assert "keine automatische Merge-Freigabe" in report
+    assert "**Failed:** 0" in report
+    assert "**Installed integration version:** not verified automatically." in report
+    assert "not automatic merge approval" in report
 
 
 def test_issue_form_distinguishes_versions_deployments_and_authentication() -> None:

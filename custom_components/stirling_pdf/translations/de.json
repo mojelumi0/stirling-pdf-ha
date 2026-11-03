@@ -490,24 +490,24 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "detectionMode": {
-          "name": "Detection Mode",
+        "detection_mode": {
+          "name": "Detection mode",
           "description": "Stirling-PDF-Feld: detectionMode."
         },
-        "confidenceThreshold": {
-          "name": "Confidence Threshold",
+        "confidence_threshold": {
+          "name": "Confidence threshold",
           "description": "Stirling-PDF-Feld: confidenceThreshold."
         },
-        "dryRun": {
-          "name": "Dry Run",
+        "dry_run": {
+          "name": "Dry run",
           "description": "Stirling-PDF-Feld: dryRun."
         },
-        "inferUndetected": {
-          "name": "Infer Undetected",
+        "infer_undetected": {
+          "name": "Infer undetected",
           "description": "Stirling-PDF-Feld: inferUndetected."
         },
-        "pageRotations": {
-          "name": "Page Rotations",
+        "page_rotations": {
+          "name": "Page rotations",
           "description": "Stirling-PDF-Feld: pageRotations."
         }
       }
@@ -532,8 +532,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling-PDF-Feld: pageNumbers."
         }
       }
@@ -558,8 +558,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling-PDF-Feld: pageNumbers."
         },
         "x": {
@@ -578,12 +578,12 @@
           "name": "Height",
           "description": "Stirling-PDF-Feld: height."
         },
-        "removeDataOutsideCrop": {
-          "name": "Remove Data Outside Crop",
+        "remove_data_outside_crop": {
+          "name": "Remove data outside crop",
           "description": "Stirling-PDF-Feld: removeDataOutsideCrop."
         },
-        "autoCrop": {
-          "name": "Auto Crop",
+        "auto_crop": {
+          "name": "Auto crop",
           "description": "Stirling-PDF-Feld: autoCrop."
         }
       }
@@ -608,16 +608,16 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "pageSize": {
-          "name": "Page Size",
+        "page_size": {
+          "name": "Page size",
           "description": "Stirling-PDF-Feld: pageSize."
         },
         "orientation": {
           "name": "Orientation",
           "description": "Stirling-PDF-Feld: orientation."
         },
-        "scaleFactor": {
-          "name": "Scale Factor",
+        "scale_factor": {
+          "name": "Scale factor",
           "description": "Stirling-PDF-Feld: scaleFactor."
         }
       }
@@ -646,8 +646,8 @@
           "name": "Threshold",
           "description": "Stirling-PDF-Feld: threshold."
         },
-        "whitePercent": {
-          "name": "White Percent",
+        "white_percent": {
+          "name": "White percent",
           "description": "Stirling-PDF-Feld: whitePercent."
         }
       }
@@ -694,12 +694,12 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "splitType": {
-          "name": "Split Type",
+        "split_type": {
+          "name": "Split type",
           "description": "Stirling-PDF-Feld: splitType."
         },
-        "splitValue": {
-          "name": "Split Value",
+        "split_value": {
+          "name": "Split value",
           "description": "Stirling-PDF-Feld: splitValue."
         }
       }
@@ -724,16 +724,16 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "includeMetadata": {
-          "name": "Include Metadata",
+        "include_metadata": {
+          "name": "Include metadata",
           "description": "Stirling-PDF-Feld: includeMetadata."
         },
-        "allowDuplicates": {
-          "name": "Allow Duplicates",
+        "allow_duplicates": {
+          "name": "Allow duplicates",
           "description": "Stirling-PDF-Feld: allowDuplicates."
         },
-        "bookmarkLevel": {
-          "name": "Bookmark Level",
+        "bookmark_level": {
+          "name": "Bookmark level",
           "description": "Stirling-PDF-Feld: bookmarkLevel."
         }
       }
@@ -758,8 +758,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "duplexMode": {
-          "name": "Duplex Mode",
+        "duplex_mode": {
+          "name": "Duplex mode",
           "description": "Stirling-PDF-Feld: duplexMode."
         }
       }
@@ -784,20 +784,20 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling-PDF-Feld: pageNumbers."
         },
-        "splitMode": {
-          "name": "Split Mode",
+        "split_mode": {
+          "name": "Split mode",
           "description": "Stirling-PDF-Feld: splitMode."
         },
-        "horizontalDivisions": {
-          "name": "Horizontal Divisions",
+        "horizontal_divisions": {
+          "name": "Horizontal divisions",
           "description": "Stirling-PDF-Feld: horizontalDivisions."
         },
-        "verticalDivisions": {
-          "name": "Vertical Divisions",
+        "vertical_divisions": {
+          "name": "Vertical divisions",
           "description": "Stirling-PDF-Feld: verticalDivisions."
         },
         "merge": {
@@ -826,20 +826,20 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "pageSize": {
-          "name": "Page Size",
+        "page_size": {
+          "name": "Page size",
           "description": "Stirling-PDF-Feld: pageSize."
         },
-        "rightToLeft": {
-          "name": "Right To Left",
+        "right_to_left": {
+          "name": "Right to left",
           "description": "Stirling-PDF-Feld: rightToLeft."
         },
-        "xFactor": {
-          "name": "X Factor",
+        "x_factor": {
+          "name": "X factor",
           "description": "Stirling-PDF-Feld: xFactor."
         },
-        "yFactor": {
-          "name": "Y Factor",
+        "y_factor": {
+          "name": "Y factor",
           "description": "Stirling-PDF-Feld: yFactor."
         }
       }
@@ -864,36 +864,36 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "pagesPerSheet": {
-          "name": "Pages Per Sheet",
+        "pages_per_sheet": {
+          "name": "Pages per sheet",
           "description": "Stirling-PDF-Feld: pagesPerSheet."
         },
-        "addBorder": {
-          "name": "Add Border",
+        "add_border": {
+          "name": "Add border",
           "description": "Stirling-PDF-Feld: addBorder."
         },
-        "spineLocation": {
-          "name": "Spine Location",
+        "spine_location": {
+          "name": "Spine location",
           "description": "Stirling-PDF-Feld: spineLocation."
         },
-        "addGutter": {
-          "name": "Add Gutter",
+        "add_gutter": {
+          "name": "Add gutter",
           "description": "Stirling-PDF-Feld: addGutter."
         },
-        "gutterSize": {
-          "name": "Gutter Size",
+        "gutter_size": {
+          "name": "Gutter size",
           "description": "Stirling-PDF-Feld: gutterSize."
         },
-        "doubleSided": {
-          "name": "Double Sided",
+        "double_sided": {
+          "name": "Double sided",
           "description": "Stirling-PDF-Feld: doubleSided."
         },
-        "duplexPass": {
-          "name": "Duplex Pass",
+        "duplex_pass": {
+          "name": "Duplex pass",
           "description": "Stirling-PDF-Feld: duplexPass."
         },
-        "flipOnShortEdge": {
-          "name": "Flip On Short Edge",
+        "flip_on_short_edge": {
+          "name": "Flip on short edge",
           "description": "Stirling-PDF-Feld: flipOnShortEdge."
         }
       }
@@ -922,16 +922,16 @@
           "name": "Mode",
           "description": "Stirling-PDF-Feld: mode."
         },
-        "pagesPerSheet": {
-          "name": "Pages Per Sheet",
+        "pages_per_sheet": {
+          "name": "Pages per sheet",
           "description": "Stirling-PDF-Feld: pagesPerSheet."
         },
         "arrangement": {
           "name": "Arrangement",
           "description": "Stirling-PDF-Feld: arrangement."
         },
-        "readingDirection": {
-          "name": "Reading Direction",
+        "reading_direction": {
+          "name": "Reading direction",
           "description": "Stirling-PDF-Feld: readingDirection."
         },
         "rows": {
@@ -946,32 +946,32 @@
           "name": "Orientation",
           "description": "Stirling-PDF-Feld: orientation."
         },
-        "innerMargin": {
-          "name": "Inner Margin",
+        "inner_margin": {
+          "name": "Inner margin",
           "description": "Stirling-PDF-Feld: innerMargin."
         },
-        "topMargin": {
-          "name": "Top Margin",
+        "top_margin": {
+          "name": "Top margin",
           "description": "Stirling-PDF-Feld: topMargin."
         },
-        "bottomMargin": {
-          "name": "Bottom Margin",
+        "bottom_margin": {
+          "name": "Bottom margin",
           "description": "Stirling-PDF-Feld: bottomMargin."
         },
-        "leftMargin": {
-          "name": "Left Margin",
+        "left_margin": {
+          "name": "Left margin",
           "description": "Stirling-PDF-Feld: leftMargin."
         },
-        "rightMargin": {
-          "name": "Right Margin",
+        "right_margin": {
+          "name": "Right margin",
           "description": "Stirling-PDF-Feld: rightMargin."
         },
-        "borderWidth": {
-          "name": "Border Width",
+        "border_width": {
+          "name": "Border width",
           "description": "Stirling-PDF-Feld: borderWidth."
         },
-        "addBorder": {
-          "name": "Add Border",
+        "add_border": {
+          "name": "Add border",
           "description": "Stirling-PDF-Feld: addBorder."
         }
       }
@@ -1018,20 +1018,20 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "overlayFiles": {
-          "name": "Overlay Files",
+        "overlay_files": {
+          "name": "Overlay files",
           "description": "Absoluter freigegebener Dateipfad. Endungen: .pdf."
         },
-        "overlayMode": {
-          "name": "Overlay Mode",
+        "overlay_mode": {
+          "name": "Overlay mode",
           "description": "Stirling-PDF-Feld: overlayMode."
         },
         "counts": {
           "name": "Counts",
           "description": "Stirling-PDF-Feld: counts."
         },
-        "overlayPosition": {
-          "name": "Overlay Position",
+        "overlay_position": {
+          "name": "Overlay position",
           "description": "Stirling-PDF-Feld: overlayPosition."
         }
       }
@@ -1056,44 +1056,44 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling-PDF-Feld: pageNumbers."
         },
-        "fontType": {
-          "name": "Font Type",
+        "font_type": {
+          "name": "Font type",
           "description": "Stirling-PDF-Feld: fontType."
         },
         "position": {
           "name": "Position",
           "description": "Stirling-PDF-Feld: position."
         },
-        "customText": {
-          "name": "Custom Text",
+        "custom_text": {
+          "name": "Custom text",
           "description": "Stirling-PDF-Feld: customText."
         },
-        "pagesToNumber": {
-          "name": "Pages To Number",
+        "pages_to_number": {
+          "name": "Pages to number",
           "description": "Stirling-PDF-Feld: pagesToNumber."
         },
-        "startingNumber": {
-          "name": "Starting Number",
+        "starting_number": {
+          "name": "Starting number",
           "description": "Stirling-PDF-Feld: startingNumber."
         },
-        "fontSize": {
-          "name": "Font Size",
+        "font_size": {
+          "name": "Font size",
           "description": "Stirling-PDF-Feld: fontSize."
         },
-        "fontColor": {
-          "name": "Font Color",
+        "font_color": {
+          "name": "Font color",
           "description": "Stirling-PDF-Feld: fontColor."
         },
-        "customMargin": {
-          "name": "Custom Margin",
+        "custom_margin": {
+          "name": "Custom margin",
           "description": "Stirling-PDF-Feld: customMargin."
         },
-        "zeroPad": {
-          "name": "Zero Pad",
+        "zero_pad": {
+          "name": "Zero pad",
           "description": "Stirling-PDF-Feld: zeroPad."
         }
       }
@@ -1118,24 +1118,24 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "watermarkImage": {
-          "name": "Watermark Image",
+        "watermark_image": {
+          "name": "Watermark image",
           "description": "Absoluter freigegebener Dateipfad. Endungen: .png, .jpg, .jpeg, .gif, .webp."
         },
-        "watermarkType": {
-          "name": "Watermark Type",
+        "watermark_type": {
+          "name": "Watermark type",
           "description": "Stirling-PDF-Feld: watermarkType."
         },
-        "watermarkText": {
-          "name": "Watermark Text",
+        "watermark_text": {
+          "name": "Watermark text",
           "description": "Stirling-PDF-Feld: watermarkText."
         },
         "alphabet": {
           "name": "Alphabet",
           "description": "Stirling-PDF-Feld: alphabet."
         },
-        "fontSize": {
-          "name": "Font Size",
+        "font_size": {
+          "name": "Font size",
           "description": "Stirling-PDF-Feld: fontSize."
         },
         "rotation": {
@@ -1146,20 +1146,20 @@
           "name": "Opacity",
           "description": "Stirling-PDF-Feld: opacity."
         },
-        "customColor": {
-          "name": "Custom Color",
+        "custom_color": {
+          "name": "Custom color",
           "description": "Stirling-PDF-Feld: customColor."
         },
-        "convertPDFToImage": {
-          "name": "Convert PDFTo Image",
+        "convert_pdf_to_image": {
+          "name": "Convert pdf to image",
           "description": "Stirling-PDF-Feld: convertPDFToImage."
         },
-        "widthSpacer": {
-          "name": "Width Spacer",
+        "width_spacer": {
+          "name": "Width spacer",
           "description": "Stirling-PDF-Feld: widthSpacer."
         },
-        "heightSpacer": {
-          "name": "Height Spacer",
+        "height_spacer": {
+          "name": "Height spacer",
           "description": "Stirling-PDF-Feld: heightSpacer."
         }
       }
@@ -1184,36 +1184,36 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "stampImage": {
-          "name": "Stamp Image",
+        "stamp_image": {
+          "name": "Stamp image",
           "description": "Absoluter freigegebener Dateipfad. Endungen: .png, .jpg, .jpeg, .gif, .webp."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling-PDF-Feld: pageNumbers."
         },
-        "stampType": {
-          "name": "Stamp Type",
+        "stamp_type": {
+          "name": "Stamp type",
           "description": "Stirling-PDF-Feld: stampType."
         },
-        "stampText": {
-          "name": "Stamp Text",
+        "stamp_text": {
+          "name": "Stamp text",
           "description": "Stirling-PDF-Feld: stampText."
         },
         "position": {
           "name": "Position",
           "description": "Stirling-PDF-Feld: position."
         },
-        "fontSize": {
-          "name": "Font Size",
+        "font_size": {
+          "name": "Font size",
           "description": "Stirling-PDF-Feld: fontSize."
         },
         "opacity": {
           "name": "Opacity",
           "description": "Stirling-PDF-Feld: opacity."
         },
-        "customColor": {
-          "name": "Custom Color",
+        "custom_color": {
+          "name": "Custom color",
           "description": "Stirling-PDF-Feld: customColor."
         },
         "rotation": {
@@ -1224,16 +1224,16 @@
           "name": "Alphabet",
           "description": "Stirling-PDF-Feld: alphabet."
         },
-        "overrideX": {
-          "name": "Override X",
+        "override_x": {
+          "name": "Override x",
           "description": "Stirling-PDF-Feld: overrideX."
         },
-        "overrideY": {
-          "name": "Override Y",
+        "override_y": {
+          "name": "Override y",
           "description": "Stirling-PDF-Feld: overrideY."
         },
-        "customMargin": {
-          "name": "Custom Margin",
+        "custom_margin": {
+          "name": "Custom margin",
           "description": "Stirling-PDF-Feld: customMargin."
         }
       }
@@ -1258,8 +1258,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "imageFile": {
-          "name": "Image File",
+        "image_file": {
+          "name": "Image file",
           "description": "Absoluter freigegebener Dateipfad. Endungen: .png, .jpg, .jpeg, .gif, .webp."
         },
         "x": {
@@ -1270,8 +1270,8 @@
           "name": "Y",
           "description": "Stirling-PDF-Feld: y."
         },
-        "everyPage": {
-          "name": "Every Page",
+        "every_page": {
+          "name": "Every page",
           "description": "Stirling-PDF-Feld: everyPage."
         }
       }
@@ -1322,16 +1322,16 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling-PDF-Feld: pageNumbers."
         },
         "edits": {
           "name": "Edits",
           "description": "Stirling-PDF-Feld: edits."
         },
-        "wholeWordSearch": {
-          "name": "Whole Word Search",
+        "whole_word_search": {
+          "name": "Whole word search",
           "description": "Stirling-PDF-Feld: wholeWordSearch."
         }
       }
@@ -1356,16 +1356,16 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "deleteAll": {
-          "name": "Delete All",
+        "delete_all": {
+          "name": "Delete all",
           "description": "Stirling-PDF-Feld: deleteAll."
         },
         "author": {
           "name": "Author",
           "description": "Stirling-PDF-Feld: author."
         },
-        "creationDate": {
-          "name": "Creation Date",
+        "creation_date": {
+          "name": "Creation date",
           "description": "Stirling-PDF-Feld: creationDate."
         },
         "creator": {
@@ -1376,8 +1376,8 @@
           "name": "Keywords",
           "description": "Stirling-PDF-Feld: keywords."
         },
-        "modificationDate": {
-          "name": "Modification Date",
+        "modification_date": {
+          "name": "Modification date",
           "description": "Stirling-PDF-Feld: modificationDate."
         },
         "producer": {
@@ -1396,8 +1396,8 @@
           "name": "Trapped",
           "description": "Stirling-PDF-Feld: trapped."
         },
-        "allRequestParams": {
-          "name": "All Request Params",
+        "all_request_params": {
+          "name": "All request params",
           "description": "Stirling-PDF-Feld: allRequestParams."
         }
       }
@@ -1444,12 +1444,12 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "bookmarkData": {
-          "name": "Bookmark Data",
+        "bookmark_data": {
+          "name": "Bookmark data",
           "description": "Stirling-PDF-Feld: bookmarkData."
         },
-        "replaceExisting": {
-          "name": "Replace Existing",
+        "replace_existing": {
+          "name": "Replace existing",
           "description": "Stirling-PDF-Feld: replaceExisting."
         }
       }
@@ -1496,20 +1496,20 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "replaceAndInvertOption": {
-          "name": "Replace And Invert Option",
+        "replace_and_invert_option": {
+          "name": "Replace and invert option",
           "description": "Stirling-PDF-Feld: replaceAndInvertOption."
         },
-        "highContrastColorCombination": {
-          "name": "High Contrast Color Combination",
+        "high_contrast_color_combination": {
+          "name": "High contrast color combination",
           "description": "Stirling-PDF-Feld: highContrastColorCombination."
         },
-        "backGroundColor": {
-          "name": "Back Ground Color",
+        "back_ground_color": {
+          "name": "Back ground color",
           "description": "Stirling-PDF-Feld: backGroundColor."
         },
-        "textColor": {
-          "name": "Text Color",
+        "text_color": {
+          "name": "Text color",
           "description": "Stirling-PDF-Feld: textColor."
         }
       }
@@ -1546,8 +1546,8 @@
           "name": "Colorspace",
           "description": "Stirling-PDF-Feld: colorspace."
         },
-        "advancedEnabled": {
-          "name": "Advanced Enabled",
+        "advanced_enabled": {
+          "name": "Advanced enabled",
           "description": "Stirling-PDF-Feld: advancedEnabled."
         },
         "brightness": {
@@ -1578,16 +1578,16 @@
           "name": "Rotate",
           "description": "Stirling-PDF-Feld: rotate."
         },
-        "rotateVariance": {
-          "name": "Rotate Variance",
+        "rotate_variance": {
+          "name": "Rotate variance",
           "description": "Stirling-PDF-Feld: rotateVariance."
         },
         "yellowish": {
           "name": "Yellowish",
           "description": "Stirling-PDF-Feld: yellowish."
         },
-        "rotationValue": {
-          "name": "Rotation Value",
+        "rotation_value": {
+          "name": "Rotation value",
           "description": "Stirling-PDF-Feld: rotationValue."
         }
       }
@@ -1634,8 +1634,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "useFirstTextAsFallback": {
-          "name": "Use First Text As Fallback",
+        "use_first_text_as_fallback": {
+          "name": "Use first text as fallback",
           "description": "Stirling-PDF-Feld: useFirstTextAsFallback."
         }
       }
@@ -1686,24 +1686,24 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "angleThreshold": {
-          "name": "Angle Threshold",
+        "angle_threshold": {
+          "name": "Angle threshold",
           "description": "Stirling-PDF-Feld: angleThreshold."
         },
         "tolerance": {
           "name": "Tolerance",
           "description": "Stirling-PDF-Feld: tolerance."
         },
-        "minArea": {
-          "name": "Min Area",
+        "min_area": {
+          "name": "Min area",
           "description": "Stirling-PDF-Feld: minArea."
         },
-        "minContourArea": {
-          "name": "Min Contour Area",
+        "min_contour_area": {
+          "name": "Min contour area",
           "description": "Stirling-PDF-Feld: minContourArea."
         },
-        "borderSize": {
-          "name": "Border Size",
+        "border_size": {
+          "name": "Border size",
           "description": "Stirling-PDF-Feld: borderSize."
         }
       }
@@ -1776,8 +1776,8 @@
           "name": "Attachments",
           "description": "Absoluter freigegebener Dateipfad. Endungen: .pdf, .txt, .csv, .json, .png, .jpg, .docx, .xlsx, .zip."
         },
-        "convertToPdfA3b": {
-          "name": "Convert To Pdf A3b",
+        "convert_to_pdf_a3b": {
+          "name": "Convert to pdf a3b",
           "description": "Stirling-PDF-Feld: convertToPdfA3b."
         }
       }
@@ -1802,8 +1802,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "attachmentName": {
-          "name": "Attachment Name",
+        "attachment_name": {
+          "name": "Attachment name",
           "description": "Stirling-PDF-Feld: attachmentName."
         }
       }
@@ -1828,12 +1828,12 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "attachmentName": {
-          "name": "Attachment Name",
+        "attachment_name": {
+          "name": "Attachment name",
           "description": "Stirling-PDF-Feld: attachmentName."
         },
-        "newName": {
-          "name": "New Name",
+        "new_name": {
+          "name": "New name",
           "description": "Stirling-PDF-Feld: newName."
         }
       }
@@ -1862,12 +1862,12 @@
           "name": "Attachments",
           "description": "Absoluter freigegebener Dateipfad. Endungen: .pdf, .txt, .csv, .json, .png, .jpg, .docx, .xlsx, .zip."
         },
-        "opsJson": {
-          "name": "Ops Json",
+        "ops_json": {
+          "name": "Ops json",
           "description": "Stirling-PDF-Feld: opsJson."
         },
-        "convertToPdfA3b": {
-          "name": "Convert To Pdf A3b",
+        "convert_to_pdf_a3b": {
+          "name": "Convert to pdf a3b",
           "description": "Stirling-PDF-Feld: convertToPdfA3b."
         }
       }
@@ -1892,8 +1892,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "coverTitle": {
-          "name": "Cover Title",
+        "cover_title": {
+          "name": "Cover title",
           "description": "Stirling-PDF-Feld: coverTitle."
         }
       }
@@ -1940,12 +1940,12 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "flattenOnlyForms": {
-          "name": "Flatten Only Forms",
+        "flatten_only_forms": {
+          "name": "Flatten only forms",
           "description": "Stirling-PDF-Feld: flattenOnlyForms."
         },
-        "renderDpi": {
-          "name": "Render Dpi",
+        "render_dpi": {
+          "name": "Render dpi",
           "description": "Stirling-PDF-Feld: renderDpi."
         }
       }
@@ -1992,16 +1992,16 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "fitOption": {
-          "name": "Fit Option",
+        "fit_option": {
+          "name": "Fit option",
           "description": "Stirling-PDF-Feld: fitOption."
         },
-        "colorType": {
-          "name": "Color Type",
+        "color_type": {
+          "name": "Color type",
           "description": "Stirling-PDF-Feld: colorType."
         },
-        "autoRotate": {
-          "name": "Auto Rotate",
+        "auto_rotate": {
+          "name": "Auto rotate",
           "description": "Stirling-PDF-Feld: autoRotate."
         }
       }
@@ -2026,28 +2026,28 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling-PDF-Feld: pageNumbers."
         },
-        "imageFormat": {
-          "name": "Image Format",
+        "image_format": {
+          "name": "Image format",
           "description": "Stirling-PDF-Feld: imageFormat."
         },
-        "singleOrMultiple": {
-          "name": "Single Or Multiple",
+        "single_or_multiple": {
+          "name": "Single or multiple",
           "description": "Stirling-PDF-Feld: singleOrMultiple."
         },
-        "colorType": {
-          "name": "Color Type",
+        "color_type": {
+          "name": "Color type",
           "description": "Stirling-PDF-Feld: colorType."
         },
         "dpi": {
           "name": "Dpi",
           "description": "Stirling-PDF-Feld: dpi."
         },
-        "includeAnnotations": {
-          "name": "Include Annotations",
+        "include_annotations": {
+          "name": "Include annotations",
           "description": "Stirling-PDF-Feld: includeAnnotations."
         }
       }
@@ -2072,12 +2072,12 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "outputFormat": {
-          "name": "Output Format",
+        "output_format": {
+          "name": "Output format",
           "description": "Stirling-PDF-Feld: outputFormat."
         },
-        "pdfUa": {
-          "name": "Pdf Ua",
+        "pdf_ua": {
+          "name": "Pdf ua",
           "description": "Stirling-PDF-Feld: pdfUa."
         },
         "strict": {
@@ -2106,12 +2106,12 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "outputFormat": {
-          "name": "Output Format",
+        "output_format": {
+          "name": "Output format",
           "description": "Stirling-PDF-Feld: outputFormat."
         },
-        "useStirlingOfficeConvert": {
-          "name": "Use Stirling Office Convert",
+        "use_stirling_office_convert": {
+          "name": "Use stirling office convert",
           "description": "Stirling-PDF-Feld: useStirlingOfficeConvert."
         }
       }
@@ -2136,12 +2136,12 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "outputFormat": {
-          "name": "Output Format",
+        "output_format": {
+          "name": "Output format",
           "description": "Stirling-PDF-Feld: outputFormat."
         },
-        "useStirlingOfficeConvert": {
-          "name": "Use Stirling Office Convert",
+        "use_stirling_office_convert": {
+          "name": "Use stirling office convert",
           "description": "Stirling-PDF-Feld: useStirlingOfficeConvert."
         }
       }
@@ -2166,8 +2166,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "useStirlingOfficeConvert": {
-          "name": "Use Stirling Office Convert",
+        "use_stirling_office_convert": {
+          "name": "Use stirling office convert",
           "description": "Stirling-PDF-Feld: useStirlingOfficeConvert."
         }
       }
@@ -2192,12 +2192,12 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "outputFormat": {
-          "name": "Output Format",
+        "output_format": {
+          "name": "Output format",
           "description": "Stirling-PDF-Feld: outputFormat."
         },
-        "useStirlingOfficeConvert": {
-          "name": "Use Stirling Office Convert",
+        "use_stirling_office_convert": {
+          "name": "Use stirling office convert",
           "description": "Stirling-PDF-Feld: useStirlingOfficeConvert."
         }
       }
@@ -2222,8 +2222,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling-PDF-Feld: pageNumbers."
         }
       }
@@ -2248,12 +2248,12 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling-PDF-Feld: pageNumbers."
         },
-        "useStirlingOfficeConvert": {
-          "name": "Use Stirling Office Convert",
+        "use_stirling_office_convert": {
+          "name": "Use stirling office convert",
           "description": "Stirling-PDF-Feld: useStirlingOfficeConvert."
         }
       }
@@ -2392,20 +2392,20 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "includeAttachments": {
-          "name": "Include Attachments",
+        "include_attachments": {
+          "name": "Include attachments",
           "description": "Stirling-PDF-Feld: includeAttachments."
         },
-        "maxAttachmentSizeMB": {
-          "name": "Max Attachment Size MB",
+        "max_attachment_size_mb": {
+          "name": "Max attachment size mb",
           "description": "Stirling-PDF-Feld: maxAttachmentSizeMB."
         },
-        "downloadHtml": {
-          "name": "Download Html",
+        "download_html": {
+          "name": "Download html",
           "description": "Stirling-PDF-Feld: downloadHtml."
         },
-        "includeAllRecipients": {
-          "name": "Include All Recipients",
+        "include_all_recipients": {
+          "name": "Include all recipients",
           "description": "Stirling-PDF-Feld: includeAllRecipients."
         }
       }
@@ -2430,8 +2430,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "combineIntoSinglePdf": {
-          "name": "Combine Into Single Pdf",
+        "combine_into_single_pdf": {
+          "name": "Combine into single pdf",
           "description": "Stirling-PDF-Feld: combineIntoSinglePdf."
         }
       }
@@ -2456,20 +2456,20 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "embedAllFonts": {
-          "name": "Embed All Fonts",
+        "embed_all_fonts": {
+          "name": "Embed all fonts",
           "description": "Stirling-PDF-Feld: embedAllFonts."
         },
-        "includeTableOfContents": {
-          "name": "Include Table Of Contents",
+        "include_table_of_contents": {
+          "name": "Include table of contents",
           "description": "Stirling-PDF-Feld: includeTableOfContents."
         },
-        "includePageNumbers": {
-          "name": "Include Page Numbers",
+        "include_page_numbers": {
+          "name": "Include page numbers",
           "description": "Stirling-PDF-Feld: includePageNumbers."
         },
-        "optimizeForEbook": {
-          "name": "Optimize For Ebook",
+        "optimize_for_ebook": {
+          "name": "Optimize for ebook",
           "description": "Stirling-PDF-Feld: optimizeForEbook."
         }
       }
@@ -2494,16 +2494,16 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "detectChapters": {
-          "name": "Detect Chapters",
+        "detect_chapters": {
+          "name": "Detect chapters",
           "description": "Stirling-PDF-Feld: detectChapters."
         },
-        "targetDevice": {
-          "name": "Target Device",
+        "target_device": {
+          "name": "Target device",
           "description": "Stirling-PDF-Feld: targetDevice."
         },
-        "outputFormat": {
-          "name": "Output Format",
+        "output_format": {
+          "name": "Output format",
           "description": "Stirling-PDF-Feld: outputFormat."
         }
       }
@@ -2528,8 +2528,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "optimizeForEbook": {
-          "name": "Optimize For Ebook",
+        "optimize_for_ebook": {
+          "name": "Optimize for ebook",
           "description": "Stirling-PDF-Feld: optimizeForEbook."
         }
       }
@@ -2554,8 +2554,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "optimizeForEbook": {
-          "name": "Optimize For Ebook",
+        "optimize_for_ebook": {
+          "name": "Optimize for ebook",
           "description": "Stirling-PDF-Feld: optimizeForEbook."
         }
       }
@@ -2632,8 +2632,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "outputFormat": {
-          "name": "Output Format",
+        "output_format": {
+          "name": "Output format",
           "description": "Stirling-PDF-Feld: outputFormat."
         },
         "prepress": {
@@ -2662,8 +2662,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "outputFormat": {
-          "name": "Output Format",
+        "output_format": {
+          "name": "Output format",
           "description": "Stirling-PDF-Feld: outputFormat."
         },
         "prepress": {
@@ -2704,24 +2704,24 @@
           "name": "Language",
           "description": "Stirling-PDF-Feld: language."
         },
-        "overrideLanguage": {
-          "name": "Override Language",
+        "override_language": {
+          "name": "Override language",
           "description": "Stirling-PDF-Feld: overrideLanguage."
         },
-        "existingTags": {
-          "name": "Existing Tags",
+        "existing_tags": {
+          "name": "Existing tags",
           "description": "Stirling-PDF-Feld: existingTags."
         },
-        "figurePolicy": {
-          "name": "Figure Policy",
+        "figure_policy": {
+          "name": "Figure policy",
           "description": "Stirling-PDF-Feld: figurePolicy."
         },
-        "embedFonts": {
-          "name": "Embed Fonts",
+        "embed_fonts": {
+          "name": "Embed fonts",
           "description": "Stirling-PDF-Feld: embedFonts."
         },
-        "altText": {
-          "name": "Alt Text",
+        "alt_text": {
+          "name": "Alt text",
           "description": "Stirling-PDF-Feld: altText."
         }
       }
@@ -2742,8 +2742,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "urlInput": {
-          "name": "Url Input",
+        "url_input": {
+          "name": "Url input",
           "description": "Stirling-PDF-Feld: urlInput."
         }
       }
@@ -2966,8 +2966,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling-PDF-Feld: pageNumbers."
         },
         "text": {
@@ -2996,8 +2996,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling-PDF-Feld: pageNumbers."
         }
       }
@@ -3026,8 +3026,8 @@
           "name": "Comparator",
           "description": "Stirling-PDF-Feld: comparator."
         },
-        "pageCount": {
-          "name": "Page Count",
+        "page_count": {
+          "name": "Page count",
           "description": "Stirling-PDF-Feld: pageCount."
         }
       }
@@ -3056,8 +3056,8 @@
           "name": "Comparator",
           "description": "Stirling-PDF-Feld: comparator."
         },
-        "standardPageSize": {
-          "name": "Standard Page Size",
+        "standard_page_size": {
+          "name": "Standard page size",
           "description": "Stirling-PDF-Feld: standardPageSize."
         }
       }
@@ -3086,8 +3086,8 @@
           "name": "Comparator",
           "description": "Stirling-PDF-Feld: comparator."
         },
-        "fileSize": {
-          "name": "File Size",
+        "file_size": {
+          "name": "File size",
           "description": "Stirling-PDF-Feld: fileSize."
         }
       }
@@ -3324,8 +3324,8 @@
           "name": "Edits",
           "description": "Stirling-PDF-Feld: edits."
         },
-        "includeFields": {
-          "name": "Include Fields",
+        "include_fields": {
+          "name": "Include fields",
           "description": "Stirling-PDF-Feld: includeFields."
         }
       }
@@ -3376,12 +3376,12 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "confThreshold": {
-          "name": "Conf Threshold",
+        "conf_threshold": {
+          "name": "Conf threshold",
           "description": "Stirling-PDF-Feld: confThreshold."
         },
-        "applyToPdf": {
-          "name": "Apply To Pdf",
+        "apply_to_pdf": {
+          "name": "Apply to pdf",
           "description": "Stirling-PDF-Feld: applyToPdf."
         }
       }
@@ -3406,56 +3406,56 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "ownerPassword": {
-          "name": "Owner Password",
+        "owner_password": {
+          "name": "Owner password",
           "description": "Stirling-PDF-Feld: ownerPassword. Achtung: Automationen und Traces koennen dieses Geheimnis speichern."
         },
         "password": {
           "name": "Password",
           "description": "Stirling-PDF-Feld: password. Achtung: Automationen und Traces koennen dieses Geheimnis speichern."
         },
-        "sourcePassword": {
-          "name": "Source Password",
+        "source_password": {
+          "name": "Source password",
           "description": "Stirling-PDF-Feld: sourcePassword. Achtung: Automationen und Traces koennen dieses Geheimnis speichern."
         },
-        "preserveExisting": {
-          "name": "Preserve Existing",
+        "preserve_existing": {
+          "name": "Preserve existing",
           "description": "Stirling-PDF-Feld: preserveExisting."
         },
-        "keyLength": {
-          "name": "Key Length",
+        "key_length": {
+          "name": "Key length",
           "description": "Stirling-PDF-Feld: keyLength."
         },
-        "preventAssembly": {
-          "name": "Prevent Assembly",
+        "prevent_assembly": {
+          "name": "Prevent assembly",
           "description": "Stirling-PDF-Feld: preventAssembly."
         },
-        "preventExtractContent": {
-          "name": "Prevent Extract Content",
+        "prevent_extract_content": {
+          "name": "Prevent extract content",
           "description": "Stirling-PDF-Feld: preventExtractContent."
         },
-        "preventExtractForAccessibility": {
-          "name": "Prevent Extract For Accessibility",
+        "prevent_extract_for_accessibility": {
+          "name": "Prevent extract for accessibility",
           "description": "Stirling-PDF-Feld: preventExtractForAccessibility."
         },
-        "preventFillInForm": {
-          "name": "Prevent Fill In Form",
+        "prevent_fill_in_form": {
+          "name": "Prevent fill in form",
           "description": "Stirling-PDF-Feld: preventFillInForm."
         },
-        "preventModify": {
-          "name": "Prevent Modify",
+        "prevent_modify": {
+          "name": "Prevent modify",
           "description": "Stirling-PDF-Feld: preventModify."
         },
-        "preventModifyAnnotations": {
-          "name": "Prevent Modify Annotations",
+        "prevent_modify_annotations": {
+          "name": "Prevent modify annotations",
           "description": "Stirling-PDF-Feld: preventModifyAnnotations."
         },
-        "preventPrinting": {
-          "name": "Prevent Printing",
+        "prevent_printing": {
+          "name": "Prevent printing",
           "description": "Stirling-PDF-Feld: preventPrinting."
         },
-        "preventPrintingFaithful": {
-          "name": "Prevent Printing Faithful",
+        "prevent_printing_faithful": {
+          "name": "Prevent printing faithful",
           "description": "Stirling-PDF-Feld: preventPrintingFaithful."
         }
       }
@@ -3484,20 +3484,20 @@
           "name": "Password",
           "description": "Stirling-PDF-Feld: password. Achtung: Automationen und Traces koennen dieses Geheimnis speichern."
         },
-        "removeAll": {
-          "name": "Remove All",
+        "remove_all": {
+          "name": "Remove all",
           "description": "Stirling-PDF-Feld: removeAll."
         },
-        "ownerPassword": {
-          "name": "Owner Password",
+        "owner_password": {
+          "name": "Owner password",
           "description": "Stirling-PDF-Feld: ownerPassword. Achtung: Automationen und Traces koennen dieses Geheimnis speichern."
         },
-        "sourcePassword": {
-          "name": "Source Password",
+        "source_password": {
+          "name": "Source password",
           "description": "Stirling-PDF-Feld: sourcePassword. Achtung: Automationen und Traces koennen dieses Geheimnis speichern."
         },
-        "retainedOpeningPassword": {
-          "name": "Retained Opening Password",
+        "retained_opening_password": {
+          "name": "Retained opening password",
           "description": "Stirling-PDF-Feld: retainedOpeningPassword. Achtung: Automationen und Traces koennen dieses Geheimnis speichern."
         }
       }
@@ -3522,32 +3522,32 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "listOfText": {
-          "name": "List Of Text",
+        "list_of_text": {
+          "name": "List of text",
           "description": "Stirling-PDF-Feld: listOfText."
         },
-        "useRegex": {
-          "name": "Use Regex",
+        "use_regex": {
+          "name": "Use regex",
           "description": "Stirling-PDF-Feld: useRegex."
         },
-        "wholeWordSearch": {
-          "name": "Whole Word Search",
+        "whole_word_search": {
+          "name": "Whole word search",
           "description": "Stirling-PDF-Feld: wholeWordSearch."
         },
-        "caseSensitive": {
-          "name": "Case Sensitive",
+        "case_sensitive": {
+          "name": "Case sensitive",
           "description": "Stirling-PDF-Feld: caseSensitive."
         },
-        "redactColor": {
-          "name": "Redact Color",
+        "redact_color": {
+          "name": "Redact color",
           "description": "Stirling-PDF-Feld: redactColor."
         },
-        "customPadding": {
-          "name": "Custom Padding",
+        "custom_padding": {
+          "name": "Custom padding",
           "description": "Stirling-PDF-Feld: customPadding."
         },
-        "convertPDFToImage": {
-          "name": "Convert PDFTo Image",
+        "convert_pdf_to_image": {
+          "name": "Convert pdf to image",
           "description": "Stirling-PDF-Feld: convertPDFToImage."
         }
       }
@@ -3572,20 +3572,20 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "pageNumbers": {
-          "name": "Page Numbers",
+        "page_numbers": {
+          "name": "Page numbers",
           "description": "Stirling-PDF-Feld: pageNumbers."
         },
         "redactions": {
           "name": "Redactions",
           "description": "Stirling-PDF-Feld: redactions."
         },
-        "convertPDFToImage": {
-          "name": "Convert PDFTo Image",
+        "convert_pdf_to_image": {
+          "name": "Convert pdf to image",
           "description": "Stirling-PDF-Feld: convertPDFToImage."
         },
-        "pageRedactionColor": {
-          "name": "Page Redaction Color",
+        "page_redaction_color": {
+          "name": "Page redaction color",
           "description": "Stirling-PDF-Feld: pageRedactionColor."
         }
       }
@@ -3610,28 +3610,28 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "textValues": {
-          "name": "Text Values",
+        "text_values": {
+          "name": "Text values",
           "description": "Stirling-PDF-Feld: textValues."
         },
-        "regexPatterns": {
-          "name": "Regex Patterns",
+        "regex_patterns": {
+          "name": "Regex patterns",
           "description": "Stirling-PDF-Feld: regexPatterns."
         },
-        "wipePages": {
-          "name": "Wipe Pages",
+        "wipe_pages": {
+          "name": "Wipe pages",
           "description": "Stirling-PDF-Feld: wipePages."
         },
         "ranges": {
           "name": "Ranges",
           "description": "Stirling-PDF-Feld: ranges."
         },
-        "imageBoxes": {
-          "name": "Image Boxes",
+        "image_boxes": {
+          "name": "Image boxes",
           "description": "Stirling-PDF-Feld: imageBoxes."
         },
-        "redactImagePages": {
-          "name": "Redact Image Pages",
+        "redact_image_pages": {
+          "name": "Redact image pages",
           "description": "Stirling-PDF-Feld: redactImagePages."
         },
         "style": {
@@ -3660,24 +3660,24 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "privateKeyFile": {
-          "name": "Private Key File",
+        "private_key_file": {
+          "name": "Private key file",
           "description": "Absoluter freigegebener Dateipfad. Endungen: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
         },
-        "certFile": {
-          "name": "Cert File",
+        "cert_file": {
+          "name": "Cert file",
           "description": "Absoluter freigegebener Dateipfad. Endungen: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
         },
-        "p12File": {
-          "name": "P12File",
+        "p12_file": {
+          "name": "P12 file",
           "description": "Absoluter freigegebener Dateipfad. Endungen: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
         },
-        "jksFile": {
-          "name": "Jks File",
+        "jks_file": {
+          "name": "Jks file",
           "description": "Absoluter freigegebener Dateipfad. Endungen: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
         },
-        "certType": {
-          "name": "Cert Type",
+        "cert_type": {
+          "name": "Cert type",
           "description": "Stirling-PDF-Feld: certType."
         },
         "password": {
@@ -3688,8 +3688,8 @@
           "name": "Alias",
           "description": "Stirling-PDF-Feld: alias."
         },
-        "showSignature": {
-          "name": "Show Signature",
+        "show_signature": {
+          "name": "Show signature",
           "description": "Stirling-PDF-Feld: showSignature."
         },
         "reason": {
@@ -3704,12 +3704,12 @@
           "name": "Name",
           "description": "Stirling-PDF-Feld: name."
         },
-        "pageNumber": {
-          "name": "Page Number",
+        "page_number": {
+          "name": "Page number",
           "description": "Stirling-PDF-Feld: pageNumber."
         },
-        "showLogo": {
-          "name": "Show Logo",
+        "show_logo": {
+          "name": "Show logo",
           "description": "Stirling-PDF-Feld: showLogo."
         }
       }
@@ -3734,8 +3734,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "tsaUrl": {
-          "name": "Tsa Url",
+        "tsa_url": {
+          "name": "Tsa url",
           "description": "Stirling-PDF-Feld: tsaUrl."
         }
       }
@@ -3782,28 +3782,28 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "removeJavaScript": {
-          "name": "Remove Java Script",
+        "remove_java_script": {
+          "name": "Remove java script",
           "description": "Stirling-PDF-Feld: removeJavaScript."
         },
-        "removeEmbeddedFiles": {
-          "name": "Remove Embedded Files",
+        "remove_embedded_files": {
+          "name": "Remove embedded files",
           "description": "Stirling-PDF-Feld: removeEmbeddedFiles."
         },
-        "removeXMPMetadata": {
-          "name": "Remove XMPMetadata",
+        "remove_xmp_metadata": {
+          "name": "Remove xmp metadata",
           "description": "Stirling-PDF-Feld: removeXMPMetadata."
         },
-        "removeMetadata": {
-          "name": "Remove Metadata",
+        "remove_metadata": {
+          "name": "Remove metadata",
           "description": "Stirling-PDF-Feld: removeMetadata."
         },
-        "removeLinks": {
-          "name": "Remove Links",
+        "remove_links": {
+          "name": "Remove links",
           "description": "Stirling-PDF-Feld: removeLinks."
         },
-        "removeFonts": {
-          "name": "Remove Fonts",
+        "remove_fonts": {
+          "name": "Remove fonts",
           "description": "Stirling-PDF-Feld: removeFonts."
         }
       }
@@ -3828,8 +3828,8 @@
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
-        "certFile": {
-          "name": "Cert File",
+        "cert_file": {
+          "name": "Cert file",
           "description": "Absoluter freigegebener Dateipfad. Endungen: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
         }
       }

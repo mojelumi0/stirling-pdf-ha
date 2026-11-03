@@ -55,14 +55,14 @@ sequence:
         - operation: metadata
           data:
             file_path: "{{ directory }}/a.pdf"
-            deleteAll: false
+            delete_all: false
             title: Stirling PDF synthetic acceptance test
             output_path: "{{ prefix }}_metadata.pdf"
         - operation: watermark
           data:
             file_path: "{{ directory }}/a.pdf"
-            watermarkType: text
-            watermarkText: STIRLING TEST
+            watermark_type: text
+            watermark_text: STIRLING TEST
             output_path: "{{ prefix }}_watermark.pdf"
         - operation: analyze_page_count
           data:

@@ -7,7 +7,10 @@ determine availability. Actions are on demand, not automatically executed.
 
 Each action accepts `config_entry_id`. Binary results require `output_path` with
 the listed extension; JSON and filter outputs may instead use action response data.
-Field names follow the server API and are shown individually in the action editor.
+HA fields use `snake_case`, for example `render_dpi`, `page_numbers` and
+`image_file`. The integration maps them to the original Stirling PDF multipart
+names (`renderDpi`, `pageNumbers` and `imageFile`). Fields are shown individually
+in the action editor; descriptions identify their underlying API names.
 
 | Action | Group | Input extensions | Output extensions | Endpoint |
 |---|---|---|---|---|

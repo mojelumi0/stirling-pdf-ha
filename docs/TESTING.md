@@ -77,6 +77,9 @@ There is no automatic publication or release approval in this preparation.
 - Optional diagnostics with listener-driven polling, endpoint deduplication and
   isolation from base status/reauthentication.
 - Representative real HTTP and real-server cases for new tools.
+- Both native HA examples use English labels and reports. Their operation names,
+  action payloads, input/output paths, expected counts and safety guards remain
+  unchanged by the language update. HA-generated errors can follow the HA UI language.
 
 Mocked handler tests do not validate all 110 server contracts. The catalog uses
 official 3.2.2 source and the public OpenAPI document reporting 3.2.1. It must not
@@ -94,6 +97,40 @@ actions must be rejected with two entries configured. Check reload/restart,
 reconfigure/reauth isolation, optional-entity enabling/disabling and new tools in
 small groups with non-private documents. Do not enable sensitive/network/AI groups
 merely to make a general acceptance report green.
+
+## Alpha CI findings and fixes, 2026-11-03
+
+The maintainer supplied failed CI logs for commit
+`872fa07f06e64d7627c06046389b7e6f937a6a35`. Both supported HA jobs reported
+481 passed and two failed tests. Every integration module reached 100% line
+coverage, but the suites still failed. Coverage does not replace passing tests.
+Hassfest rejected camelCase service translation keys. Both login modes of the
+pinned real-server suite reported 19 passed and one failed test.
+
+The correction was prepared against development commit
+`2d65c6aa017634ee2e787d9704faf6c356476874`:
+
+- Expose additional HA action fields in `snake_case`, consistently across schemas,
+  selectors, translations and the native tool example. Map them back to original
+  API names for multipart text fields and additional file uploads. Preserve the
+  five established actions, API contracts, security opt-ins and URL checks.
+- Instantiate actual selectors when validating documented defaults. The HA
+  `validate_selector` helper returns a configuration dictionary, not a callable.
+- Generate contract-test numeric inputs within their declared bounds. Keep the
+  flattening minimum of 72 DPI, and explicitly test acceptance at 72 and rejection
+  at 71. Do not relax the runtime constraint to accommodate an invalid fixture.
+- Send `pageNumbers=all` in direct text-filter HTTP tests. The pinned 3.2.0 server
+  dereferences the missing selection rather than defaulting it. Test both a PDF
+  match (200 with verified content) and a non-match (204 with an empty body).
+- Check public-name validity, uniqueness and agreement with service metadata,
+  original wire names for every additional handler, and native example payloads.
+  Retain the English report tests and documentation from local preparation.
+
+These are prepared fixes, not a successful CI rerun. No Python/pytest, hassfest
+or Docker server was executed locally. Ruff and static metadata/package checks
+are recorded separately in the handoff. All existing coverage thresholds remain
+unchanged. Rerun the workflows on the corrected commit before HA acceptance or
+alpha publication; do not count the earlier 100% coverage as a green check.
 
 ## Boundaries
 

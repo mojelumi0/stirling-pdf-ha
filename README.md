@@ -319,7 +319,9 @@ a diagnostic entity does not enable or configure that engine.
 See the [additional action catalog](docs/ACTIONS.md) for 110 additional named
 contracts: page editing/layout, watermarks, metadata, attachments, forms,
 conversions, analysis, filters and opt-in security/network/AI tools. Fields are
-shown individually in the action editor using their server API names. Actions
+shown individually in the action editor using HA-compatible `snake_case` names.
+The integration maps names such as `render_dpi`, `page_numbers` and `image_file`
+to the original Stirling PDF API fields without renaming multipart fields. Actions
 run only when explicitly called; they are not polling entities.
 
 These contracts are source-derived, not a claim that every tool has been
@@ -338,7 +340,7 @@ Options are read on each call; changing a group does not restart another server.
 
 For network tools, configure comma-separated exact hostnames in **Allowed URL
 hosts**, for example `example.org,tsa.example.org`. URL-to-PDF requires HTTP(S)
-without embedded credentials. Timestamping requires an explicit `tsaUrl`; no
+without embedded credentials. Timestamping requires an explicit `tsa_url`; no
 vendor host is silently selected. This is **not an SSRF sandbox**: redirects,
 DNS, embedded resources and server-configured network access still need controls
 in the Stirling PDF deployment and network. Conversions may load embedded

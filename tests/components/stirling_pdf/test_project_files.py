@@ -3,14 +3,17 @@
 from __future__ import annotations
 
 import json
+import re
 import struct
 from pathlib import Path
 from typing import Any
 
 import yaml
-from homeassistant.helpers.selector import validate_selector
+from homeassistant.helpers.selector import selector as selector_factory
 
 from custom_components.stirling_pdf.const import SERVICES
+from custom_components.stirling_pdf.operations import OPERATIONS
+from custom_components.stirling_pdf.tools import ha_field_name, tool_schema
 
 ROOT = Path(__file__).resolve().parents[3]
 INTEGRATION = ROOT / "custom_components" / "stirling_pdf"
@@ -65,6 +68,9 @@ def test_service_and_translation_keys_match() -> None:
     assert set(german["services"]) == set(services)
     for service, description in services.items():
         field_keys = set(description["fields"])
+        assert re.fullmatch(r"[a-z0-9]+(?:[_-][a-z0-9]+)*", service), service
+        for key in field_keys:
+            assert re.fullmatch(r"[a-z0-9]+(?:[_-][a-z0-9]+)*", key), (service, key)
         assert set(strings["services"][service]["fields"]) == field_keys
         assert set(english["services"][service]["fields"]) == field_keys
         assert set(german["services"][service]["fields"]) == field_keys
@@ -83,9 +89,29 @@ def test_action_selectors_accept_their_documented_defaults() -> None:
     services = yaml.safe_load((INTEGRATION / "services.yaml").read_text("utf-8"))
     for service in services.values():
         for field in service["fields"].values():
-            selector = validate_selector(field["selector"])
+            selector = selector_factory(field["selector"])
             if "default" in field:
                 selector(field["default"])
+
+
+def test_catalog_public_fields_are_unique_and_match_service_schemas() -> None:
+    services = yaml.safe_load((INTEGRATION / "services.yaml").read_text("utf-8"))
+    for name, operation in OPERATIONS.items():
+        public_names = [
+            ha_field_name(api_name)
+            for api_name in [*operation["fields"], *operation["files"]]
+        ]
+        reserved = {
+            "config_entry_id",
+            "output_path",
+            "overwrite",
+            "file_path",
+            "file_paths",
+        }
+        assert len(public_names) == len(set(public_names)), name
+        assert not (reserved & set(public_names)), name
+        schema_keys = {key.schema for key in tool_schema(operation).schema}
+        assert schema_keys == set(services[name]["fields"]), name
 
 
 def test_hacs_manifest_is_valid() -> None:
