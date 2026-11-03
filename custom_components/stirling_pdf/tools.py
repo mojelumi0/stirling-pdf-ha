@@ -11,7 +11,12 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse
-from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
+from homeassistant.exceptions import (
+    HomeAssistantError,
+    ServiceValidationError,
+    Unauthorized,
+    UnknownUser,
+)
 from homeassistant.helpers import config_validation as cv
 from yarl import URL
 
@@ -42,6 +47,33 @@ def ha_field_name(api_name: str) -> str:
     return re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", words).lower()
 
 
+def integer_value(value: Any) -> int:
+    """Accept whole numbers without silently truncating floats or booleans."""
+    if isinstance(value, bool) or not isinstance(value, (int, float, str)):
+        raise vol.Invalid("An integer is required")
+    if isinstance(value, float) and (
+        not math.isfinite(value) or not value.is_integer()
+    ):
+        raise vol.Invalid("An integer is required")
+    try:
+        return int(value)
+    except (ValueError, OverflowError) as err:
+        raise vol.Invalid("An integer is required") from err
+
+
+def _number_value(value: Any) -> float:
+    """Reject booleans, non-finite values and overflowing numeric conversions."""
+    if isinstance(value, bool):
+        raise vol.Invalid("A finite number is required")
+    try:
+        number = float(value)
+    except (ValueError, TypeError, OverflowError) as err:
+        raise vol.Invalid("A finite number is required") from err
+    if not math.isfinite(number):
+        raise vol.Invalid("A finite number is required")
+    return number
+
+
 def field_validator(spec: dict[str, Any]) -> Callable:
     """Build validation from a fixed, locally reviewed field contract."""
     kind = spec["type"]
@@ -54,8 +86,7 @@ def field_validator(spec: dict[str, Any]) -> Callable:
         validator = cv.boolean
     elif kind in ("number", "integer"):
         validator = vol.All(
-            vol.Coerce(int if kind == "integer" else float),
-            lambda value: value if math.isfinite(value) else _invalid_number(),
+            integer_value if kind == "integer" else _number_value,
             vol.Range(min=spec.get("minimum"), max=spec.get("maximum")),
         )
     else:
@@ -64,10 +95,6 @@ def field_validator(spec: dict[str, Any]) -> Callable:
             vol.Length(min=spec.get("minLength", 0), max=spec.get("maxLength", 65536)),
         )
     return vol.All(validator, vol.In(spec["enum"])) if "enum" in spec else validator
-
-
-def _invalid_number() -> None:
-    raise vol.Invalid("A finite number is required")
 
 
 def tool_schema(operation: dict[str, Any]) -> vol.Schema:
@@ -169,6 +196,8 @@ async def _read_file(
 
 def validate_result(content: bytes, suffix: str) -> None:
     """Check the selected output container before creating or replacing a file."""
+    if suffix == ".json" and len(content) > _MAX_JSON_BYTES:
+        raise StirlingPdfApiError("Tool JSON response exceeds the response limit")
     zip_file = content.startswith((b"PK\x03\x04", b"PK\x05\x06", b"PK\x07\x08"))
     checks = {
         ".pdf": b"%PDF-" in content[:1024],
@@ -229,12 +258,18 @@ async def async_handle_tool(
         raise ServiceValidationError(
             translation_domain=DOMAIN, translation_key="action_group_disabled"
         )
-    if call.data.get("use_stirling_office_convert") and not entry.options.get(
-        CONF_EXTERNAL_ACTIONS, False
-    ):
-        raise ServiceValidationError(
-            translation_domain=DOMAIN, translation_key="action_group_disabled"
-        )
+    if call.data.get("use_stirling_office_convert"):
+        if not entry.options.get(CONF_EXTERNAL_ACTIONS, False):
+            raise ServiceValidationError(
+                translation_domain=DOMAIN, translation_key="action_group_disabled"
+            )
+        # Match HA's admin-service rules without restricting local conversions.
+        if call.context.user_id:
+            user = await call.hass.auth.async_get_user(call.context.user_id)
+            if user is None:
+                raise UnknownUser(context=call.context)
+            if not user.is_admin:
+                raise Unauthorized(context=call.context)
     output_path = call.data.get("output_path")
     suffix = Path(output_path).suffix.lower() if output_path else ""
     overwrite = call.data["overwrite"]

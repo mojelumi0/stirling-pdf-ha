@@ -112,6 +112,76 @@ async def test_reconfigure_can_clear_a_friendly_server_name(
     assert mock_config_entry.title == "Stirling PDF (pdf.local)"
 
 
+@pytest.mark.parametrize("previous_name", [None, "", "Old server name"])
+async def test_reconfigure_saves_friendly_names_for_legacy_and_current_entries(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry, previous_name: str | None
+) -> None:
+    """A missing saved server_name must not discard a submitted new name."""
+    original = dict(mock_config_entry.data)
+    if previous_name is not None:
+        original["server_name"] = previous_name
+    hass.config_entries.async_update_entry(mock_config_entry, data=original)
+    entry_id = mock_config_entry.entry_id
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_RECONFIGURE, "entry_id": entry_id},
+    )
+    submitted = {
+        CONF_URL: original[CONF_URL],
+        CONF_API_KEY: API_KEY_PLACEHOLDER,
+        "server_name": "Office PDF",
+    }
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(),
+    ) as validate:
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], submitted
+        )
+    assert result["reason"] == "reconfigure_successful"
+    assert mock_config_entry.entry_id == entry_id
+    assert mock_config_entry.title == "Office PDF"
+    assert mock_config_entry.data == {**original, "server_name": "Office PDF"}
+    assert validate.await_args.args[1]["server_name"] == "Office PDF"
+    assert validate.await_args.args[1][CONF_API_KEY] == original[CONF_API_KEY]
+
+
+async def test_legacy_name_reconfiguration_failure_preserves_data_then_allows_retry(
+    hass: HomeAssistant, mock_config_entry: MockConfigEntry
+) -> None:
+    original = dict(mock_config_entry.data)
+    original_title = mock_config_entry.title
+    assert "server_name" not in original
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={
+            "source": config_entries.SOURCE_RECONFIGURE,
+            "entry_id": mock_config_entry.entry_id,
+        },
+    )
+    submitted = {
+        CONF_URL: original[CONF_URL],
+        CONF_API_KEY: API_KEY_PLACEHOLDER,
+        "server_name": "Office PDF",
+    }
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(side_effect=[StirlingPdfAuthError("denied"), None]),
+    ):
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], submitted
+        )
+        assert result["errors"] == {"base": "invalid_auth"}
+        assert dict(mock_config_entry.data) == original
+        assert mock_config_entry.title == original_title
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"], submitted
+        )
+    assert result["reason"] == "reconfigure_successful"
+    assert mock_config_entry.title == "Office PDF"
+    assert mock_config_entry.data == {**original, "server_name": "Office PDF"}
+
+
 @pytest.fixture(autouse=True)
 def mock_entry_setup() -> Iterator[None]:
     """Keep background entry setup/reloads out of these isolated flow tests."""

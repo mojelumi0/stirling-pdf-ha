@@ -126,11 +126,51 @@ The correction was prepared against development commit
   original wire names for every additional handler, and native example payloads.
   Retain the English report tests and documentation from local preparation.
 
-These are prepared fixes, not a successful CI rerun. No Python/pytest, hassfest
-or Docker server was executed locally. Ruff and static metadata/package checks
-are recorded separately in the handoff. All existing coverage thresholds remain
-unchanged. Rerun the workflows on the corrected commit before HA acceptance or
-alpha publication; do not count the earlier 100% coverage as a green check.
+These fixes were initially prepared without a successful CI rerun. No Python,
+pytest, hassfest or Docker server was executed locally. The GitHub checks were
+subsequently verified as successful on PR #11 head
+`03fbf8f7ec156d2c777262572d6f548e6634a6fa`: both configured HA versions,
+the aggregate pytest job, hassfest, HACS and both server login modes. This is
+historical evidence for that exact commit, not for the later changes below.
+
+## PR #11 independent review and regression preparation, 2026-11-03
+
+The current published head was fetched again and matched all 69 local project
+files before editing. The following fixes and regression tests were prepared:
+
+- Require both the external-action opt-in and user-admin authorization when
+  `use_stirling_office_convert` is true. Test every one of the five affected
+  conversion services with non-admin and unknown users, before file access,
+  output validation, network calls or statistics changes. Separately cover admin
+  and internal automation calls, disabled opt-in, and ordinary local conversions.
+  Keep HA's existing behavior for automation calls without a user context.
+- Reject fractional, boolean and non-finite integer inputs, including nested
+  integer arrays and integer enums. Preserve whole numbers and integer strings.
+  Apply the same validator to the established compression-level action, where
+  the independent review found the same truncation issue. Preserve range checks.
+- Convert malformed or overflowing general numeric values to schema errors
+  rather than allowing booleans or leaking raw conversion exceptions.
+- Enforce the 4 MiB JSON-output limit in the common format validator, including
+  `auto_rotate` and `form_detect`, before decoding/parsing or writing. Exercise
+  boundaries below, exactly at and above the limit through HA's real service
+  registry. Rejected outputs must not create files, replace existing outputs or
+  update statistics. Pure JSON analysis remains covered too. Tests use a small
+  patched limit, exercising the production logic without large fixtures.
+- Do not apply that JSON-specific limit to PDF output. This remains a response
+  validation limit after download, not a streaming memory cap.
+- Do not change the production config flow for the reported legacy server-name
+  issue: both credential preparation and normalization already preserve submitted
+  fields. Add regression tests for legacy/current entries, successful renaming,
+  failed validation and retry. The existing name-clearing test remains in place.
+
+The review also inspected server routing, per-entry statistics, optional metric
+isolation, output revalidation/atomic replacement and credential-safe HTTP error
+handling. This is code inspection, not a claim that every server tool or deployment
+has been validated. No automatic merge or release approval follows from it.
+
+These new tests have not been executed locally. The previous green GitHub checks
+do not validate this follow-up patch. Ruff/static checks are separate from pytest,
+measured coverage and live HA acceptance. Existing coverage gates are unchanged.
 
 ## Boundaries
 

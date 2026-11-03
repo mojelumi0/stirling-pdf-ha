@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 import voluptuous as vol
@@ -14,6 +14,7 @@ from homeassistant.exceptions import (
     HomeAssistantError,
     ServiceValidationError,
     Unauthorized,
+    UnknownUser,
 )
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -184,6 +185,62 @@ def test_field_types(spec, value, expected) -> None:
     assert field_validator(spec)(value) == expected
 
 
+@pytest.mark.parametrize("value", [2, 2.0, "2", " +2 ", 2**80])
+def test_integer_fields_preserve_whole_numbers(value) -> None:
+    result = field_validator({"type": "integer"})(value)
+    assert result == int(value)
+    assert type(result) is int
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        1.5,
+        -1.5,
+        True,
+        False,
+        None,
+        [],
+        {},
+        "1.5",
+        "2.0",
+        float("nan"),
+        float("inf"),
+        -float("inf"),
+    ],
+)
+def test_integer_fields_reject_lossy_or_non_numeric_inputs(value) -> None:
+    with pytest.raises(vol.Invalid):
+        field_validator({"type": "integer"})(value)
+
+
+def test_integer_arrays_and_enums_cannot_hide_fractional_inputs() -> None:
+    with pytest.raises(vol.Invalid):
+        field_validator({"type": "array", "items": "integer"})([1, 2.5])
+    position = field_validator(OPERATIONS["page_numbers"]["fields"]["position"])
+    with pytest.raises(vol.Invalid):
+        position(1.5)
+    assert position(1.0) == 1
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        True,
+        False,
+        None,
+        [],
+        "not-a-number",
+        float("nan"),
+        float("inf"),
+        pytest.param(10**10000, id="overflowing-integer"),
+    ],
+)
+def test_number_fields_reject_invalid_values_as_schema_errors(value) -> None:
+    with pytest.raises(vol.Invalid):
+        field_validator({"type": "number"})(value)
+
+
 @pytest.mark.parametrize(
     ("spec", "value"),
     [
@@ -258,6 +315,75 @@ def test_bad_outputs_cannot_replace_files(content, suffix) -> None:
         validate_result(content, suffix)
 
 
+def test_json_size_limit_is_checked_before_parsing_and_not_applied_to_pdf() -> None:
+    with (
+        patch("custom_components.stirling_pdf.tools._MAX_JSON_BYTES", 8),
+        patch("custom_components.stirling_pdf.tools.json.loads") as parse,
+    ):
+        with pytest.raises(StirlingPdfApiError, match="response limit"):
+            validate_result(b'{"value":123}', ".json")
+        parse.assert_not_called()
+        validate_result(b"%PDF-" + b"x" * 64, ".pdf")
+
+
+@pytest.mark.parametrize("name", ["auto_rotate", "form_detect", "analyze_page_count"])
+@pytest.mark.parametrize("size", [31, 32, 33])
+@pytest.mark.parametrize("overwrite", [False, True])
+async def test_json_outputs_enforce_size_limits_before_writing_and_statistics(
+    hass: HomeAssistant,
+    loaded_entry: MockConfigEntry,
+    tmp_path: Path,
+    name: str,
+    size: int,
+    overwrite: bool,
+) -> None:
+    hass.config.allowlist_external_dirs.add(str(tmp_path))
+    source = tmp_path / "input.pdf"
+    source.write_bytes(b"%PDF-input")
+    output = tmp_path / "result.json"
+    original = b'{"original":true}'
+    if overwrite:
+        output.write_bytes(original)
+    content = b'{"value":"' + b"x" * (size - len(b'{"value":""}')) + b'"}'
+    assert len(content) == size
+    client = loaded_entry.runtime_data.client
+    client.async_process = AsyncMock(return_value=(200, content))
+    payload = {
+        "file_path": str(source),
+        "output_path": str(output),
+        "overwrite": overwrite,
+    }
+    if name == "form_detect":
+        payload["apply_to_pdf"] = False
+    with patch("custom_components.stirling_pdf.tools._MAX_JSON_BYTES", 32):
+        if size > 32:
+            with pytest.raises(HomeAssistantError) as error:
+                await hass.services.async_call(DOMAIN, name, payload, blocking=True)
+            assert error.value.translation_key == "processing_failed"
+        else:
+            response = await hass.services.async_call(
+                DOMAIN, name, payload, blocking=True, return_response=True
+            )
+            assert response["output_size"] == size
+            if name == "analyze_page_count":
+                assert response["result"] == json.loads(content)
+    client.async_process.assert_awaited_once()
+    assert source.read_bytes() == b"%PDF-input"
+    coordinator = loaded_entry.runtime_data
+    if size > 32:
+        assert coordinator.jobs_processed == 0
+        assert coordinator.last_operation is None
+        assert coordinator.last_operation_time is None
+        if overwrite:
+            assert output.read_bytes() == original
+        else:
+            assert not output.exists()
+    else:
+        assert coordinator.jobs_processed == 1
+        assert coordinator.last_operation == name
+        assert output.read_bytes() == content
+
+
 async def test_new_action_uses_the_real_registry_atomic_writer_and_statistics(
     hass: HomeAssistant,
     loaded_entry: MockConfigEntry,
@@ -326,6 +452,145 @@ async def test_opt_in_groups_use_home_assistant_admin_service_permissions(
                 blocking=True,
                 context=Context(user_id="non-admin"),
             )
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        name
+        for name, operation in OPERATIONS.items()
+        if "useStirlingOfficeConvert" in operation["fields"]
+    ],
+)
+@pytest.mark.parametrize("known_user", [True, False])
+async def test_external_conversion_rejects_non_admin_and_unknown_users_before_io(
+    hass: HomeAssistant, loaded_entry: MockConfigEntry, name: str, known_user: bool
+) -> None:
+    hass.config_entries.async_update_entry(
+        loaded_entry, options={"enable_external_actions": True}
+    )
+    operation = OPERATIONS[name]
+    payload = {
+        "file_path": "/not/allowed/input" + operation["inputExtensions"][0],
+        "output_path": "/not/allowed/out" + operation["suffixes"][0],
+        "use_stirling_office_convert": True,
+    }
+    if "outputFormat" in operation["fields"]:
+        payload["output_format"] = operation["suffixes"][0].lstrip(".")
+    client = loaded_entry.runtime_data.client
+    client.async_process = AsyncMock()
+    with (
+        patch.object(
+            hass.auth,
+            "async_get_user",
+            new=AsyncMock(
+                return_value=SimpleNamespace(is_admin=False) if known_user else None
+            ),
+        ) as lookup,
+        patch(
+            "custom_components.stirling_pdf.tools._read_file", new_callable=AsyncMock
+        ) as read,
+        patch("custom_components.stirling_pdf._validate_output_path") as validate,
+        patch(
+            "custom_components.stirling_pdf._async_write_result", new_callable=AsyncMock
+        ) as write,
+        pytest.raises(Unauthorized if known_user else UnknownUser),
+    ):
+        await hass.services.async_call(
+            DOMAIN, name, payload, blocking=True, context=Context(user_id="caller")
+        )
+    lookup.assert_awaited_once_with("caller")
+    read.assert_not_awaited()
+    validate.assert_not_called()
+    write.assert_not_awaited()
+    client.async_process.assert_not_awaited()
+    assert loaded_entry.runtime_data.jobs_processed == 0
+    assert loaded_entry.runtime_data.last_operation is None
+
+
+@pytest.mark.parametrize(
+    ("user_id", "is_admin", "external"),
+    [
+        ("admin", True, True),
+        (None, None, True),
+        ("non-admin", False, False),
+        ("non-admin", False, None),
+    ],
+)
+async def test_conversion_admin_and_automation_paths_preserve_local_access(
+    hass: HomeAssistant,
+    loaded_entry: MockConfigEntry,
+    tmp_path: Path,
+    user_id: str | None,
+    is_admin: bool | None,
+    external: bool | None,
+) -> None:
+    hass.config_entries.async_update_entry(
+        loaded_entry, options={"enable_external_actions": external is True}
+    )
+    hass.config.allowlist_external_dirs.add(str(tmp_path))
+    source = tmp_path / "input.doc"
+    source.write_bytes(b"synthetic document")
+    output = tmp_path / "converted.pdf"
+    payload = {"file_path": str(source), "output_path": str(output)}
+    if external is not None:
+        payload["use_stirling_office_convert"] = external
+    client = loaded_entry.runtime_data.client
+    client.async_process = AsyncMock(return_value=(200, b"%PDF-converted"))
+    with patch.object(
+        hass.auth,
+        "async_get_user",
+        new=AsyncMock(return_value=SimpleNamespace(is_admin=is_admin)),
+    ) as lookup:
+        response = await hass.services.async_call(
+            DOMAIN,
+            "file_to_pdf",
+            payload,
+            blocking=True,
+            return_response=True,
+            context=Context(user_id=user_id),
+        )
+    if user_id and external:
+        lookup.assert_awaited_once_with(user_id)
+    else:
+        lookup.assert_not_awaited()
+    assert response["config_entry_id"] == loaded_entry.entry_id
+    assert output.read_bytes() == b"%PDF-converted"
+    assert source.read_bytes() == b"synthetic document"
+    assert loaded_entry.runtime_data.jobs_processed == 1
+    assert loaded_entry.runtime_data.last_operation == "file_to_pdf"
+    sent = client.async_process.await_args.args[2]
+    assert sent.get("useStirlingOfficeConvert") is external
+
+
+async def test_external_conversion_requires_opt_in_even_for_admins(
+    hass: HomeAssistant, loaded_entry: MockConfigEntry
+) -> None:
+    client = loaded_entry.runtime_data.client
+    client.async_process = AsyncMock()
+    with (
+        patch.object(
+            hass.auth,
+            "async_get_user",
+            new=AsyncMock(return_value=SimpleNamespace(is_admin=True)),
+        ) as lookup,
+        pytest.raises(ServiceValidationError) as error,
+    ):
+        await hass.services.async_call(
+            DOMAIN,
+            "file_to_pdf",
+            {
+                "file_path": "/not/allowed.doc",
+                "output_path": "/not/out.pdf",
+                "use_stirling_office_convert": True,
+            },
+            blocking=True,
+            context=Context(user_id="admin"),
+        )
+    assert error.value.translation_key == "action_group_disabled"
+    lookup.assert_not_awaited()
+    client.async_process.assert_not_awaited()
+    assert loaded_entry.runtime_data.jobs_processed == 0
 
 
 @pytest.mark.parametrize(

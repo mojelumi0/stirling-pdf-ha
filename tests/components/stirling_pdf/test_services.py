@@ -7,6 +7,7 @@ from threading import get_ident
 from unittest.mock import AsyncMock, patch
 
 import pytest
+import voluptuous as vol
 from homeassistant.config_entries import SOURCE_REAUTH
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
@@ -437,6 +438,64 @@ async def test_invalid_action_input_is_rejected_before_api_call(
 
     client_call.assert_not_awaited()
     assert loaded_entry.runtime_data.jobs_processed == 0
+
+
+@pytest.mark.parametrize(
+    "level", [1.5, 5.9, True, False, "1.5", float("nan"), float("inf")]
+)
+async def test_compression_rejects_non_integer_levels_before_file_access(
+    hass: HomeAssistant, loaded_entry: MockConfigEntry, level: object
+) -> None:
+    client = loaded_entry.runtime_data.client
+    client.async_compress = AsyncMock()
+    with (
+        patch(
+            "custom_components.stirling_pdf._async_read_pdf", new_callable=AsyncMock
+        ) as read,
+        patch("custom_components.stirling_pdf._validate_output_path") as validate,
+        pytest.raises(vol.Invalid),
+    ):
+        await hass.services.async_call(
+            DOMAIN,
+            SERVICE_COMPRESS,
+            {
+                ATTR_FILE_PATH: "/not/input.pdf",
+                ATTR_OUTPUT_PATH: "/not/output.pdf",
+                ATTR_OPTIMIZE_LEVEL: level,
+            },
+            blocking=True,
+        )
+    read.assert_not_awaited()
+    validate.assert_not_called()
+    client.async_compress.assert_not_awaited()
+    assert loaded_entry.runtime_data.jobs_processed == 0
+
+
+@pytest.mark.parametrize("level", [1, 5.0, "9"])
+async def test_compression_preserves_valid_whole_number_levels(
+    hass: HomeAssistant, loaded_entry: MockConfigEntry, tmp_path: Path, level: object
+) -> None:
+    _allow_test_directory(hass, tmp_path)
+    source = tmp_path / "input.pdf"
+    source.write_bytes(PDF_INPUT)
+    output = tmp_path / "result.pdf"
+    client = loaded_entry.runtime_data.client
+    client.async_compress = AsyncMock(return_value=PDF_RESULT)
+    await hass.services.async_call(
+        DOMAIN,
+        SERVICE_COMPRESS,
+        {
+            ATTR_FILE_PATH: str(source),
+            ATTR_OUTPUT_PATH: str(output),
+            ATTR_OPTIMIZE_LEVEL: level,
+        },
+        blocking=True,
+    )
+    client.async_compress.assert_awaited_once_with("input.pdf", PDF_INPUT, int(level))
+    assert type(client.async_compress.await_args.args[2]) is int
+    assert output.read_bytes() == PDF_RESULT
+    assert source.read_bytes() == PDF_INPUT
+    assert loaded_entry.runtime_data.jobs_processed == 1
 
 
 @pytest.mark.parametrize(

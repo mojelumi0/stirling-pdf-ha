@@ -60,7 +60,7 @@ from .const import (
 )
 from .coordinator import StirlingPdfCoordinator, async_remove_statistics
 from .operations import OPERATIONS
-from .tools import async_handle_tool, tool_schema
+from .tools import async_handle_tool, integer_value, tool_schema
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
@@ -106,7 +106,7 @@ _COMPRESS_SCHEMA = vol.Schema(
     {
         vol.Required(ATTR_FILE_PATH): cv.string,
         vol.Optional(ATTR_OPTIMIZE_LEVEL, default=5): vol.All(
-            vol.Coerce(int), vol.Range(min=1, max=9)
+            integer_value, vol.Range(min=1, max=9)
         ),
         vol.Required(ATTR_OUTPUT_PATH): cv.string,
         vol.Optional(ATTR_OVERWRITE, default=False): cv.boolean,

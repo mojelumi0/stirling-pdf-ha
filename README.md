@@ -241,6 +241,9 @@ Important behavior:
 - Additional tools accept at most 32 local files with a combined 64 MiB;
   structured fields and returned JSON are limited to 4 MiB. These are
   additional-tool limits, not new restrictions on the original five actions.
+  The JSON response limit also applies to tools offering `.json` as an optional
+  output format, before parsing or writing. Responses are received into memory
+  before this validation; it is not a streaming download memory limit.
 
 Home Assistant does not provide a general file picker for arbitrary server or
 container paths. The action editor therefore uses text fields for these paths.
@@ -337,6 +340,13 @@ not start reauth; HTTP 401 does so for the selected server only.
 User-initiated sensitive/external/AI calls also require a Home Assistant admin.
 Internal automation calls without a user context follow HA's admin-service rules.
 Options are read on each call; changing a group does not restart another server.
+Conversion actions with `use_stirling_office_convert: true` require both the
+selected server's external-action opt-in and the same user-admin check. Local
+conversion calls with this flag omitted or false do not gain an admin restriction.
+
+Integer action fields, including the compression level, reject fractional values
+and booleans rather than silently converting them. Whole numeric values and
+integer strings remain accepted; existing range and enum restrictions still apply.
 
 For network tools, configure comma-separated exact hostnames in **Allowed URL
 hosts**, for example `example.org,tsa.example.org`. URL-to-PDF requires HTTP(S)
