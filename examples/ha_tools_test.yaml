@@ -1,19 +1,19 @@
-alias: Stirling PDF - Zusaetzliche Werkzeuge testen
+alias: Stirling PDF - Additional tool test
 description: >-
-  Testet sechs ausgewaehlte Standardaktionen fuer genau einen Server mit a.pdf.
-  Keine Freigabe sensibler, externer oder KI-Aktionen erforderlich. Eigene neue
-  Ausgaben, kein Ueberschreiben, Loeschen, Reload oder Neustart.
+  Tests six selected standard actions for exactly one server using a.pdf.
+  No sensitive, external or AI action opt-ins are required. Creates its own new
+  outputs without overwriting, deleting, reloading or restarting.
 mode: single
 icon: mdi:file-document-check-outline
 fields:
   config_entry_id:
-    name: Stirling-PDF-Server
+    name: Stirling PDF server
     required: true
     selector:
       config_entry:
         integration: stirling_pdf
   test_directory:
-    name: Testordner mit a.pdf
+    name: Test directory containing a.pdf
     default: /config/pdf-test
     selector:
       text:
@@ -31,7 +31,7 @@ sequence:
       results: []
   - if: "{{ not directory.startswith('/config/') or '..' in directory.split('/') or jobs_candidates | count != 1 }}"
     then:
-      - stop: Kein eindeutiger Server-Auftragssensor oder ungueltiger Testordner. Keine PDF-Aktion gestartet.
+      - stop: No unique server job-counter sensor or invalid test directory. No PDF action was started.
         error: true
   - variables:
       jobs_entity: "{{ jobs_candidates | first }}"
@@ -39,7 +39,7 @@ sequence:
       prefix: "{{ directory }}/stirling_tools_{{ run_id }}"
   - if: "{{ start_count < 0 }}"
     then:
-      - stop: Auftragssensor liefert keine Zahl. Keine PDF-Aktion gestartet.
+      - stop: The job-counter sensor does not report a number. No PDF action was started.
         error: true
   - variables:
       test_cases:
@@ -77,7 +77,7 @@ sequence:
         - variables:
             before_count: "{{ states(jobs_entity) | int(-1) }}"
             reply: {}
-        - alias: Zusaetzliches Werkzeug mit Antwort aufrufen
+        - alias: Call additional tool and capture response
           action: "stirling_pdf.{{ repeat.item.operation }}"
           data: "{{ dict(repeat.item.data, config_entry_id=selected_server, overwrite=false) }}"
           response_variable: reply
@@ -102,27 +102,27 @@ sequence:
                  output=reply.get('output_path', '') if reply is mapping else '')] }}
   - action: persistent_notification.create
     data:
-      title: Stirling PDF - Erweiterter Testbericht
+      title: Stirling PDF - Additional tool test report
       message: >-
-        **Testlauf:** {{ run_id }}
+        **Test run:** {{ run_id }}
 
-        **Server-Eintrag:** {{ selected_server }}
+        **Server entry:** {{ selected_server }}
 
         **OK:** {{ results | selectattr('ok', 'eq', true) | list | count }} / {{ test_cases | count }}
 
         {% for result in results %}
-        - {{ result.operation }}: {{ 'OK' if result.ok else 'FEHLER - Trace pruefen' }}.
-        Zaehler {{ result.before }} -> {{ result.after }}.
+        - {{ result.operation }}: {{ 'OK' if result.ok else 'FAILED - check trace' }}.
+        Counter {{ result.before }} -> {{ result.after }}.
         {{ result.output }}
 
         {% endfor %}
 
-        **Zaehler:** {{ start_count }} -> {{ states(jobs_entity) }}.
-        Erwartet bei vollstaendigem Erfolg: {{ start_count + test_cases | count }}.
+        **Counter:** {{ start_count }} -> {{ states(jobs_entity) }}.
+        Expected for a fully successful run: {{ start_count + test_cases | count }}.
 
-        Bitte die vier PDFs oeffnen: Drehung, Seiteninhalt, Metadaten-Titel und
-        Wasserzeichen manuell vergleichen. Die andere Server-Statistik darf
-        sich nicht geaendert haben. Testskript fuer Persistenzpruefungen nicht
-        erneut ausfuehren. Keine automatische Versionspruefung, OCR-Bewertung,
-        Sicherheitspruefung oder Merge-Freigabe. Dieses Skript prueft sechs
-        Standardaktionen, nicht den gesamten Katalog oder sensible/externe/KI-Werkzeuge.
+        Open the four PDFs and manually compare rotation, page contents, metadata
+        title and watermark. The other server's statistics must not have changed.
+        Do not rerun this script for persistence checks. There is no automatic
+        version verification, OCR assessment, security assessment or merge approval.
+        This script tests six standard actions, not the entire catalog or any
+        sensitive, external or AI tools.
