@@ -168,9 +168,42 @@ isolation, output revalidation/atomic replacement and credential-safe HTTP error
 handling. This is code inspection, not a claim that every server tool or deployment
 has been validated. No automatic merge or release approval follows from it.
 
-These new tests have not been executed locally. The previous green GitHub checks
-do not validate this follow-up patch. Ruff/static checks are separate from pytest,
-measured coverage and live HA acceptance. Existing coverage gates are unchanged.
+These tests were not executed locally. The subsequent GitHub checks were verified
+as successful on head `8522362cfb48e356d6639424a0d7bcb369a1c9db`, including both
+HA versions, existing coverage gates, hassfest/HACS and both real-server modes.
+Copilot marked the four earlier discussions resolved. This is historical evidence
+for that commit, not validation of the following metrics patch or live HA acceptance.
+
+## Optional metric integer overflow follow-up, 2026-11-03
+
+The updated review identified another real edge case: `math.isfinite` converts
+integer arguments to float, which can overflow for very large JSON integers.
+Simply accepting every Python integer would move the exception into HA's own
+numeric sensor validation, which also calls `isfinite`. HA also limits state
+strings to `MAX_LENGTH_STATE_STATE` (255 characters in both supported versions).
+
+- Validate non-negative integers with direct integer comparisons, not a float or
+  string conversion. Preserve valid integer values exactly. Return `None` for
+  integers beyond the smaller of HA's state-text bound and the finite-float range,
+  making the affected optional sensor unavailable instead of raising or rounding.
+- Continue using `math.isfinite` only for float metric values. Keep rejection of
+  booleans, negatives, non-finite floats and invalid types. Boolean capability
+  sensors still accept actual `False` values.
+- Bound uptime strings before integer parsing and route calculated seconds
+  through the same numeric validation. This also avoids Python's integer-text
+  limit on malformed, excessively long duration components.
+- Add direct/mapping tests for ordinary counters, integers above float range,
+  values above Python's integer-text limit, the exact HA state-length boundary,
+  invalid floats and overlong uptime data.
+- Enable one optional metric through the real entity registry before integration
+  setup. Use its real platform/coordinator/state-machine path to test a valid
+  value, an unavailable value and recovery. Also test publishing the largest
+  accepted integer. Base status and local processing statistics must not change.
+
+All HTTP interactions in those tests remain mocked. No live HA configuration is
+changed. The new tests have not been executed locally; Ruff/static checks and
+package hashes are separate from the required new CI run. The previous green
+head does not validate this patch. No coverage thresholds or dependencies change.
 
 ## Boundaries
 

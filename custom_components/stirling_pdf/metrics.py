@@ -5,17 +5,23 @@ from __future__ import annotations
 import logging
 import math
 import re
+import sys
 from dataclasses import dataclass
 from datetime import timedelta
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import MAX_LENGTH_STATE_STATE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import StirlingPdfApiClient, StirlingPdfApiError
 
 _LOGGER = logging.getLogger(__name__)
+
+# HA validates numeric sensor states as floats and stores at most 255 characters.
+# Compare integers directly, without converting huge values to float or text.
+_MAX_METRIC_INTEGER = min(int(sys.float_info.max), 10**MAX_LENGTH_STATE_STATE - 1)
 
 ENDPOINTS = {
     "uptime": "/api/v1/info/uptime",
@@ -95,21 +101,27 @@ def metric_value(data: Any, description: Metric) -> int | float | str | bool | N
     if description.kind == "languages":
         return len(languages(value)) if isinstance(value, list) else None
     if description.kind == "text":
-        return value if isinstance(value, str) and 0 < len(value) <= 255 else None
+        return (
+            value
+            if isinstance(value, str) and 0 < len(value) <= MAX_LENGTH_STATE_STATE
+            else None
+        )
     if description.kind == "boolean":
         return value if isinstance(value, bool) else None
     if description.kind == "duration":
         match = (
-            re.fullmatch(r"(\d+)d (\d+)h (\d+)m (\d+)s", value or "")
-            if isinstance(value, str)
+            re.fullmatch(r"(\d+)d (\d+)h (\d+)m (\d+)s", value)
+            if isinstance(value, str) and len(value) <= MAX_LENGTH_STATE_STATE
             else None
         )
         if not match:
             return None
         days, hours, minutes, seconds = map(int, match.groups())
-        return days * 86400 + hours * 3600 + minutes * 60 + seconds
+        value = days * 86400 + hours * 3600 + minutes * 60 + seconds
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         return None
+    if isinstance(value, int):
+        return value if 0 <= value <= _MAX_METRIC_INTEGER else None
     return value if math.isfinite(value) and value >= 0 else None
 
 

@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
 from unittest.mock import AsyncMock, patch
 
 import pytest
+from homeassistant.const import MAX_LENGTH_STATE_STATE, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -12,6 +14,7 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.stirling_pdf.api import StirlingPdfApiError
 from custom_components.stirling_pdf.binary_sensor import StirlingPdfOptionalBinarySensor
+from custom_components.stirling_pdf.const import DOMAIN
 from custom_components.stirling_pdf.metrics import (
     BOOLEAN_METRICS,
     METRICS,
@@ -20,6 +23,36 @@ from custom_components.stirling_pdf.metrics import (
     metric_value,
 )
 from custom_components.stirling_pdf.sensor import StirlingPdfMetricSensor
+
+
+@pytest.fixture
+async def enabled_metric_entry(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    enable_custom_integrations: None,
+) -> AsyncIterator[MockConfigEntry]:
+    """Enable one real platform entity before setup; keep backend HTTP mocked."""
+    er.async_get(hass).async_get_or_create(
+        "sensor",
+        DOMAIN,
+        f"{mock_config_entry.entry_id}_total_jobs",
+        config_entry=mock_config_entry,
+        suggested_object_id="stirling_metric_regression",
+        disabled_by=None,
+    )
+    with (
+        patch(
+            "custom_components.stirling_pdf.api.StirlingPdfApiClient.async_validate_connection",
+            new=AsyncMock(return_value={"status": "UP", "version": "3.2.0"}),
+        ),
+        patch(
+            "custom_components.stirling_pdf.api.StirlingPdfApiClient.async_get_optional_data",
+            new=AsyncMock(return_value={"totalJobs": 7}),
+        ),
+    ):
+        assert await hass.config_entries.async_setup(mock_config_entry.entry_id)
+        await hass.async_block_till_done()
+        yield mock_config_entry
 
 
 @pytest.mark.parametrize(
@@ -49,6 +82,110 @@ from custom_components.stirling_pdf.sensor import StirlingPdfMetricSensor
 )
 def test_metric_value_rejects_guesses(value, description, expected) -> None:
     assert metric_value(value, description) == expected
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (0, 0),
+        (2**63 - 1, 2**63 - 1),
+        (2**80, 2**80),
+        (10**MAX_LENGTH_STATE_STATE - 1, 10**MAX_LENGTH_STATE_STATE - 1),
+        (10**MAX_LENGTH_STATE_STATE, None),
+        (10**400, None),
+        (-(10**400), None),
+        pytest.param(10**5000, None, id="above-python-int-text-limit"),
+        (True, None),
+        (False, None),
+    ],
+)
+@pytest.mark.parametrize("as_mapping", [False, True])
+def test_integer_metrics_are_exact_bounded_and_never_converted_to_float(
+    value, expected, as_mapping: bool
+) -> None:
+    description = Metric("x", "jobs", "totalJobs" if as_mapping else "")
+    data = {"totalJobs": value} if as_mapping else value
+    with patch("custom_components.stirling_pdf.metrics.math.isfinite") as isfinite:
+        result = metric_value(data, description)
+        isfinite.assert_not_called()
+    assert result == expected
+    if result is not None:
+        assert type(result) is int
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (0.0, 0.0),
+        (0.5, 0.5),
+        (1e308, 1e308),
+        (-0.5, None),
+        (float("inf"), None),
+        (-float("inf"), None),
+        (float("nan"), None),
+    ],
+)
+def test_float_metric_validation_remains_finite_and_non_negative(
+    value, expected
+) -> None:
+    assert metric_value(value, Metric("x", "x")) == expected
+
+
+def test_uptime_input_is_bounded_before_integer_parsing() -> None:
+    description = Metric("uptime", "uptime", kind="duration")
+    assert metric_value("9" * 5000 + "d 0h 0m 0s", description) is None
+    assert metric_value("1d 2h 3m 4s", description) == 93784
+
+
+@pytest.mark.parametrize(
+    "invalid_value",
+    [
+        10**MAX_LENGTH_STATE_STATE,
+        10**400,
+        pytest.param(10**5000, id="huge-integer"),
+        -(10**400),
+        True,
+        False,
+        float("inf"),
+        float("nan"),
+    ],
+)
+async def test_optional_metric_entity_publishes_unavailable_and_recovers(
+    hass: HomeAssistant, enabled_metric_entry: MockConfigEntry, invalid_value
+) -> None:
+    """Use HA's real sensor state validation and state-machine write path."""
+    coordinator = enabled_metric_entry.runtime_data.metrics
+    entity_id = er.async_get(hass).async_get_entity_id(
+        "sensor", DOMAIN, f"{enabled_metric_entry.entry_id}_total_jobs"
+    )
+    assert entity_id is not None
+    assert hass.states.get(entity_id) is not None
+    for value, expected in [(7, "7"), (invalid_value, STATE_UNAVAILABLE), (9, "9")]:
+        coordinator.async_set_updated_data({"jobs": {"totalJobs": value}})
+        await hass.async_block_till_done()
+        state = hass.states.get(entity_id)
+        assert state is not None
+        assert state.state == expected
+        assert enabled_metric_entry.runtime_data.last_update_success is True
+        assert enabled_metric_entry.runtime_data.jobs_processed == 0
+        assert enabled_metric_entry.runtime_data.last_operation is None
+
+
+async def test_largest_supported_integer_survives_actual_ha_state_validation(
+    hass: HomeAssistant, enabled_metric_entry: MockConfigEntry
+) -> None:
+    coordinator = enabled_metric_entry.runtime_data.metrics
+    entity_id = er.async_get(hass).async_get_entity_id(
+        "sensor", DOMAIN, f"{enabled_metric_entry.entry_id}_total_jobs"
+    )
+    assert entity_id is not None
+    value = 10**MAX_LENGTH_STATE_STATE - 1
+    coordinator.async_set_updated_data({"jobs": {"totalJobs": value}})
+    await hass.async_block_till_done()
+    state = hass.states.get(entity_id)
+    assert state is not None
+    assert state.state == str(value)
+    assert len(state.state) == MAX_LENGTH_STATE_STATE
 
 
 def test_language_attributes_are_bounded_and_sanitized() -> None:
