@@ -11,8 +11,13 @@ import pytest
 import yaml
 from homeassistant.components.script.config import SCRIPT_ENTITY_SCHEMA
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers.entity import entity_sources
+from homeassistant.helpers.script_variables import ScriptVariables
 from homeassistant.helpers.template import Template
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
+from custom_components.stirling_pdf.const import DOMAIN
 from custom_components.stirling_pdf.operations import OPERATIONS
 from custom_components.stirling_pdf.tools import tool_schema
 
@@ -41,6 +46,120 @@ def _case_variables(example: dict[str, Any]) -> dict[str, Any]:
         for step in example["sequence"]
         if "test_cases" in step.get("variables", {})
     )
+
+
+def _render_initial_variables(hass, script, inputs):
+    """Render the real first-step variables sequentially using HA globals."""
+    values = {
+        name: Template(value, hass)
+        if isinstance(value, str) and ("{{" in value or "{%" in value)
+        else deepcopy(value)
+        for name, value in script["sequence"][0]["variables"].items()
+    }
+    return ScriptVariables(values).async_render(hass, inputs)
+
+
+def _discovery_entry(hass: HomeAssistant, domain: str, label: str):
+    """Register realistic sensors without loading or contacting a backend."""
+    entry = MockConfigEntry(domain=domain, title="Same friendly server name", data={})
+    entry.add_to_hass(hass)
+    entities = {}
+    for platform, suffix, state, attributes in [
+        ("sensor", "jobs", "4", {"state_class": "total_increasing"}),
+        ("sensor", "last", "merge", {"device_class": "enum"}),
+        ("binary_sensor", "reachable", "on", {"device_class": "connectivity"}),
+        ("sensor", "optional", "17", {"state_class": "measurement"}),
+    ]:
+        registered = er.async_get(hass).async_get_or_create(
+            platform,
+            domain,
+            f"{entry.entry_id}_{suffix}",
+            config_entry=entry,
+            suggested_object_id=f"fixture_{label}_{suffix}",
+        )
+        entities[suffix] = registered.entity_id
+        entity_sources(hass)[registered.entity_id] = {
+            "domain": domain,
+            "config_entry": entry.entry_id,
+        }
+        hass.states.async_set(registered.entity_id, state, attributes)
+    return entry, entities
+
+
+@pytest.mark.parametrize("filename", ["ha_test.yaml", "ha_tools_test.yaml"])
+@pytest.mark.parametrize("selected_index", [0, 1])
+async def test_initial_discovery_uses_real_ha_functions_and_exact_entry_ids(
+    hass: HomeAssistant, filename: str, selected_index: int
+) -> None:
+    script = yaml.safe_load((ROOT / "examples" / filename).read_text("utf-8"))
+    first = _discovery_entry(hass, DOMAIN, "first")
+    second = _discovery_entry(hass, DOMAIN, "second")
+    foreign = _discovery_entry(hass, "mqtt", "foreign")
+    entry, entities = (first, second)[selected_index]
+    values = _render_initial_variables(
+        hass,
+        script,
+        {"config_entry_id": entry.entry_id, "test_directory": "/config/pdf-test"},
+    )
+    assert values["selected_server"] == entry.entry_id
+    assert set(values["selected_entities"]) == set(entities.values())
+    assert not (set(values["selected_entities"]) & set(foreign[1].values()))
+    assert values["jobs_candidates"] == [entities["jobs"]]
+    if filename == "ha_test.yaml":
+        assert values["last_candidates"] == [entities["last"]]
+        assert values["reachable_candidates"] == [entities["reachable"]]
+    assert not _render(hass, script["sequence"][1]["if"], values)
+    assert "config_entry_entities" not in (ROOT / "examples" / filename).read_text(
+        "utf-8"
+    )
+
+
+@pytest.mark.parametrize("filename", ["ha_test.yaml", "ha_tools_test.yaml"])
+@pytest.mark.parametrize("selection", ["missing", "foreign"])
+async def test_invalid_selected_entry_stops_before_any_pdf_action(
+    hass: HomeAssistant, filename: str, selection: str
+) -> None:
+    script = yaml.safe_load((ROOT / "examples" / filename).read_text("utf-8"))
+    _discovery_entry(hass, DOMAIN, "first")
+    foreign, _ = _discovery_entry(hass, "mqtt", "foreign")
+    selected = "does-not-exist" if selection == "missing" else foreign.entry_id
+    values = _render_initial_variables(hass, script, {"config_entry_id": selected})
+    assert values["selected_entities"] == []
+    assert values["jobs_candidates"] == []
+    assert _render(hass, script["sequence"][1]["if"], values)
+
+
+@pytest.mark.parametrize("server_count", [1, 2])
+async def test_main_script_without_selection_retains_safe_single_server_fallback(
+    hass: HomeAssistant, server_count: int
+) -> None:
+    script = yaml.safe_load((ROOT / "examples" / "ha_test.yaml").read_text("utf-8"))
+    registered = [
+        _discovery_entry(hass, DOMAIN, f"server_{i}") for i in range(server_count)
+    ]
+    values = _render_initial_variables(hass, script, {})
+    # No input must not accidentally use HA's config_entry_id function as a value.
+    assert values["selected_server"] == ""
+    assert len(values["jobs_candidates"]) == server_count
+    assert set(values["selected_entities"]) == {
+        entity_id for _, entities in registered for entity_id in entities.values()
+    }
+    assert bool(_render(hass, script["sequence"][1]["if"], values)) is (
+        server_count != 1
+    )
+
+
+async def test_additional_tools_without_selection_stop_safely(
+    hass: HomeAssistant,
+) -> None:
+    script = yaml.safe_load(
+        (ROOT / "examples" / "ha_tools_test.yaml").read_text("utf-8")
+    )
+    _discovery_entry(hass, DOMAIN, "first")
+    values = _render_initial_variables(hass, script, {})
+    assert values["selected_server"] == ""
+    assert values["selected_entities"] == []
+    assert _render(hass, script["sequence"][1]["if"], values)
 
 
 async def test_example_matches_home_assistant_script_schema(

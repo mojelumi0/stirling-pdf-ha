@@ -20,8 +20,17 @@ fields:
 sequence:
   - variables:
       directory: "{{ test_directory | default('/config/pdf-test', true) | trim | regex_replace('/+$', '') }}"
-      selected_server: "{{ config_entry_id }}"
-      selected_entities: "{{ config_entry_entities(selected_server) }}"
+      selected_server: "{{ config_entry_id if config_entry_id is string else '' }}"
+      selected_entities: >-
+        {% set matching = namespace(entities=[]) %}
+        {% if config_entry_attr(selected_server, 'domain') == 'stirling_pdf' %}
+          {% for entity_id in integration_entities(config_entry_attr(selected_server, 'title')) %}
+            {% if (entity_id | config_entry_id) == selected_server %}
+              {% set matching.entities = matching.entities + [entity_id] %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        {{ matching.entities }}
       jobs_candidates: >-
         {{ expand(selected_entities)
            | selectattr('attributes.state_class', 'defined')

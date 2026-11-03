@@ -205,6 +205,37 @@ changed. The new tests have not been executed locally; Ruff/static checks and
 package hashes are separate from the required new CI run. The previous green
 head does not validate this patch. No coverage thresholds or dependencies change.
 
+## Native script discovery correction, 2026-11-03
+
+GitHub checks for the metrics fix were subsequently verified as successful on
+head `1852e56fa6e7103b228e8e666f99da51bd84975e`. The maintainer then reported an
+actual HA acceptance-script failure: `config_entry_entities` is undefined. That
+helper is not registered in either supported HA template environment. Previous
+example tests rendered cases and reports but missed the first variables action.
+
+Both native examples now use supported registry template APIs: obtain candidates
+through the selected entry's title, then filter each entity's owning entry ID
+with `config_entry_id` as a filter. This avoids title collisions and the script
+input shadowing the template global of the same name. A string guard also avoids
+mistaking HA's global function for input when no `config_entry_id` was supplied.
+Invalid or foreign entry IDs produce no candidates and reach the existing safe
+stop. The main script retains its single-server fallback; the additional-tools
+script still requires an explicit selection.
+
+New tests render the complete first variables action sequentially through HA's
+`ScriptVariables`, using real template functions and entity registries rather
+than mocked helper names. They cover both server selections, identical friendly
+names including a foreign integration, absent/invalid selection, candidate sensor
+roles and the preflight stop. The existing action-payload, case, report and safe
+output tests remain in place. No PDF action or real server is executed by these
+new discovery tests.
+
+This correction changes only the examples, their tests and documentation, not
+integration runtime code or dependencies. Users must separately replace the UI
+YAML of scripts they already copied; a GitHub push cannot update those scripts.
+The new tests have not been run locally and require a fresh CI run. Earlier green
+checks are not evidence that the corrected initial discovery has passed.
+
 ## Boundaries
 
 - The synthetic Basic proxy is not the Community App or Supervisor.

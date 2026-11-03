@@ -38,6 +38,17 @@ its configured UI language. The scripts do not change that language setting.
    An omitted selection with multiple matching sensor sets stops before uploads.
    Run separately for each server and verify that the other's count is unchanged.
 
+The examples discover the selected server through HA's supported
+`integration_entities`, `config_entry_attr` and `config_entry_id` filter APIs.
+Candidates are filtered by the exact entry ID, so identical friendly names do
+not mix servers. Both scripts render their initial discovery variables in CI,
+including the `config_entry_id` script input, invalid selections and missing input.
+
+If a copied script reports `config_entry_entities is undefined`, replace its UI
+YAML with the current example. No integration update or HA restart is needed for
+this script-only correction. Updating the GitHub examples does not automatically
+replace scripts already saved in Home Assistant.
+
 ## Install and run the script
 
 1. Open **Settings > Automations & scenes > Scripts** and create a new script.
