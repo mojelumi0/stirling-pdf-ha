@@ -50,6 +50,47 @@ async def test_example_matches_home_assistant_script_schema(
     assert example["fields"]["include_extract_pages"]["default"] is True
     assert example["fields"]["reported_version"]["default"] == ""
     assert not re.search(r"\b\d+\.\d+\.\d+", example["alias"])
+    assert example["fields"]["config_entry_id"]["selector"] == {
+        "config_entry": {"integration": "stirling_pdf"}
+    }
+
+
+async def test_extended_example_schema_and_safe_cases(hass: HomeAssistant) -> None:
+    example = yaml.safe_load(
+        (ROOT / "examples" / "ha_tools_test.yaml").read_text("utf-8")
+    )
+    SCRIPT_ENTITY_SCHEMA(deepcopy(example))
+    assert example["fields"]["config_entry_id"]["required"] is True
+    values = _case_variables(example)
+    context = {
+        "directory": "/config/pdf-test",
+        "prefix": "/config/pdf-test/stirling_tools_fixture",
+        "run_id": "fixture",
+    }
+    cases = _render(hass, values["test_cases"], context)
+    assert len(cases) == 6
+    assert {case["operation"] for case in cases} == {
+        "rotate",
+        "repair",
+        "metadata",
+        "watermark",
+        "analyze_page_count",
+        "check_contains_text",
+    }
+    for case in cases:
+        assert case["data"]["file_path"] == "/config/pdf-test/a.pdf"
+        if "output_path" in case["data"]:
+            assert case["data"]["output_path"].startswith(context["prefix"])
+    action = next(step for step in example["sequence"] if "repeat" in step)["repeat"][
+        "sequence"
+    ][1]
+    rendered = _render(
+        hass,
+        action["data"],
+        {"repeat": {"item": cases[0]}, "selected_server": "selected-entry"},
+    )
+    assert rendered["config_entry_id"] == "selected-entry"
+    assert rendered["overwrite"] is False
 
 
 @pytest.mark.parametrize("extract_enabled", [True, False])

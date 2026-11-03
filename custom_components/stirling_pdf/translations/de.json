@@ -9,7 +9,8 @@
           "url": "URL",
           "api_key": "API-Key (optional)",
           "username": "HTTP-Basic-Benutzername (optional)",
-          "password": "HTTP-Basic-Passwort (optional)"
+          "password": "HTTP-Basic-Passwort (optional)",
+          "server_name": "Servername (optional)"
         }
       },
       "reconfigure": {
@@ -19,7 +20,8 @@
           "url": "URL",
           "api_key": "API-Key (optional)",
           "username": "HTTP-Basic-Benutzername (optional)",
-          "password": "HTTP-Basic-Passwort (optional)"
+          "password": "HTTP-Basic-Passwort (optional)",
+          "server_name": "Servername (optional)"
         }
       },
       "reauth_confirm": {
@@ -41,15 +43,19 @@
       "unknown": "Unerwarteter Fehler."
     },
     "abort": {
-      "single_instance_allowed": "Es kann nur eine Stirling-PDF-Instanz eingerichtet werden.",
       "reauth_successful": "Die Authentifizierung wurde erfolgreich aktualisiert.",
-      "reconfigure_successful": "Die Konfiguration wurde erfolgreich aktualisiert."
+      "reconfigure_successful": "Die Konfiguration wurde erfolgreich aktualisiert.",
+      "already_configured": "Diese Server-URL ist bereits eingerichtet."
     }
   },
   "entity": {
     "sensor": {
-      "version": { "name": "Version" },
-      "jobs_processed": { "name": "Verarbeitete Aufträge" },
+      "version": {
+        "name": "Version"
+      },
+      "jobs_processed": {
+        "name": "Verarbeitete Aufträge"
+      },
       "last_operation": {
         "name": "Letzte Aktion",
         "state": {
@@ -57,74 +63,3959 @@
           "split": "Teilen",
           "ocr": "OCR",
           "compress": "Komprimieren",
-          "extract_pages": "Seiten extrahieren"
+          "extract_pages": "Seiten extrahieren",
+          "rotate": "Seiten drehen",
+          "auto_rotate": "Seiten automatisch ausrichten",
+          "remove_pages": "Seiten entfernen",
+          "crop": "Seiten zuschneiden",
+          "scale_pages": "Seitengröße ändern",
+          "remove_blanks": "Leerseiten entfernen",
+          "repair": "PDF reparieren",
+          "split_by_size": "Nach Größe oder Anzahl aufteilen",
+          "split_by_chapters": "Nach Lesezeichen aufteilen",
+          "auto_split": "Mit Trennseiten aufteilen",
+          "split_by_sections": "Seiten in Abschnitte zerlegen",
+          "poster": "Posterdruck",
+          "booklet": "Broschürendruck",
+          "multi_page_layout": "Mehrere Seiten pro Blatt",
+          "single_page": "Lange Einzelseite",
+          "overlay": "PDF überlagern",
+          "page_numbers": "Seitenzahlen hinzufügen",
+          "watermark": "Wasserzeichen",
+          "stamp": "Stempel",
+          "add_image": "Bild einfügen",
+          "add_comments": "Kommentare hinzufügen",
+          "replace_text": "Text ersetzen",
+          "metadata": "Metadaten bearbeiten",
+          "bookmarks": "Lesezeichen auslesen",
+          "edit_bookmarks": "Lesezeichen bearbeiten",
+          "remove_images": "Bilder entfernen",
+          "invert_colors": "Farben ersetzen oder invertieren",
+          "scanner_effect": "Scan-Effekt",
+          "decompress": "PDF-Streams entpacken",
+          "auto_rename": "Dateiname aus Inhalt ableiten",
+          "extract_images": "Bilder extrahieren",
+          "extract_scans": "Scans ausschneiden",
+          "list_attachments": "Anhänge auflisten",
+          "extract_attachments": "Alle Anhänge extrahieren",
+          "add_attachments": "Anhänge einbetten",
+          "delete_attachment": "Anhang entfernen",
+          "rename_attachment": "Anhang umbenennen",
+          "batch_process_attachments": "Anhänge gesammelt bearbeiten",
+          "create_portfolio": "PDF-Portfolio erzeugen",
+          "flatten_portfolio": "Portfolio vereinfachen",
+          "flatten": "PDF/Formulare abflachen",
+          "unlock_pdf_forms": "Formular-Schreibschutz lösen",
+          "images_to_pdf": "Bilder zu PDF",
+          "pdf_to_img": "PDF zu Bildern",
+          "pdf_to_pdfa": "PDF/A oder PDF/X",
+          "pdf_to_text": "PDF zu Text oder RTF",
+          "pdf_to_word": "PDF zu Word",
+          "file_to_pdf": "Office/Datei zu PDF",
+          "pdf_to_presentation": "PDF zu Präsentation",
+          "pdf_to_csv": "Tabellen zu CSV",
+          "pdf_to_xlsx": "Tabellen zu XLSX",
+          "pdf_to_xml": "PDF zu XML",
+          "html_to_pdf": "HTML zu PDF",
+          "markdown_to_pdf": "Markdown zu PDF",
+          "pdf_to_html": "PDF zu HTML",
+          "pdf_to_markdown": "PDF zu Markdown",
+          "eml_to_pdf": "E-Mail zu PDF",
+          "svg_to_pdf": "SVG zu PDF",
+          "ebook_to_pdf": "E-Book zu PDF",
+          "pdf_to_epub": "PDF zu E-Book",
+          "cbr_to_pdf": "CBR zu PDF",
+          "cbz_to_pdf": "CBZ zu PDF",
+          "pdf_to_cbr": "PDF zu CBR",
+          "pdf_to_cbz": "PDF zu CBZ",
+          "pdf_to_vector": "PDF zu PS/EPS/PCL/XPS",
+          "vector_to_pdf": "PS/EPS zu PDF",
+          "pdf_to_ua": "PDF/UA erzeugen",
+          "url_to_pdf": "Webseite zu PDF",
+          "analyze_basic_info": "PDF-Grunddaten",
+          "analyze_page_count": "Seitenzahl",
+          "analyze_page_dimensions": "Seitengrößen",
+          "analyze_document_properties": "Dokumenteigenschaften",
+          "analyze_font_info": "Schriftinformationen",
+          "analyze_annotation_info": "Anmerkungen",
+          "analyze_form_fields": "Formularanalyse",
+          "analyze_security_info": "Sicherheitsanalyse",
+          "pdf_info": "Umfassende PDF-Informationen",
+          "check_contains_text": "Textbedingung",
+          "check_contains_image": "Bildbedingung",
+          "check_page_count": "Seitenzahlbedingung",
+          "check_page_size": "Papierformatbedingung",
+          "check_file_size": "Dateigrößenbedingung",
+          "check_page_rotation": "Drehungsbedingung",
+          "form_fields": "Formularfelder lesen",
+          "form_fields_with_coordinates": "Formularpositionen lesen",
+          "form_fill": "Formular ausfüllen",
+          "form_extract_csv": "Formulardaten als CSV",
+          "form_extract_xlsx": "Formulardaten als XLSX",
+          "form_add_fields": "Formularfelder anlegen",
+          "form_modify_fields": "Formularfelder ändern",
+          "form_edit_fields": "Formularänderungen bündeln",
+          "form_delete_fields": "Formularfelder entfernen",
+          "form_detect": "Formularfelder automatisch erkennen",
+          "add_password": "PDF verschlüsseln",
+          "remove_password": "PDF entschlüsseln",
+          "auto_redact": "Automatisch schwärzen",
+          "redact": "Bereiche schwärzen",
+          "redact_execute": "Schwärzungsplan ausführen",
+          "cert_sign": "Digital signieren",
+          "timestamp": "Zeitstempel hinzufügen",
+          "remove_cert_sign": "Signatur entfernen",
+          "sanitize": "PDF bereinigen",
+          "validate_signature": "Signatur prüfen",
+          "verify": "PDF-Standards prüfen",
+          "validate_compliance": "PDF/A-Konformität prüfen",
+          "accessibility_report": "Barrierefreiheitsbericht",
+          "show_javascript": "PDF-JavaScript auslesen",
+          "classify_and_label": "KI klassifizieren",
+          "math_auditor_agent": "Rechnungen mit KI prüfen",
+          "pdf_comment_agent": "KI-Kommentare"
         }
+      },
+      "uptime": {
+        "name": "Server-Laufzeit"
+      },
+      "post_requests": {
+        "name": "Server-POST-Anfragen"
+      },
+      "get_requests": {
+        "name": "Server-GET-Anfragen"
+      },
+      "total_jobs": {
+        "name": "Aufbewahrte Auftraege"
+      },
+      "active_jobs": {
+        "name": "Aktive Auftraege"
+      },
+      "completed_jobs": {
+        "name": "Abgeschlossene aufbewahrte Auftraege"
+      },
+      "failed_jobs": {
+        "name": "Fehlgeschlagene aufbewahrte Auftraege"
+      },
+      "successful_jobs": {
+        "name": "Erfolgreiche aufbewahrte Auftraege"
+      },
+      "file_result_jobs": {
+        "name": "Aufbewahrte Dateiergebnisse"
+      },
+      "average_processing_time": {
+        "name": "Mittlere Verarbeitungszeit"
+      },
+      "oldest_active_job": {
+        "name": "Aeltester aktiver Auftrag (Serverzeit)"
+      },
+      "newest_active_job": {
+        "name": "Neuester aktiver Auftrag (Serverzeit)"
+      },
+      "queued_jobs": {
+        "name": "Wartende Auftraege"
+      },
+      "queue_capacity": {
+        "name": "Warteschlangenkapazitaet"
+      },
+      "total_queued_jobs": {
+        "name": "Insgesamt eingereihte Auftraege"
+      },
+      "rejected_jobs": {
+        "name": "Abgewiesene Auftraege"
+      },
+      "resource_status": {
+        "name": "Ressourcenstatus"
+      },
+      "ocr_languages": {
+        "name": "Installierte OCR-Sprachen"
+      },
+      "ai_health": {
+        "name": "KI-Gesundheitsstatus"
+      },
+      "ai_smart_model": {
+        "name": "KI-Smart-Modell"
+      },
+      "ai_fast_model": {
+        "name": "KI-Fast-Modell"
+      },
+      "ai_latency": {
+        "name": "KI-Prueflatenz"
       }
     },
     "binary_sensor": {
-      "reachable": { "name": "Erreichbar" }
+      "reachable": {
+        "name": "Erreichbar"
+      },
+      "ai_enabled": {
+        "name": "KI aktiviert"
+      },
+      "ai_reachable": {
+        "name": "KI erreichbar"
+      },
+      "ai_authenticated": {
+        "name": "KI authentifiziert"
+      },
+      "document_parsing_enabled": {
+        "name": "Dokumentanalyse aktiviert"
+      },
+      "document_parsing_reachable": {
+        "name": "Dokumentanalyse erreichbar"
+      },
+      "indexing_ready": {
+        "name": "Indexierung eingerichtet"
+      }
     }
   },
   "exceptions": {
-    "not_configured": { "message": "Stirling PDF ist nicht eingerichtet." },
-    "entry_not_loaded": { "message": "Die Stirling-PDF-Konfiguration ist nicht geladen." },
-    "path_not_allowed": { "message": "Der Pfad `{path}` ist in Home Assistant nicht erlaubt. Füge den übergeordneten Ordner zu `allowlist_external_dirs` hinzu." },
-    "invalid_extension": { "message": "Der Pfad `{path}` muss die Dateiendung `{extension}` verwenden." },
-    "invalid_languages": { "message": "Gib mindestens einen gültigen OCR-Sprachcode ein, beispielsweise `eng` oder `deu`." },
-    "invalid_page_numbers": { "message": "Gib positive Seitenzahlen oder aufsteigende Bereiche ein, zum Beispiel `1,3-5`. Verwende höchstens 1024 Zeichen. Ausdrücke wie `all` oder `2n+1` werden beim Extrahieren nicht unterstützt." },
-    "output_exists": { "message": "Die Ausgabedatei `{path}` existiert bereits. Aktiviere Überschreiben oder wähle einen anderen Pfad." },
-    "authentication_failed": { "message": "Stirling PDF hat den API-Zugriff abgelehnt. Aktualisiere die Authentifizierung unter Einstellungen > Geräte & Dienste." },
-    "processing_failed": { "message": "Stirling PDF konnte das Dokument nicht verarbeiten: {error}" },
-    "file_error": { "message": "Home Assistant konnte die Datei nicht lesen oder schreiben: {error}" }
+    "not_configured": {
+      "message": "Stirling PDF ist nicht eingerichtet."
+    },
+    "entry_not_loaded": {
+      "message": "Die Stirling-PDF-Konfiguration ist nicht geladen."
+    },
+    "path_not_allowed": {
+      "message": "Der Pfad `{path}` ist in Home Assistant nicht erlaubt. Füge den übergeordneten Ordner zu `allowlist_external_dirs` hinzu."
+    },
+    "invalid_extension": {
+      "message": "Der Pfad `{path}` muss die Dateiendung `{extension}` verwenden."
+    },
+    "invalid_languages": {
+      "message": "Gib mindestens einen gültigen OCR-Sprachcode ein, beispielsweise `eng` oder `deu`."
+    },
+    "invalid_page_numbers": {
+      "message": "Gib positive Seitenzahlen oder aufsteigende Bereiche ein, zum Beispiel `1,3-5`. Verwende höchstens 1024 Zeichen. Ausdrücke wie `all` oder `2n+1` werden beim Extrahieren nicht unterstützt."
+    },
+    "output_exists": {
+      "message": "Die Ausgabedatei `{path}` existiert bereits. Aktiviere Überschreiben oder wähle einen anderen Pfad."
+    },
+    "authentication_failed": {
+      "message": "Stirling PDF hat den API-Zugriff abgelehnt. Aktualisiere die Authentifizierung unter Einstellungen > Geräte & Dienste."
+    },
+    "processing_failed": {
+      "message": "Stirling PDF konnte das Dokument nicht verarbeiten: {error}"
+    },
+    "file_error": {
+      "message": "Home Assistant konnte die Datei nicht lesen oder schreiben: {error}"
+    },
+    "invalid_server": {
+      "message": "Waehle einen gueltigen Stirling-PDF-Server."
+    },
+    "server_required": {
+      "message": "Mehrere Server sind eingerichtet. Waehle den Server mit config_entry_id aus."
+    },
+    "action_group_disabled": {
+      "message": "Gib diese Aktionsgruppe zuerst in den Integrationsoptionen des gewaehlten Servers frei."
+    },
+    "remote_host_not_allowed": {
+      "message": "Gib eine HTTP(S)-URL ohne eingebettete Zugangsdaten an und erlaube ihren Hostnamen in den Optionen dieses Servers."
+    },
+    "input_too_large": {
+      "message": "Zusaetzliche Werkzeuge erlauben maximal 32 Dateien mit zusammen 64 MiB und strukturierte Felder bis 4 MiB."
+    },
+    "tool_forbidden": {
+      "message": "Das gewaehlte Werkzeug ist fuer diesen Server oder Benutzer nicht erlaubt. Die Basisanmeldung wurde nicht geaendert."
+    }
   },
   "services": {
     "merge": {
       "name": "PDFs zusammenführen",
       "description": "Führe zwei oder mehr PDF-Dateien in der angegebenen Reihenfolge zusammen.",
       "fields": {
-        "file_paths": { "name": "Dateipfade", "description": "Absolute Pfade der zusammenzuführenden PDFs in der gewünschten Reihenfolge." },
-        "output_path": { "name": "Ausgabepfad", "description": "Absoluter Pfad für das zusammengeführte PDF." },
-        "overwrite": { "name": "Überschreiben", "description": "Ersetze die Ausgabedatei, wenn sie bereits existiert." }
+        "file_paths": {
+          "name": "Dateipfade",
+          "description": "Absolute Pfade der zusammenzuführenden PDFs in der gewünschten Reihenfolge."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Absoluter Pfad für das zusammengeführte PDF."
+        },
+        "overwrite": {
+          "name": "Überschreiben",
+          "description": "Ersetze die Ausgabedatei, wenn sie bereits existiert."
+        },
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        }
       }
     },
     "split": {
       "name": "PDF teilen",
       "description": "Teile ein PDF nach den angegebenen Seitenzahlen.",
       "fields": {
-        "file_path": { "name": "Dateipfad", "description": "Absoluter Pfad des zu teilenden PDFs." },
-        "page_numbers": { "name": "Seitenzahlen", "description": "Trennpunkte wie `2,5`, Bereiche, `all` oder Funktionen wie `2n+1`." },
-        "output_path": { "name": "Ausgabepfad", "description": "Absoluter `.zip`-Pfad für die erzeugten PDFs." },
-        "overwrite": { "name": "Überschreiben", "description": "Ersetze die Ausgabedatei, wenn sie bereits existiert." }
+        "file_path": {
+          "name": "Dateipfad",
+          "description": "Absoluter Pfad des zu teilenden PDFs."
+        },
+        "page_numbers": {
+          "name": "Seitenzahlen",
+          "description": "Trennpunkte wie `2,5`, Bereiche, `all` oder Funktionen wie `2n+1`."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Absoluter `.zip`-Pfad für die erzeugten PDFs."
+        },
+        "overwrite": {
+          "name": "Überschreiben",
+          "description": "Ersetze die Ausgabedatei, wenn sie bereits existiert."
+        },
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        }
       }
     },
     "ocr": {
       "name": "OCR auf PDF anwenden",
       "description": "Mache ein gescanntes PDF per OCR durchsuchbar.",
       "fields": {
-        "file_path": { "name": "Dateipfad", "description": "Absoluter Pfad des gescannten PDFs." },
-        "languages": { "name": "Sprachen", "description": "Installierte Tesseract-Sprachcodes, beispielsweise `eng` und `deu`." },
-        "output_path": { "name": "Ausgabepfad", "description": "Absoluter Pfad für das durchsuchbare PDF." },
-        "overwrite": { "name": "Überschreiben", "description": "Ersetze die Ausgabedatei, wenn sie bereits existiert." }
+        "file_path": {
+          "name": "Dateipfad",
+          "description": "Absoluter Pfad des gescannten PDFs."
+        },
+        "languages": {
+          "name": "Sprachen",
+          "description": "Installierte Tesseract-Sprachcodes, beispielsweise `eng` und `deu`."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Absoluter Pfad für das durchsuchbare PDF."
+        },
+        "overwrite": {
+          "name": "Überschreiben",
+          "description": "Ersetze die Ausgabedatei, wenn sie bereits existiert."
+        },
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        }
       }
     },
     "extract_pages": {
       "name": "PDF-Seiten extrahieren",
       "description": "Speichere ausgewählte Seiten einer PDF in einer neuen PDF.",
       "fields": {
-        "file_path": { "name": "Dateipfad", "description": "Absoluter Pfad der Quell-PDF." },
-        "page_numbers": { "name": "Seitenzahlen", "description": "Positive Seitenzahlen ab 1 und aufsteigende Bereiche, zum Beispiel `1,3-5`. Höchstens 1024 Zeichen. Keine Ausdrücke wie `all` oder Funktionen." },
-        "output_path": { "name": "Ausgabepfad", "description": "Absoluter `.pdf`-Pfad für die ausgewählten Seiten." },
-        "overwrite": { "name": "Überschreiben", "description": "Ersetze eine bereits vorhandene Ausgabedatei." }
+        "file_path": {
+          "name": "Dateipfad",
+          "description": "Absoluter Pfad der Quell-PDF."
+        },
+        "page_numbers": {
+          "name": "Seitenzahlen",
+          "description": "Positive Seitenzahlen ab 1 und aufsteigende Bereiche, zum Beispiel `1,3-5`. Höchstens 1024 Zeichen. Keine Ausdrücke wie `all` oder Funktionen."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Absoluter `.pdf`-Pfad für die ausgewählten Seiten."
+        },
+        "overwrite": {
+          "name": "Überschreiben",
+          "description": "Ersetze eine bereits vorhandene Ausgabedatei."
+        },
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        }
       }
     },
     "compress": {
       "name": "PDF komprimieren",
       "description": "Verringere die Dateigröße eines PDFs.",
       "fields": {
-        "file_path": { "name": "Dateipfad", "description": "Absoluter Pfad des zu komprimierenden PDFs." },
-        "optimize_level": { "name": "Optimierungsstufe", "description": "Ein Wert von 1 (leicht) bis 9 (am stärksten)." },
-        "output_path": { "name": "Ausgabepfad", "description": "Absoluter Pfad für das komprimierte PDF." },
-        "overwrite": { "name": "Überschreiben", "description": "Ersetze die Ausgabedatei, wenn sie bereits existiert." }
+        "file_path": {
+          "name": "Dateipfad",
+          "description": "Absoluter Pfad des zu komprimierenden PDFs."
+        },
+        "optimize_level": {
+          "name": "Optimierungsstufe",
+          "description": "Ein Wert von 1 (leicht) bis 9 (am stärksten)."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Absoluter Pfad für das komprimierte PDF."
+        },
+        "overwrite": {
+          "name": "Überschreiben",
+          "description": "Ersetze die Ausgabedatei, wenn sie bereits existiert."
+        },
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        }
+      }
+    },
+    "rotate": {
+      "name": "Seiten drehen",
+      "description": "Feste Drehung für ausgewählte Seiten. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "angle": {
+          "name": "Angle",
+          "description": "Stirling-PDF-Feld: angle."
+        }
+      }
+    },
+    "auto_rotate": {
+      "name": "Seiten automatisch ausrichten",
+      "description": "Seitenausrichtung erkennen und korrigieren. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf, .json."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "detectionMode": {
+          "name": "Detection Mode",
+          "description": "Stirling-PDF-Feld: detectionMode."
+        },
+        "confidenceThreshold": {
+          "name": "Confidence Threshold",
+          "description": "Stirling-PDF-Feld: confidenceThreshold."
+        },
+        "dryRun": {
+          "name": "Dry Run",
+          "description": "Stirling-PDF-Feld: dryRun."
+        },
+        "inferUndetected": {
+          "name": "Infer Undetected",
+          "description": "Stirling-PDF-Feld: inferUndetected."
+        },
+        "pageRotations": {
+          "name": "Page Rotations",
+          "description": "Stirling-PDF-Feld: pageRotations."
+        }
+      }
+    },
+    "remove_pages": {
+      "name": "Seiten entfernen",
+      "description": "Angegebene Seiten aus einer neuen Ergebnisdatei entfernen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "pageNumbers": {
+          "name": "Page Numbers",
+          "description": "Stirling-PDF-Feld: pageNumbers."
+        }
+      }
+    },
+    "crop": {
+      "name": "Seiten zuschneiden",
+      "description": "Ausschnitt beziehungsweise Seitenrahmen verändern. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "pageNumbers": {
+          "name": "Page Numbers",
+          "description": "Stirling-PDF-Feld: pageNumbers."
+        },
+        "x": {
+          "name": "X",
+          "description": "Stirling-PDF-Feld: x."
+        },
+        "y": {
+          "name": "Y",
+          "description": "Stirling-PDF-Feld: y."
+        },
+        "width": {
+          "name": "Width",
+          "description": "Stirling-PDF-Feld: width."
+        },
+        "height": {
+          "name": "Height",
+          "description": "Stirling-PDF-Feld: height."
+        },
+        "removeDataOutsideCrop": {
+          "name": "Remove Data Outside Crop",
+          "description": "Stirling-PDF-Feld: removeDataOutsideCrop."
+        },
+        "autoCrop": {
+          "name": "Auto Crop",
+          "description": "Stirling-PDF-Feld: autoCrop."
+        }
+      }
+    },
+    "scale_pages": {
+      "name": "Seitengröße ändern",
+      "description": "Seiten skalieren oder an ein Papierformat anpassen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "pageSize": {
+          "name": "Page Size",
+          "description": "Stirling-PDF-Feld: pageSize."
+        },
+        "orientation": {
+          "name": "Orientation",
+          "description": "Stirling-PDF-Feld: orientation."
+        },
+        "scaleFactor": {
+          "name": "Scale Factor",
+          "description": "Stirling-PDF-Feld: scaleFactor."
+        }
+      }
+    },
+    "remove_blanks": {
+      "name": "Leerseiten entfernen",
+      "description": "Leere Seiten anhand konfigurierbarer Kriterien erkennen und entfernen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "threshold": {
+          "name": "Threshold",
+          "description": "Stirling-PDF-Feld: threshold."
+        },
+        "whitePercent": {
+          "name": "White Percent",
+          "description": "Stirling-PDF-Feld: whitePercent."
+        }
+      }
+    },
+    "repair": {
+      "name": "PDF reparieren",
+      "description": "Strukturelle PDF-Probleme zu beheben versuchen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "split_by_size": {
+      "name": "Nach Größe oder Anzahl aufteilen",
+      "description": "PDF nach Dateigröße, Seiten- oder Dokumentzahl zerlegen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .zip, .pdf, .png, .jpg, .jpeg."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "splitType": {
+          "name": "Split Type",
+          "description": "Stirling-PDF-Feld: splitType."
+        },
+        "splitValue": {
+          "name": "Split Value",
+          "description": "Stirling-PDF-Feld: splitValue."
+        }
+      }
+    },
+    "split_by_chapters": {
+      "name": "Nach Lesezeichen aufteilen",
+      "description": "Kapitel-/Lesezeichenstruktur zum Aufteilen verwenden. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .zip, .pdf, .png, .jpg, .jpeg."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "includeMetadata": {
+          "name": "Include Metadata",
+          "description": "Stirling-PDF-Feld: includeMetadata."
+        },
+        "allowDuplicates": {
+          "name": "Allow Duplicates",
+          "description": "Stirling-PDF-Feld: allowDuplicates."
+        },
+        "bookmarkLevel": {
+          "name": "Bookmark Level",
+          "description": "Stirling-PDF-Feld: bookmarkLevel."
+        }
+      }
+    },
+    "auto_split": {
+      "name": "Mit Trennseiten aufteilen",
+      "description": "Automatische Aufteilung anhand des serverseitigen Trennseitenverfahrens. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .zip, .pdf, .png, .jpg, .jpeg."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "duplexMode": {
+          "name": "Duplex Mode",
+          "description": "Stirling-PDF-Feld: duplexMode."
+        }
+      }
+    },
+    "split_by_sections": {
+      "name": "Seiten in Abschnitte zerlegen",
+      "description": "Einzelne Seiten räumlich in Teilbereiche aufteilen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .zip, .pdf, .png, .jpg, .jpeg."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "pageNumbers": {
+          "name": "Page Numbers",
+          "description": "Stirling-PDF-Feld: pageNumbers."
+        },
+        "splitMode": {
+          "name": "Split Mode",
+          "description": "Stirling-PDF-Feld: splitMode."
+        },
+        "horizontalDivisions": {
+          "name": "Horizontal Divisions",
+          "description": "Stirling-PDF-Feld: horizontalDivisions."
+        },
+        "verticalDivisions": {
+          "name": "Vertical Divisions",
+          "description": "Stirling-PDF-Feld: verticalDivisions."
+        },
+        "merge": {
+          "name": "Merge",
+          "description": "Stirling-PDF-Feld: merge."
+        }
+      }
+    },
+    "poster": {
+      "name": "Posterdruck",
+      "description": "Große Seiten in kleinere Druckkacheln zerlegen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .zip, .pdf, .png, .jpg, .jpeg."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "pageSize": {
+          "name": "Page Size",
+          "description": "Stirling-PDF-Feld: pageSize."
+        },
+        "rightToLeft": {
+          "name": "Right To Left",
+          "description": "Stirling-PDF-Feld: rightToLeft."
+        },
+        "xFactor": {
+          "name": "X Factor",
+          "description": "Stirling-PDF-Feld: xFactor."
+        },
+        "yFactor": {
+          "name": "Y Factor",
+          "description": "Stirling-PDF-Feld: yFactor."
+        }
+      }
+    },
+    "booklet": {
+      "name": "Broschürendruck",
+      "description": "Seiten für ein gefaltetes Heft anordnen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "pagesPerSheet": {
+          "name": "Pages Per Sheet",
+          "description": "Stirling-PDF-Feld: pagesPerSheet."
+        },
+        "addBorder": {
+          "name": "Add Border",
+          "description": "Stirling-PDF-Feld: addBorder."
+        },
+        "spineLocation": {
+          "name": "Spine Location",
+          "description": "Stirling-PDF-Feld: spineLocation."
+        },
+        "addGutter": {
+          "name": "Add Gutter",
+          "description": "Stirling-PDF-Feld: addGutter."
+        },
+        "gutterSize": {
+          "name": "Gutter Size",
+          "description": "Stirling-PDF-Feld: gutterSize."
+        },
+        "doubleSided": {
+          "name": "Double Sided",
+          "description": "Stirling-PDF-Feld: doubleSided."
+        },
+        "duplexPass": {
+          "name": "Duplex Pass",
+          "description": "Stirling-PDF-Feld: duplexPass."
+        },
+        "flipOnShortEdge": {
+          "name": "Flip On Short Edge",
+          "description": "Stirling-PDF-Feld: flipOnShortEdge."
+        }
+      }
+    },
+    "multi_page_layout": {
+      "name": "Mehrere Seiten pro Blatt",
+      "description": "Mehrere PDF-Seiten auf einer Ausgabeseite anordnen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "mode": {
+          "name": "Mode",
+          "description": "Stirling-PDF-Feld: mode."
+        },
+        "pagesPerSheet": {
+          "name": "Pages Per Sheet",
+          "description": "Stirling-PDF-Feld: pagesPerSheet."
+        },
+        "arrangement": {
+          "name": "Arrangement",
+          "description": "Stirling-PDF-Feld: arrangement."
+        },
+        "readingDirection": {
+          "name": "Reading Direction",
+          "description": "Stirling-PDF-Feld: readingDirection."
+        },
+        "rows": {
+          "name": "Rows",
+          "description": "Stirling-PDF-Feld: rows."
+        },
+        "cols": {
+          "name": "Cols",
+          "description": "Stirling-PDF-Feld: cols."
+        },
+        "orientation": {
+          "name": "Orientation",
+          "description": "Stirling-PDF-Feld: orientation."
+        },
+        "innerMargin": {
+          "name": "Inner Margin",
+          "description": "Stirling-PDF-Feld: innerMargin."
+        },
+        "topMargin": {
+          "name": "Top Margin",
+          "description": "Stirling-PDF-Feld: topMargin."
+        },
+        "bottomMargin": {
+          "name": "Bottom Margin",
+          "description": "Stirling-PDF-Feld: bottomMargin."
+        },
+        "leftMargin": {
+          "name": "Left Margin",
+          "description": "Stirling-PDF-Feld: leftMargin."
+        },
+        "rightMargin": {
+          "name": "Right Margin",
+          "description": "Stirling-PDF-Feld: rightMargin."
+        },
+        "borderWidth": {
+          "name": "Border Width",
+          "description": "Stirling-PDF-Feld: borderWidth."
+        },
+        "addBorder": {
+          "name": "Add Border",
+          "description": "Stirling-PDF-Feld: addBorder."
+        }
+      }
+    },
+    "single_page": {
+      "name": "Lange Einzelseite",
+      "description": "Mehrere Seiten zu einer langen PDF-Seite verbinden. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "overlay": {
+      "name": "PDF überlagern",
+      "description": "Dokumente als überlagerte Ebenen kombinieren. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "overlayFiles": {
+          "name": "Overlay Files",
+          "description": "Absoluter freigegebener Dateipfad. Endungen: .pdf."
+        },
+        "overlayMode": {
+          "name": "Overlay Mode",
+          "description": "Stirling-PDF-Feld: overlayMode."
+        },
+        "counts": {
+          "name": "Counts",
+          "description": "Stirling-PDF-Feld: counts."
+        },
+        "overlayPosition": {
+          "name": "Overlay Position",
+          "description": "Stirling-PDF-Feld: overlayPosition."
+        }
+      }
+    },
+    "page_numbers": {
+      "name": "Seitenzahlen hinzufügen",
+      "description": "Positionierbare Seitennummerierung ergänzen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "pageNumbers": {
+          "name": "Page Numbers",
+          "description": "Stirling-PDF-Feld: pageNumbers."
+        },
+        "fontType": {
+          "name": "Font Type",
+          "description": "Stirling-PDF-Feld: fontType."
+        },
+        "position": {
+          "name": "Position",
+          "description": "Stirling-PDF-Feld: position."
+        },
+        "customText": {
+          "name": "Custom Text",
+          "description": "Stirling-PDF-Feld: customText."
+        },
+        "pagesToNumber": {
+          "name": "Pages To Number",
+          "description": "Stirling-PDF-Feld: pagesToNumber."
+        },
+        "startingNumber": {
+          "name": "Starting Number",
+          "description": "Stirling-PDF-Feld: startingNumber."
+        },
+        "fontSize": {
+          "name": "Font Size",
+          "description": "Stirling-PDF-Feld: fontSize."
+        },
+        "fontColor": {
+          "name": "Font Color",
+          "description": "Stirling-PDF-Feld: fontColor."
+        },
+        "customMargin": {
+          "name": "Custom Margin",
+          "description": "Stirling-PDF-Feld: customMargin."
+        },
+        "zeroPad": {
+          "name": "Zero Pad",
+          "description": "Stirling-PDF-Feld: zeroPad."
+        }
+      }
+    },
+    "watermark": {
+      "name": "Wasserzeichen",
+      "description": "Text- oder Bildwasserzeichen in eine Ergebnis-PDF einfügen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "watermarkImage": {
+          "name": "Watermark Image",
+          "description": "Absoluter freigegebener Dateipfad. Endungen: .png, .jpg, .jpeg, .gif, .webp."
+        },
+        "watermarkType": {
+          "name": "Watermark Type",
+          "description": "Stirling-PDF-Feld: watermarkType."
+        },
+        "watermarkText": {
+          "name": "Watermark Text",
+          "description": "Stirling-PDF-Feld: watermarkText."
+        },
+        "alphabet": {
+          "name": "Alphabet",
+          "description": "Stirling-PDF-Feld: alphabet."
+        },
+        "fontSize": {
+          "name": "Font Size",
+          "description": "Stirling-PDF-Feld: fontSize."
+        },
+        "rotation": {
+          "name": "Rotation",
+          "description": "Stirling-PDF-Feld: rotation."
+        },
+        "opacity": {
+          "name": "Opacity",
+          "description": "Stirling-PDF-Feld: opacity."
+        },
+        "customColor": {
+          "name": "Custom Color",
+          "description": "Stirling-PDF-Feld: customColor."
+        },
+        "convertPDFToImage": {
+          "name": "Convert PDFTo Image",
+          "description": "Stirling-PDF-Feld: convertPDFToImage."
+        },
+        "widthSpacer": {
+          "name": "Width Spacer",
+          "description": "Stirling-PDF-Feld: widthSpacer."
+        },
+        "heightSpacer": {
+          "name": "Height Spacer",
+          "description": "Stirling-PDF-Feld: heightSpacer."
+        }
+      }
+    },
+    "stamp": {
+      "name": "Stempel",
+      "description": "Text-, Bild- oder QR-Stempel aufbringen, abhängig von Serverversion und Parametern. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "stampImage": {
+          "name": "Stamp Image",
+          "description": "Absoluter freigegebener Dateipfad. Endungen: .png, .jpg, .jpeg, .gif, .webp."
+        },
+        "pageNumbers": {
+          "name": "Page Numbers",
+          "description": "Stirling-PDF-Feld: pageNumbers."
+        },
+        "stampType": {
+          "name": "Stamp Type",
+          "description": "Stirling-PDF-Feld: stampType."
+        },
+        "stampText": {
+          "name": "Stamp Text",
+          "description": "Stirling-PDF-Feld: stampText."
+        },
+        "position": {
+          "name": "Position",
+          "description": "Stirling-PDF-Feld: position."
+        },
+        "fontSize": {
+          "name": "Font Size",
+          "description": "Stirling-PDF-Feld: fontSize."
+        },
+        "opacity": {
+          "name": "Opacity",
+          "description": "Stirling-PDF-Feld: opacity."
+        },
+        "customColor": {
+          "name": "Custom Color",
+          "description": "Stirling-PDF-Feld: customColor."
+        },
+        "rotation": {
+          "name": "Rotation",
+          "description": "Stirling-PDF-Feld: rotation."
+        },
+        "alphabet": {
+          "name": "Alphabet",
+          "description": "Stirling-PDF-Feld: alphabet."
+        },
+        "overrideX": {
+          "name": "Override X",
+          "description": "Stirling-PDF-Feld: overrideX."
+        },
+        "overrideY": {
+          "name": "Override Y",
+          "description": "Stirling-PDF-Feld: overrideY."
+        },
+        "customMargin": {
+          "name": "Custom Margin",
+          "description": "Stirling-PDF-Feld: customMargin."
+        }
+      }
+    },
+    "add_image": {
+      "name": "Bild einfügen",
+      "description": "Ein Bild auf PDF-Seiten platzieren. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "imageFile": {
+          "name": "Image File",
+          "description": "Absoluter freigegebener Dateipfad. Endungen: .png, .jpg, .jpeg, .gif, .webp."
+        },
+        "x": {
+          "name": "X",
+          "description": "Stirling-PDF-Feld: x."
+        },
+        "y": {
+          "name": "Y",
+          "description": "Stirling-PDF-Feld: y."
+        },
+        "everyPage": {
+          "name": "Every Page",
+          "description": "Stirling-PDF-Feld: everyPage."
+        }
+      }
+    },
+    "add_comments": {
+      "name": "Kommentare hinzufügen",
+      "description": "Notizkommentare an Positionen oder Textstellen einfügen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "comments": {
+          "name": "Comments",
+          "description": "Stirling-PDF-Feld: comments."
+        }
+      }
+    },
+    "replace_text": {
+      "name": "Text ersetzen",
+      "description": "Vorhandenen Text per Suchen/Ersetzen bearbeiten. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "pageNumbers": {
+          "name": "Page Numbers",
+          "description": "Stirling-PDF-Feld: pageNumbers."
+        },
+        "edits": {
+          "name": "Edits",
+          "description": "Stirling-PDF-Feld: edits."
+        },
+        "wholeWordSearch": {
+          "name": "Whole Word Search",
+          "description": "Stirling-PDF-Feld: wholeWordSearch."
+        }
+      }
+    },
+    "metadata": {
+      "name": "Metadaten bearbeiten",
+      "description": "Titel, Autor und weitere PDF-Metadaten ändern oder entfernen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "deleteAll": {
+          "name": "Delete All",
+          "description": "Stirling-PDF-Feld: deleteAll."
+        },
+        "author": {
+          "name": "Author",
+          "description": "Stirling-PDF-Feld: author."
+        },
+        "creationDate": {
+          "name": "Creation Date",
+          "description": "Stirling-PDF-Feld: creationDate."
+        },
+        "creator": {
+          "name": "Creator",
+          "description": "Stirling-PDF-Feld: creator."
+        },
+        "keywords": {
+          "name": "Keywords",
+          "description": "Stirling-PDF-Feld: keywords."
+        },
+        "modificationDate": {
+          "name": "Modification Date",
+          "description": "Stirling-PDF-Feld: modificationDate."
+        },
+        "producer": {
+          "name": "Producer",
+          "description": "Stirling-PDF-Feld: producer."
+        },
+        "subject": {
+          "name": "Subject",
+          "description": "Stirling-PDF-Feld: subject."
+        },
+        "title": {
+          "name": "Title",
+          "description": "Stirling-PDF-Feld: title."
+        },
+        "trapped": {
+          "name": "Trapped",
+          "description": "Stirling-PDF-Feld: trapped."
+        },
+        "allRequestParams": {
+          "name": "All Request Params",
+          "description": "Stirling-PDF-Feld: allRequestParams."
+        }
+      }
+    },
+    "bookmarks": {
+      "name": "Lesezeichen auslesen",
+      "description": "Lesezeichenstruktur als Ergebnis bereitstellen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "edit_bookmarks": {
+      "name": "Lesezeichen bearbeiten",
+      "description": "Inhalts-/Lesezeichenstruktur hinzufügen oder verändern. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "bookmarkData": {
+          "name": "Bookmark Data",
+          "description": "Stirling-PDF-Feld: bookmarkData."
+        },
+        "replaceExisting": {
+          "name": "Replace Existing",
+          "description": "Stirling-PDF-Feld: replaceExisting."
+        }
+      }
+    },
+    "remove_images": {
+      "name": "Bilder entfernen",
+      "description": "Bildelemente aus der PDF entfernen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "invert_colors": {
+      "name": "Farben ersetzen oder invertieren",
+      "description": "Farbwerte beziehungsweise Darstellung anpassen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "replaceAndInvertOption": {
+          "name": "Replace And Invert Option",
+          "description": "Stirling-PDF-Feld: replaceAndInvertOption."
+        },
+        "highContrastColorCombination": {
+          "name": "High Contrast Color Combination",
+          "description": "Stirling-PDF-Feld: highContrastColorCombination."
+        },
+        "backGroundColor": {
+          "name": "Back Ground Color",
+          "description": "Stirling-PDF-Feld: backGroundColor."
+        },
+        "textColor": {
+          "name": "Text Color",
+          "description": "Stirling-PDF-Feld: textColor."
+        }
+      }
+    },
+    "scanner_effect": {
+      "name": "Scan-Effekt",
+      "description": "Ein künstlich gescannt wirkendes Ergebnis erzeugen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "quality": {
+          "name": "Quality",
+          "description": "Stirling-PDF-Feld: quality."
+        },
+        "rotation": {
+          "name": "Rotation",
+          "description": "Stirling-PDF-Feld: rotation."
+        },
+        "colorspace": {
+          "name": "Colorspace",
+          "description": "Stirling-PDF-Feld: colorspace."
+        },
+        "advancedEnabled": {
+          "name": "Advanced Enabled",
+          "description": "Stirling-PDF-Feld: advancedEnabled."
+        },
+        "brightness": {
+          "name": "Brightness",
+          "description": "Stirling-PDF-Feld: brightness."
+        },
+        "contrast": {
+          "name": "Contrast",
+          "description": "Stirling-PDF-Feld: contrast."
+        },
+        "blur": {
+          "name": "Blur",
+          "description": "Stirling-PDF-Feld: blur."
+        },
+        "noise": {
+          "name": "Noise",
+          "description": "Stirling-PDF-Feld: noise."
+        },
+        "resolution": {
+          "name": "Resolution",
+          "description": "Stirling-PDF-Feld: resolution."
+        },
+        "border": {
+          "name": "Border",
+          "description": "Stirling-PDF-Feld: border."
+        },
+        "rotate": {
+          "name": "Rotate",
+          "description": "Stirling-PDF-Feld: rotate."
+        },
+        "rotateVariance": {
+          "name": "Rotate Variance",
+          "description": "Stirling-PDF-Feld: rotateVariance."
+        },
+        "yellowish": {
+          "name": "Yellowish",
+          "description": "Stirling-PDF-Feld: yellowish."
+        },
+        "rotationValue": {
+          "name": "Rotation Value",
+          "description": "Stirling-PDF-Feld: rotationValue."
+        }
+      }
+    },
+    "decompress": {
+      "name": "PDF-Streams entpacken",
+      "description": "Interne PDF-Datenströme dekomprimieren. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "auto_rename": {
+      "name": "Dateiname aus Inhalt ableiten",
+      "description": "Inhalts-/Kopfzeileninformationen für einen Dateinamen verwenden. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "useFirstTextAsFallback": {
+          "name": "Use First Text As Fallback",
+          "description": "Stirling-PDF-Feld: useFirstTextAsFallback."
+        }
+      }
+    },
+    "extract_images": {
+      "name": "Bilder extrahieren",
+      "description": "Eingebettete Bilder aus der PDF ausgeben. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .zip, .pdf, .png, .jpg, .jpeg."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "format": {
+          "name": "Format",
+          "description": "Stirling-PDF-Feld: format."
+        }
+      }
+    },
+    "extract_scans": {
+      "name": "Scans ausschneiden",
+      "description": "Gescannte Bildbereiche aus einer Eingabe erkennen und extrahieren. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .zip, .pdf, .png, .jpg, .jpeg."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "angleThreshold": {
+          "name": "Angle Threshold",
+          "description": "Stirling-PDF-Feld: angleThreshold."
+        },
+        "tolerance": {
+          "name": "Tolerance",
+          "description": "Stirling-PDF-Feld: tolerance."
+        },
+        "minArea": {
+          "name": "Min Area",
+          "description": "Stirling-PDF-Feld: minArea."
+        },
+        "minContourArea": {
+          "name": "Min Contour Area",
+          "description": "Stirling-PDF-Feld: minContourArea."
+        },
+        "borderSize": {
+          "name": "Border Size",
+          "description": "Stirling-PDF-Feld: borderSize."
+        }
+      }
+    },
+    "list_attachments": {
+      "name": "Anhänge auflisten",
+      "description": "Namen und Eigenschaften eingebetteter Anhänge ermitteln. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "extract_attachments": {
+      "name": "Alle Anhänge extrahieren",
+      "description": "Eingebettete Dateien als Ergebnis ausgeben. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .zip, .pdf, .png, .jpg, .jpeg."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "add_attachments": {
+      "name": "Anhänge einbetten",
+      "description": "Dateien an ein PDF anhängen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "attachments": {
+          "name": "Attachments",
+          "description": "Absoluter freigegebener Dateipfad. Endungen: .pdf, .txt, .csv, .json, .png, .jpg, .docx, .xlsx, .zip."
+        },
+        "convertToPdfA3b": {
+          "name": "Convert To Pdf A3b",
+          "description": "Stirling-PDF-Feld: convertToPdfA3b."
+        }
+      }
+    },
+    "delete_attachment": {
+      "name": "Anhang entfernen",
+      "description": "Einbettung eines gewählten Anhangs entfernen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "attachmentName": {
+          "name": "Attachment Name",
+          "description": "Stirling-PDF-Feld: attachmentName."
+        }
+      }
+    },
+    "rename_attachment": {
+      "name": "Anhang umbenennen",
+      "description": "Anhangsnamen in einer neuen Ergebnisdatei ändern. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "attachmentName": {
+          "name": "Attachment Name",
+          "description": "Stirling-PDF-Feld: attachmentName."
+        },
+        "newName": {
+          "name": "New Name",
+          "description": "Stirling-PDF-Feld: newName."
+        }
+      }
+    },
+    "batch_process_attachments": {
+      "name": "Anhänge gesammelt bearbeiten",
+      "description": "Mehrere Anhangsänderungen in einem Aufruf durchführen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "attachments": {
+          "name": "Attachments",
+          "description": "Absoluter freigegebener Dateipfad. Endungen: .pdf, .txt, .csv, .json, .png, .jpg, .docx, .xlsx, .zip."
+        },
+        "opsJson": {
+          "name": "Ops Json",
+          "description": "Stirling-PDF-Feld: opsJson."
+        },
+        "convertToPdfA3b": {
+          "name": "Convert To Pdf A3b",
+          "description": "Stirling-PDF-Feld: convertToPdfA3b."
+        }
+      }
+    },
+    "create_portfolio": {
+      "name": "PDF-Portfolio erzeugen",
+      "description": "Dateien als PDF-Portfolio bündeln. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_paths": {
+          "name": "Eingabedateien",
+          "description": "Absolute freigegebene HA-Pfade. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "coverTitle": {
+          "name": "Cover Title",
+          "description": "Stirling-PDF-Feld: coverTitle."
+        }
+      }
+    },
+    "flatten_portfolio": {
+      "name": "Portfolio vereinfachen",
+      "description": "PDF-Portfolio in eine einfachere Ausgabe überführen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "flatten": {
+      "name": "PDF/Formulare abflachen",
+      "description": "Formulare oder Seiteninhalte in eine feste Darstellung überführen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "flattenOnlyForms": {
+          "name": "Flatten Only Forms",
+          "description": "Stirling-PDF-Feld: flattenOnlyForms."
+        },
+        "renderDpi": {
+          "name": "Render Dpi",
+          "description": "Stirling-PDF-Feld: renderDpi."
+        }
+      }
+    },
+    "unlock_pdf_forms": {
+      "name": "Formular-Schreibschutz lösen",
+      "description": "Read-only-Eigenschaften von Formularfeldern entfernen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "images_to_pdf": {
+      "name": "Bilder zu PDF",
+      "description": "Scan- oder Kamerabilder in ein PDF umwandeln. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_paths": {
+          "name": "Eingabedateien",
+          "description": "Absolute freigegebene HA-Pfade. .png, .jpg, .jpeg, .tif, .tiff, .gif, .webp, .svg, .bmp."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "fitOption": {
+          "name": "Fit Option",
+          "description": "Stirling-PDF-Feld: fitOption."
+        },
+        "colorType": {
+          "name": "Color Type",
+          "description": "Stirling-PDF-Feld: colorType."
+        },
+        "autoRotate": {
+          "name": "Auto Rotate",
+          "description": "Stirling-PDF-Feld: autoRotate."
+        }
+      }
+    },
+    "pdf_to_img": {
+      "name": "PDF zu Bildern",
+      "description": "PDF-Seiten als Bilddateien rendern. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .zip, .png, .jpg, .jpeg, .tif, .tiff, .webp, .gif, .bmp."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "pageNumbers": {
+          "name": "Page Numbers",
+          "description": "Stirling-PDF-Feld: pageNumbers."
+        },
+        "imageFormat": {
+          "name": "Image Format",
+          "description": "Stirling-PDF-Feld: imageFormat."
+        },
+        "singleOrMultiple": {
+          "name": "Single Or Multiple",
+          "description": "Stirling-PDF-Feld: singleOrMultiple."
+        },
+        "colorType": {
+          "name": "Color Type",
+          "description": "Stirling-PDF-Feld: colorType."
+        },
+        "dpi": {
+          "name": "Dpi",
+          "description": "Stirling-PDF-Feld: dpi."
+        },
+        "includeAnnotations": {
+          "name": "Include Annotations",
+          "description": "Stirling-PDF-Feld: includeAnnotations."
+        }
+      }
+    },
+    "pdf_to_pdfa": {
+      "name": "PDF/A oder PDF/X",
+      "description": "Für Archivierung oder Druck ein gewünschtes Profil erzeugen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "outputFormat": {
+          "name": "Output Format",
+          "description": "Stirling-PDF-Feld: outputFormat."
+        },
+        "pdfUa": {
+          "name": "Pdf Ua",
+          "description": "Stirling-PDF-Feld: pdfUa."
+        },
+        "strict": {
+          "name": "Strict",
+          "description": "Stirling-PDF-Feld: strict."
+        }
+      }
+    },
+    "pdf_to_text": {
+      "name": "PDF zu Text oder RTF",
+      "description": "Text beziehungsweise RTF als Datei extrahieren. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .txt, .rtf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "outputFormat": {
+          "name": "Output Format",
+          "description": "Stirling-PDF-Feld: outputFormat."
+        },
+        "useStirlingOfficeConvert": {
+          "name": "Use Stirling Office Convert",
+          "description": "Stirling-PDF-Feld: useStirlingOfficeConvert."
+        }
+      }
+    },
+    "pdf_to_word": {
+      "name": "PDF zu Word",
+      "description": "Eine bearbeitbare Textverarbeitungsdatei erzeugen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .doc, .docx, .odt."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "outputFormat": {
+          "name": "Output Format",
+          "description": "Stirling-PDF-Feld: outputFormat."
+        },
+        "useStirlingOfficeConvert": {
+          "name": "Use Stirling Office Convert",
+          "description": "Stirling-PDF-Feld: useStirlingOfficeConvert."
+        }
+      }
+    },
+    "file_to_pdf": {
+      "name": "Office/Datei zu PDF",
+      "description": "Unterstützte Quelldateien mit dem verfügbaren Konverter nach PDF umwandeln. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .doc, .docx, .xls, .xlsx, .ppt, .pptx, .odt, .ods, .odp, .rtf, .txt."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "useStirlingOfficeConvert": {
+          "name": "Use Stirling Office Convert",
+          "description": "Stirling-PDF-Feld: useStirlingOfficeConvert."
+        }
+      }
+    },
+    "pdf_to_presentation": {
+      "name": "PDF zu Präsentation",
+      "description": "Präsentationsdatei aus PDF erzeugen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .ppt, .pptx, .odp."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "outputFormat": {
+          "name": "Output Format",
+          "description": "Stirling-PDF-Feld: outputFormat."
+        },
+        "useStirlingOfficeConvert": {
+          "name": "Use Stirling Office Convert",
+          "description": "Stirling-PDF-Feld: useStirlingOfficeConvert."
+        }
+      }
+    },
+    "pdf_to_csv": {
+      "name": "Tabellen zu CSV",
+      "description": "Tabellendaten aus PDF in CSV überführen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .csv, .zip."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "pageNumbers": {
+          "name": "Page Numbers",
+          "description": "Stirling-PDF-Feld: pageNumbers."
+        }
+      }
+    },
+    "pdf_to_xlsx": {
+      "name": "Tabellen zu XLSX",
+      "description": "Tabellendaten als Excel-Datei ausgeben. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .xlsx."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "pageNumbers": {
+          "name": "Page Numbers",
+          "description": "Stirling-PDF-Feld: pageNumbers."
+        },
+        "useStirlingOfficeConvert": {
+          "name": "Use Stirling Office Convert",
+          "description": "Stirling-PDF-Feld: useStirlingOfficeConvert."
+        }
+      }
+    },
+    "pdf_to_xml": {
+      "name": "PDF zu XML",
+      "description": "PDF-Inhalte in eine XML-Ausgabe überführen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .xml."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "html_to_pdf": {
+      "name": "HTML zu PDF",
+      "description": "HTML und gegebenenfalls zugehörige Ressourcen rendern. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .html, .htm, .zip."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "zoom": {
+          "name": "Zoom",
+          "description": "Stirling-PDF-Feld: zoom."
+        }
+      }
+    },
+    "markdown_to_pdf": {
+      "name": "Markdown zu PDF",
+      "description": "Markdown als druckbares PDF rendern. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .md, .markdown."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "pdf_to_html": {
+      "name": "PDF zu HTML",
+      "description": "Inhalte als HTML-Dateien ausgeben. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .html, .zip."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "pdf_to_markdown": {
+      "name": "PDF zu Markdown",
+      "description": "PDF-Inhalte als Markdown ausgeben. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .md, .zip."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "eml_to_pdf": {
+      "name": "E-Mail zu PDF",
+      "description": "EML oder MSG als PDF-Dokument rendern. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .eml, .msg."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "includeAttachments": {
+          "name": "Include Attachments",
+          "description": "Stirling-PDF-Feld: includeAttachments."
+        },
+        "maxAttachmentSizeMB": {
+          "name": "Max Attachment Size MB",
+          "description": "Stirling-PDF-Feld: maxAttachmentSizeMB."
+        },
+        "downloadHtml": {
+          "name": "Download Html",
+          "description": "Stirling-PDF-Feld: downloadHtml."
+        },
+        "includeAllRecipients": {
+          "name": "Include All Recipients",
+          "description": "Stirling-PDF-Feld: includeAllRecipients."
+        }
+      }
+    },
+    "svg_to_pdf": {
+      "name": "SVG zu PDF",
+      "description": "Vektorgrafik nach PDF umwandeln. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_paths": {
+          "name": "Eingabedateien",
+          "description": "Absolute freigegebene HA-Pfade. .svg."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "combineIntoSinglePdf": {
+          "name": "Combine Into Single Pdf",
+          "description": "Stirling-PDF-Feld: combineIntoSinglePdf."
+        }
+      }
+    },
+    "ebook_to_pdf": {
+      "name": "E-Book zu PDF",
+      "description": "Unterstützte E-Books in PDF umwandeln. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .epub, .azw3, .mobi."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "embedAllFonts": {
+          "name": "Embed All Fonts",
+          "description": "Stirling-PDF-Feld: embedAllFonts."
+        },
+        "includeTableOfContents": {
+          "name": "Include Table Of Contents",
+          "description": "Stirling-PDF-Feld: includeTableOfContents."
+        },
+        "includePageNumbers": {
+          "name": "Include Page Numbers",
+          "description": "Stirling-PDF-Feld: includePageNumbers."
+        },
+        "optimizeForEbook": {
+          "name": "Optimize For Ebook",
+          "description": "Stirling-PDF-Feld: optimizeForEbook."
+        }
+      }
+    },
+    "pdf_to_epub": {
+      "name": "PDF zu E-Book",
+      "description": "PDF als EPUB/AZW3 ausgeben. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .epub, .azw3."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "detectChapters": {
+          "name": "Detect Chapters",
+          "description": "Stirling-PDF-Feld: detectChapters."
+        },
+        "targetDevice": {
+          "name": "Target Device",
+          "description": "Stirling-PDF-Feld: targetDevice."
+        },
+        "outputFormat": {
+          "name": "Output Format",
+          "description": "Stirling-PDF-Feld: outputFormat."
+        }
+      }
+    },
+    "cbr_to_pdf": {
+      "name": "CBR zu PDF",
+      "description": "Comic-Archiv nach PDF umwandeln. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .cbr."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "optimizeForEbook": {
+          "name": "Optimize For Ebook",
+          "description": "Stirling-PDF-Feld: optimizeForEbook."
+        }
+      }
+    },
+    "cbz_to_pdf": {
+      "name": "CBZ zu PDF",
+      "description": "ZIP-basiertes Comic-Archiv nach PDF umwandeln. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .cbz."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "optimizeForEbook": {
+          "name": "Optimize For Ebook",
+          "description": "Stirling-PDF-Feld: optimizeForEbook."
+        }
+      }
+    },
+    "pdf_to_cbr": {
+      "name": "PDF zu CBR",
+      "description": "PDF als Comic-Archiv ausgeben. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .cbr."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "dpi": {
+          "name": "Dpi",
+          "description": "Stirling-PDF-Feld: dpi."
+        }
+      }
+    },
+    "pdf_to_cbz": {
+      "name": "PDF zu CBZ",
+      "description": "PDF als ZIP-basiertes Comic-Archiv ausgeben. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .cbz."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "dpi": {
+          "name": "Dpi",
+          "description": "Stirling-PDF-Feld: dpi."
+        }
+      }
+    },
+    "pdf_to_vector": {
+      "name": "PDF zu PS/EPS/PCL/XPS",
+      "description": "Vektor-/Druckformate per outputFormat wählen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .ps, .eps, .pcl, .xps."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "outputFormat": {
+          "name": "Output Format",
+          "description": "Stirling-PDF-Feld: outputFormat."
+        },
+        "prepress": {
+          "name": "Prepress",
+          "description": "Stirling-PDF-Feld: prepress."
+        }
+      }
+    },
+    "vector_to_pdf": {
+      "name": "PS/EPS zu PDF",
+      "description": "PostScript-Quellen nach PDF überführen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .ps, .eps."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "outputFormat": {
+          "name": "Output Format",
+          "description": "Stirling-PDF-Feld: outputFormat."
+        },
+        "prepress": {
+          "name": "Prepress",
+          "description": "Stirling-PDF-Feld: prepress."
+        }
+      }
+    },
+    "pdf_to_ua": {
+      "name": "PDF/UA erzeugen",
+      "description": "Barrierefreiheitsprofil PDF/UA anstreben. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "profile": {
+          "name": "Profile",
+          "description": "Stirling-PDF-Feld: profile."
+        },
+        "title": {
+          "name": "Title",
+          "description": "Stirling-PDF-Feld: title."
+        },
+        "language": {
+          "name": "Language",
+          "description": "Stirling-PDF-Feld: language."
+        },
+        "overrideLanguage": {
+          "name": "Override Language",
+          "description": "Stirling-PDF-Feld: overrideLanguage."
+        },
+        "existingTags": {
+          "name": "Existing Tags",
+          "description": "Stirling-PDF-Feld: existingTags."
+        },
+        "figurePolicy": {
+          "name": "Figure Policy",
+          "description": "Stirling-PDF-Feld: figurePolicy."
+        },
+        "embedFonts": {
+          "name": "Embed Fonts",
+          "description": "Stirling-PDF-Feld: embedFonts."
+        },
+        "altText": {
+          "name": "Alt Text",
+          "description": "Stirling-PDF-Feld: altText."
+        }
+      }
+    },
+    "url_to_pdf": {
+      "name": "Webseite zu PDF",
+      "description": "Eine URL serverseitig aufrufen und rendern. Der Server muss das Werkzeug unterstuetzen. Die Aktionsgruppe external muss fuer diesen Server freigegeben sein.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "urlInput": {
+          "name": "Url Input",
+          "description": "Stirling-PDF-Feld: urlInput."
+        }
+      }
+    },
+    "analyze_basic_info": {
+      "name": "PDF-Grunddaten",
+      "description": "Allgemeine Dokumentdaten als Aktionsantwort. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "analyze_page_count": {
+      "name": "Seitenzahl",
+      "description": "Seitenzahl einer ausdrücklich angegebenen Datei. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "analyze_page_dimensions": {
+      "name": "Seitengrößen",
+      "description": "Abmessungen und zugehörige Seiteninformationen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "analyze_document_properties": {
+      "name": "Dokumenteigenschaften",
+      "description": "PDF-Eigenschaften und Metadaten. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "analyze_font_info": {
+      "name": "Schriftinformationen",
+      "description": "Verwendete Schriften und ihre Eigenschaften. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "analyze_annotation_info": {
+      "name": "Anmerkungen",
+      "description": "Kommentar-/Anmerkungsinformationen im Dokument. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "analyze_form_fields": {
+      "name": "Formularanalyse",
+      "description": "Informationen zu Formularfeldern. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "analyze_security_info": {
+      "name": "Sicherheitsanalyse",
+      "description": "Informationen zu Verschlüsselung und Berechtigungen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "pdf_info": {
+      "name": "Umfassende PDF-Informationen",
+      "description": "Größerer strukturierter Dokumentbericht. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "check_contains_text": {
+      "name": "Textbedingung",
+      "description": "Ein Dokument entsprechend der Bedingung durch eine Pipeline lassen oder verwerfen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "pageNumbers": {
+          "name": "Page Numbers",
+          "description": "Stirling-PDF-Feld: pageNumbers."
+        },
+        "text": {
+          "name": "Text",
+          "description": "Stirling-PDF-Feld: text."
+        }
+      }
+    },
+    "check_contains_image": {
+      "name": "Bildbedingung",
+      "description": "Ein Dokument entsprechend der Bedingung durch eine Pipeline lassen oder verwerfen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "pageNumbers": {
+          "name": "Page Numbers",
+          "description": "Stirling-PDF-Feld: pageNumbers."
+        }
+      }
+    },
+    "check_page_count": {
+      "name": "Seitenzahlbedingung",
+      "description": "Ein Dokument entsprechend der Bedingung durch eine Pipeline lassen oder verwerfen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "comparator": {
+          "name": "Comparator",
+          "description": "Stirling-PDF-Feld: comparator."
+        },
+        "pageCount": {
+          "name": "Page Count",
+          "description": "Stirling-PDF-Feld: pageCount."
+        }
+      }
+    },
+    "check_page_size": {
+      "name": "Papierformatbedingung",
+      "description": "Ein Dokument entsprechend der Bedingung durch eine Pipeline lassen oder verwerfen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "comparator": {
+          "name": "Comparator",
+          "description": "Stirling-PDF-Feld: comparator."
+        },
+        "standardPageSize": {
+          "name": "Standard Page Size",
+          "description": "Stirling-PDF-Feld: standardPageSize."
+        }
+      }
+    },
+    "check_file_size": {
+      "name": "Dateigrößenbedingung",
+      "description": "Ein Dokument entsprechend der Bedingung durch eine Pipeline lassen oder verwerfen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "comparator": {
+          "name": "Comparator",
+          "description": "Stirling-PDF-Feld: comparator."
+        },
+        "fileSize": {
+          "name": "File Size",
+          "description": "Stirling-PDF-Feld: fileSize."
+        }
+      }
+    },
+    "check_page_rotation": {
+      "name": "Drehungsbedingung",
+      "description": "Ein Dokument entsprechend der Bedingung durch eine Pipeline lassen oder verwerfen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "comparator": {
+          "name": "Comparator",
+          "description": "Stirling-PDF-Feld: comparator."
+        },
+        "rotation": {
+          "name": "Rotation",
+          "description": "Stirling-PDF-Feld: rotation."
+        }
+      }
+    },
+    "form_fields": {
+      "name": "Formularfelder lesen",
+      "description": "Feldnamen und Werte auslesen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "form_fields_with_coordinates": {
+      "name": "Formularpositionen lesen",
+      "description": "Felder mit Positionen/Widgets auslesen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "form_fill": {
+      "name": "Formular ausfüllen",
+      "description": "Vorhandene Felder mit angegebenen Werten füllen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "data": {
+          "name": "Data",
+          "description": "Stirling-PDF-Feld: data."
+        },
+        "flatten": {
+          "name": "Flatten",
+          "description": "Stirling-PDF-Feld: flatten."
+        }
+      }
+    },
+    "form_extract_csv": {
+      "name": "Formulardaten als CSV",
+      "description": "Feldwerte als CSV-Datei exportieren. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .csv."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "data": {
+          "name": "Data",
+          "description": "Absoluter freigegebener Dateipfad. Endungen: .json, .csv."
+        }
+      }
+    },
+    "form_extract_xlsx": {
+      "name": "Formulardaten als XLSX",
+      "description": "Feldwerte als Tabelle exportieren. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .xlsx."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "data": {
+          "name": "Data",
+          "description": "Absoluter freigegebener Dateipfad. Endungen: .json, .csv."
+        }
+      }
+    },
+    "form_add_fields": {
+      "name": "Formularfelder anlegen",
+      "description": "Neue Formularfelder platzieren. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "fields": {
+          "name": "Fields",
+          "description": "Stirling-PDF-Feld: fields."
+        }
+      }
+    },
+    "form_modify_fields": {
+      "name": "Formularfelder ändern",
+      "description": "Eigenschaften vorhandener Felder ändern. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "updates": {
+          "name": "Updates",
+          "description": "Stirling-PDF-Feld: updates."
+        }
+      }
+    },
+    "form_edit_fields": {
+      "name": "Formularänderungen bündeln",
+      "description": "Mehrere Feldänderungen gemeinsam durchführen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf, .zip."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "edits": {
+          "name": "Edits",
+          "description": "Stirling-PDF-Feld: edits."
+        },
+        "includeFields": {
+          "name": "Include Fields",
+          "description": "Stirling-PDF-Feld: includeFields."
+        }
+      }
+    },
+    "form_delete_fields": {
+      "name": "Formularfelder entfernen",
+      "description": "Felder aus einer neuen Ergebnisdatei entfernen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "names": {
+          "name": "Names",
+          "description": "Stirling-PDF-Feld: names."
+        }
+      }
+    },
+    "form_detect": {
+      "name": "Formularfelder automatisch erkennen",
+      "description": "Felder mit einem eigens installierten Modell erkennen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf, .json."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "confThreshold": {
+          "name": "Conf Threshold",
+          "description": "Stirling-PDF-Feld: confThreshold."
+        },
+        "applyToPdf": {
+          "name": "Apply To Pdf",
+          "description": "Stirling-PDF-Feld: applyToPdf."
+        }
+      }
+    },
+    "add_password": {
+      "name": "PDF verschlüsseln",
+      "description": "Dokumentpasswort und Berechtigungen setzen. Der Server muss das Werkzeug unterstuetzen. Die Aktionsgruppe sensitive muss fuer diesen Server freigegeben sein.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "ownerPassword": {
+          "name": "Owner Password",
+          "description": "Stirling-PDF-Feld: ownerPassword. Achtung: Automationen und Traces koennen dieses Geheimnis speichern."
+        },
+        "password": {
+          "name": "Password",
+          "description": "Stirling-PDF-Feld: password. Achtung: Automationen und Traces koennen dieses Geheimnis speichern."
+        },
+        "sourcePassword": {
+          "name": "Source Password",
+          "description": "Stirling-PDF-Feld: sourcePassword. Achtung: Automationen und Traces koennen dieses Geheimnis speichern."
+        },
+        "preserveExisting": {
+          "name": "Preserve Existing",
+          "description": "Stirling-PDF-Feld: preserveExisting."
+        },
+        "keyLength": {
+          "name": "Key Length",
+          "description": "Stirling-PDF-Feld: keyLength."
+        },
+        "preventAssembly": {
+          "name": "Prevent Assembly",
+          "description": "Stirling-PDF-Feld: preventAssembly."
+        },
+        "preventExtractContent": {
+          "name": "Prevent Extract Content",
+          "description": "Stirling-PDF-Feld: preventExtractContent."
+        },
+        "preventExtractForAccessibility": {
+          "name": "Prevent Extract For Accessibility",
+          "description": "Stirling-PDF-Feld: preventExtractForAccessibility."
+        },
+        "preventFillInForm": {
+          "name": "Prevent Fill In Form",
+          "description": "Stirling-PDF-Feld: preventFillInForm."
+        },
+        "preventModify": {
+          "name": "Prevent Modify",
+          "description": "Stirling-PDF-Feld: preventModify."
+        },
+        "preventModifyAnnotations": {
+          "name": "Prevent Modify Annotations",
+          "description": "Stirling-PDF-Feld: preventModifyAnnotations."
+        },
+        "preventPrinting": {
+          "name": "Prevent Printing",
+          "description": "Stirling-PDF-Feld: preventPrinting."
+        },
+        "preventPrintingFaithful": {
+          "name": "Prevent Printing Faithful",
+          "description": "Stirling-PDF-Feld: preventPrintingFaithful."
+        }
+      }
+    },
+    "remove_password": {
+      "name": "PDF entschlüsseln",
+      "description": "Verschlüsselung bei vorhandenem gültigem Passwort entfernen. Der Server muss das Werkzeug unterstuetzen. Die Aktionsgruppe sensitive muss fuer diesen Server freigegeben sein.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "password": {
+          "name": "Password",
+          "description": "Stirling-PDF-Feld: password. Achtung: Automationen und Traces koennen dieses Geheimnis speichern."
+        },
+        "removeAll": {
+          "name": "Remove All",
+          "description": "Stirling-PDF-Feld: removeAll."
+        },
+        "ownerPassword": {
+          "name": "Owner Password",
+          "description": "Stirling-PDF-Feld: ownerPassword. Achtung: Automationen und Traces koennen dieses Geheimnis speichern."
+        },
+        "sourcePassword": {
+          "name": "Source Password",
+          "description": "Stirling-PDF-Feld: sourcePassword. Achtung: Automationen und Traces koennen dieses Geheimnis speichern."
+        },
+        "retainedOpeningPassword": {
+          "name": "Retained Opening Password",
+          "description": "Stirling-PDF-Feld: retainedOpeningPassword. Achtung: Automationen und Traces koennen dieses Geheimnis speichern."
+        }
+      }
+    },
+    "auto_redact": {
+      "name": "Automatisch schwärzen",
+      "description": "Text nach Mustern dauerhaft entfernen lassen. Der Server muss das Werkzeug unterstuetzen. Die Aktionsgruppe sensitive muss fuer diesen Server freigegeben sein.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "listOfText": {
+          "name": "List Of Text",
+          "description": "Stirling-PDF-Feld: listOfText."
+        },
+        "useRegex": {
+          "name": "Use Regex",
+          "description": "Stirling-PDF-Feld: useRegex."
+        },
+        "wholeWordSearch": {
+          "name": "Whole Word Search",
+          "description": "Stirling-PDF-Feld: wholeWordSearch."
+        },
+        "caseSensitive": {
+          "name": "Case Sensitive",
+          "description": "Stirling-PDF-Feld: caseSensitive."
+        },
+        "redactColor": {
+          "name": "Redact Color",
+          "description": "Stirling-PDF-Feld: redactColor."
+        },
+        "customPadding": {
+          "name": "Custom Padding",
+          "description": "Stirling-PDF-Feld: customPadding."
+        },
+        "convertPDFToImage": {
+          "name": "Convert PDFTo Image",
+          "description": "Stirling-PDF-Feld: convertPDFToImage."
+        }
+      }
+    },
+    "redact": {
+      "name": "Bereiche schwärzen",
+      "description": "Angegebene Bereiche/Seiten schwärzen. Der Server muss das Werkzeug unterstuetzen. Die Aktionsgruppe sensitive muss fuer diesen Server freigegeben sein.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "pageNumbers": {
+          "name": "Page Numbers",
+          "description": "Stirling-PDF-Feld: pageNumbers."
+        },
+        "redactions": {
+          "name": "Redactions",
+          "description": "Stirling-PDF-Feld: redactions."
+        },
+        "convertPDFToImage": {
+          "name": "Convert PDFTo Image",
+          "description": "Stirling-PDF-Feld: convertPDFToImage."
+        },
+        "pageRedactionColor": {
+          "name": "Page Redaction Color",
+          "description": "Stirling-PDF-Feld: pageRedactionColor."
+        }
+      }
+    },
+    "redact_execute": {
+      "name": "Schwärzungsplan ausführen",
+      "description": "Einen strukturierten Schwärzungsplan anwenden. Der Server muss das Werkzeug unterstuetzen. Die Aktionsgruppe sensitive muss fuer diesen Server freigegeben sein.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "textValues": {
+          "name": "Text Values",
+          "description": "Stirling-PDF-Feld: textValues."
+        },
+        "regexPatterns": {
+          "name": "Regex Patterns",
+          "description": "Stirling-PDF-Feld: regexPatterns."
+        },
+        "wipePages": {
+          "name": "Wipe Pages",
+          "description": "Stirling-PDF-Feld: wipePages."
+        },
+        "ranges": {
+          "name": "Ranges",
+          "description": "Stirling-PDF-Feld: ranges."
+        },
+        "imageBoxes": {
+          "name": "Image Boxes",
+          "description": "Stirling-PDF-Feld: imageBoxes."
+        },
+        "redactImagePages": {
+          "name": "Redact Image Pages",
+          "description": "Stirling-PDF-Feld: redactImagePages."
+        },
+        "style": {
+          "name": "Style",
+          "description": "Stirling-PDF-Feld: style."
+        }
+      }
+    },
+    "cert_sign": {
+      "name": "Digital signieren",
+      "description": "PDF mit einem digitalen Zertifikat signieren. Der Server muss das Werkzeug unterstuetzen. Die Aktionsgruppe sensitive muss fuer diesen Server freigegeben sein.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "privateKeyFile": {
+          "name": "Private Key File",
+          "description": "Absoluter freigegebener Dateipfad. Endungen: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
+        },
+        "certFile": {
+          "name": "Cert File",
+          "description": "Absoluter freigegebener Dateipfad. Endungen: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
+        },
+        "p12File": {
+          "name": "P12File",
+          "description": "Absoluter freigegebener Dateipfad. Endungen: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
+        },
+        "jksFile": {
+          "name": "Jks File",
+          "description": "Absoluter freigegebener Dateipfad. Endungen: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
+        },
+        "certType": {
+          "name": "Cert Type",
+          "description": "Stirling-PDF-Feld: certType."
+        },
+        "password": {
+          "name": "Password",
+          "description": "Stirling-PDF-Feld: password. Achtung: Automationen und Traces koennen dieses Geheimnis speichern."
+        },
+        "alias": {
+          "name": "Alias",
+          "description": "Stirling-PDF-Feld: alias."
+        },
+        "showSignature": {
+          "name": "Show Signature",
+          "description": "Stirling-PDF-Feld: showSignature."
+        },
+        "reason": {
+          "name": "Reason",
+          "description": "Stirling-PDF-Feld: reason."
+        },
+        "location": {
+          "name": "Location",
+          "description": "Stirling-PDF-Feld: location."
+        },
+        "name": {
+          "name": "Name",
+          "description": "Stirling-PDF-Feld: name."
+        },
+        "pageNumber": {
+          "name": "Page Number",
+          "description": "Stirling-PDF-Feld: pageNumber."
+        },
+        "showLogo": {
+          "name": "Show Logo",
+          "description": "Stirling-PDF-Feld: showLogo."
+        }
+      }
+    },
+    "timestamp": {
+      "name": "Zeitstempel hinzufügen",
+      "description": "RFC-3161-Dokumentzeitstempel über einen Zeitstempeldienst setzen. Der Server muss das Werkzeug unterstuetzen. Die Aktionsgruppe external muss fuer diesen Server freigegeben sein.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "tsaUrl": {
+          "name": "Tsa Url",
+          "description": "Stirling-PDF-Feld: tsaUrl."
+        }
+      }
+    },
+    "remove_cert_sign": {
+      "name": "Signatur entfernen",
+      "description": "Digitale Signatur aus einer Ergebnisdatei entfernen. Der Server muss das Werkzeug unterstuetzen. Die Aktionsgruppe sensitive muss fuer diesen Server freigegeben sein.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "sanitize": {
+      "name": "PDF bereinigen",
+      "description": "Ausgewählte Metadaten oder aktive Inhalte entfernen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "removeJavaScript": {
+          "name": "Remove Java Script",
+          "description": "Stirling-PDF-Feld: removeJavaScript."
+        },
+        "removeEmbeddedFiles": {
+          "name": "Remove Embedded Files",
+          "description": "Stirling-PDF-Feld: removeEmbeddedFiles."
+        },
+        "removeXMPMetadata": {
+          "name": "Remove XMPMetadata",
+          "description": "Stirling-PDF-Feld: removeXMPMetadata."
+        },
+        "removeMetadata": {
+          "name": "Remove Metadata",
+          "description": "Stirling-PDF-Feld: removeMetadata."
+        },
+        "removeLinks": {
+          "name": "Remove Links",
+          "description": "Stirling-PDF-Feld: removeLinks."
+        },
+        "removeFonts": {
+          "name": "Remove Fonts",
+          "description": "Stirling-PDF-Feld: removeFonts."
+        }
+      }
+    },
+    "validate_signature": {
+      "name": "Signatur prüfen",
+      "description": "Signaturinformationen und Prüfergebnisse ausgeben. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "certFile": {
+          "name": "Cert File",
+          "description": "Absoluter freigegebener Dateipfad. Endungen: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
+        }
+      }
+    },
+    "verify": {
+      "name": "PDF-Standards prüfen",
+      "description": "Technische PDF-Konformität untersuchen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "validate_compliance": {
+      "name": "PDF/A-Konformität prüfen",
+      "description": "Archivprofil mit dem verfügbaren Validator prüfen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "accessibility_report": {
+      "name": "Barrierefreiheitsbericht",
+      "description": "Technische Angaben zur Barrierefreiheit ausgeben. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "profile": {
+          "name": "Profile",
+          "description": "Stirling-PDF-Feld: profile."
+        }
+      }
+    },
+    "show_javascript": {
+      "name": "PDF-JavaScript auslesen",
+      "description": "Eingebetteten JavaScript-Code als Datei extrahieren, nicht ausführen. Der Server muss das Werkzeug unterstuetzen.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .js."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        }
+      }
+    },
+    "classify_and_label": {
+      "name": "KI klassifizieren",
+      "description": "Dokument automatisch einordnen und Metadaten beschriften. Der Server muss das Werkzeug unterstuetzen. Die Aktionsgruppe ai muss fuer diesen Server freigegeben sein.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "reclassify": {
+          "name": "Reclassify",
+          "description": "Stirling-PDF-Feld: reclassify."
+        }
+      }
+    },
+    "math_auditor_agent": {
+      "name": "Rechnungen mit KI prüfen",
+      "description": "Mathematische Aussagen in einem Dokument untersuchen. Der Server muss das Werkzeug unterstuetzen. Die Aktionsgruppe ai muss fuer diesen Server freigegeben sein.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .json. Optional; Ergebnis wird als Aktionsantwort zurueckgegeben."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "tolerance": {
+          "name": "Tolerance",
+          "description": "Stirling-PDF-Feld: tolerance."
+        }
+      }
+    },
+    "pdf_comment_agent": {
+      "name": "KI-Kommentare",
+      "description": "Ein Dokument mit KI-generierten Kommentaren versehen. Der Server muss das Werkzeug unterstuetzen. Die Aktionsgruppe ai muss fuer diesen Server freigegeben sein.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Bei mehreren Servern erforderlich. Bei genau einem Server optional."
+        },
+        "file_path": {
+          "name": "Eingabedatei",
+          "description": "Absoluter freigegebener HA-Pfad. .pdf."
+        },
+        "output_path": {
+          "name": "Ausgabepfad",
+          "description": "Erlaubte Endungen: .pdf."
+        },
+        "overwrite": {
+          "name": "Ueberschreiben",
+          "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "prompt": {
+          "name": "Prompt",
+          "description": "Stirling-PDF-Feld: prompt."
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Optionale Aktionsgruppen",
+        "description": "Diese Freigaben gelten nur fuer diesen Server. Passwoerter und Zertifikate koennen in Automationen und Traces gespeichert werden. Externe und KI-Werkzeuge koennen Daten ueber den Server hinaus senden und Kosten verursachen. Die Hostliste begrenzt nur die erste URL, nicht Weiterleitungen, DNS oder eingebettete Ressourcen.",
+        "data": {
+          "enable_sensitive_actions": "Sensible Aktionen freigeben",
+          "enable_external_actions": "Externe Netzwerkaktionen freigeben",
+          "enable_ai_actions": "KI-Aktionen freigeben",
+          "allowed_url_hosts": "Erlaubte URL-Hosts, durch Komma getrennt"
+        }
       }
     }
   }

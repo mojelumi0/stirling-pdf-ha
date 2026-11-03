@@ -1,0 +1,128 @@
+alias: Stirling PDF - Zusaetzliche Werkzeuge testen
+description: >-
+  Testet sechs ausgewaehlte Standardaktionen fuer genau einen Server mit a.pdf.
+  Keine Freigabe sensibler, externer oder KI-Aktionen erforderlich. Eigene neue
+  Ausgaben, kein Ueberschreiben, Loeschen, Reload oder Neustart.
+mode: single
+icon: mdi:file-document-check-outline
+fields:
+  config_entry_id:
+    name: Stirling-PDF-Server
+    required: true
+    selector:
+      config_entry:
+        integration: stirling_pdf
+  test_directory:
+    name: Testordner mit a.pdf
+    default: /config/pdf-test
+    selector:
+      text:
+sequence:
+  - variables:
+      directory: "{{ test_directory | default('/config/pdf-test', true) | trim | regex_replace('/+$', '') }}"
+      selected_server: "{{ config_entry_id }}"
+      selected_entities: "{{ config_entry_entities(selected_server) }}"
+      jobs_candidates: >-
+        {{ expand(selected_entities)
+           | selectattr('attributes.state_class', 'defined')
+           | selectattr('attributes.state_class', 'eq', 'total_increasing')
+           | map(attribute='entity_id') | list }}
+      run_id: "{{ now().strftime('%Y%m%d_%H%M%S_%f') }}"
+      results: []
+  - if: "{{ not directory.startswith('/config/') or '..' in directory.split('/') or jobs_candidates | count != 1 }}"
+    then:
+      - stop: Kein eindeutiger Server-Auftragssensor oder ungueltiger Testordner. Keine PDF-Aktion gestartet.
+        error: true
+  - variables:
+      jobs_entity: "{{ jobs_candidates | first }}"
+      start_count: "{{ states(jobs_entity) | int(-1) }}"
+      prefix: "{{ directory }}/stirling_tools_{{ run_id }}"
+  - if: "{{ start_count < 0 }}"
+    then:
+      - stop: Auftragssensor liefert keine Zahl. Keine PDF-Aktion gestartet.
+        error: true
+  - variables:
+      test_cases:
+        - operation: rotate
+          data:
+            file_path: "{{ directory }}/a.pdf"
+            angle: 90
+            output_path: "{{ prefix }}_rotated.pdf"
+        - operation: repair
+          data:
+            file_path: "{{ directory }}/a.pdf"
+            output_path: "{{ prefix }}_repaired.pdf"
+        - operation: metadata
+          data:
+            file_path: "{{ directory }}/a.pdf"
+            deleteAll: false
+            title: Stirling PDF synthetic acceptance test
+            output_path: "{{ prefix }}_metadata.pdf"
+        - operation: watermark
+          data:
+            file_path: "{{ directory }}/a.pdf"
+            watermarkType: text
+            watermarkText: STIRLING TEST
+            output_path: "{{ prefix }}_watermark.pdf"
+        - operation: analyze_page_count
+          data:
+            file_path: "{{ directory }}/a.pdf"
+        - operation: check_contains_text
+          data:
+            file_path: "{{ directory }}/a.pdf"
+            text: "STIRLING_ABSENT_{{ run_id }}"
+  - repeat:
+      for_each: "{{ test_cases }}"
+      sequence:
+        - variables:
+            before_count: "{{ states(jobs_entity) | int(-1) }}"
+            reply: {}
+        - alias: Zusaetzliches Werkzeug mit Antwort aufrufen
+          action: "stirling_pdf.{{ repeat.item.operation }}"
+          data: "{{ dict(repeat.item.data, config_entry_id=selected_server, overwrite=false) }}"
+          response_variable: reply
+          continue_on_error: true
+        - wait_template: "{{ states(jobs_entity) | int(-1) != before_count }}"
+          timeout: "00:00:03"
+          continue_on_timeout: true
+        - variables:
+            after_count: "{{ states(jobs_entity) | int(-1) }}"
+            ok: >-
+              {{ reply is mapping and reply.get('operation') == repeat.item.operation
+                 and reply.get('config_entry_id') == selected_server
+                 and after_count == before_count + 1
+                 and (reply.get('output_size', 0) | int(0) > 0
+                      if repeat.item.operation not in ['analyze_page_count', 'check_contains_text']
+                      else reply.get('result', {}).get('pageCount', 0) | int(0) > 0
+                      if repeat.item.operation == 'analyze_page_count'
+                      else reply.get('matches') == false) }}
+            results: >-
+              {{ results + [dict(operation=repeat.item.operation, ok=ok,
+                 before=before_count, after=after_count,
+                 output=reply.get('output_path', '') if reply is mapping else '')] }}
+  - action: persistent_notification.create
+    data:
+      title: Stirling PDF - Erweiterter Testbericht
+      message: >-
+        **Testlauf:** {{ run_id }}
+
+        **Server-Eintrag:** {{ selected_server }}
+
+        **OK:** {{ results | selectattr('ok', 'eq', true) | list | count }} / {{ test_cases | count }}
+
+        {% for result in results %}
+        - {{ result.operation }}: {{ 'OK' if result.ok else 'FEHLER - Trace pruefen' }}.
+        Zaehler {{ result.before }} -> {{ result.after }}.
+        {{ result.output }}
+
+        {% endfor %}
+
+        **Zaehler:** {{ start_count }} -> {{ states(jobs_entity) }}.
+        Erwartet bei vollstaendigem Erfolg: {{ start_count + test_cases | count }}.
+
+        Bitte die vier PDFs oeffnen: Drehung, Seiteninhalt, Metadaten-Titel und
+        Wasserzeichen manuell vergleichen. Die andere Server-Statistik darf
+        sich nicht geaendert haben. Testskript fuer Persistenzpruefungen nicht
+        erneut ausfuehren. Keine automatische Versionspruefung, OCR-Bewertung,
+        Sicherheitspruefung oder Merge-Freigabe. Dieses Skript prueft sechs
+        Standardaktionen, nicht den gesamten Katalog oder sensible/externe/KI-Werkzeuge.

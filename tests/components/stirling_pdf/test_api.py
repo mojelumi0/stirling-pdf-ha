@@ -595,3 +595,76 @@ async def test_split_rejects_non_zip_output(session: MagicMock, content: bytes) 
     client = StirlingPdfApiClient(session, "http://pdf.local")
     with pytest.raises(StirlingPdfApiError, match="not a ZIP"):
         await client.async_split("input.pdf", b"pdf", "1")
+
+
+@pytest.mark.parametrize("status", [403, 404, 405, 501])
+async def test_optional_endpoint_permissions_do_not_require_reauthentication(
+    session: MagicMock, status: int
+) -> None:
+    session.get.return_value = _mock_response(status)
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+    assert await client.async_get_optional_data("/api/v1/admin/job/stats") is None
+
+
+@pytest.mark.parametrize(
+    ("endpoint", "body", "expected"),
+    [
+        ("/api/v1/info/uptime", "0d 1h 2m 3s", "0d 1h 2m 3s"),
+        ("/api/v1/info/requests", "42", 42),
+        ("/api/v1/admin/job/stats", '{"totalJobs":2}', {"totalJobs": 2}),
+    ],
+)
+async def test_optional_metrics_parse_json_and_legacy_duration(
+    session: MagicMock, endpoint: str, body: str, expected: object
+) -> None:
+    session.get.return_value = _mock_response(200, text_data=body)
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+    assert await client.async_get_optional_data(endpoint) == expected
+    assert session.get.call_args.kwargs["allow_redirects"] is False
+
+
+async def test_optional_data_rejects_unknown_endpoints_and_bad_json(
+    session: MagicMock,
+) -> None:
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+    with pytest.raises(StirlingPdfApiError, match="Unknown monitoring"):
+        await client.async_get_optional_data("https://elsewhere.example")
+    session.get.assert_not_called()
+    session.get.return_value = _mock_response(200, text_data="<html>secret</html>")
+    with pytest.raises(StirlingPdfApiError, match="Invalid monitoring"):
+        await client.async_get_optional_data("/api/v1/admin/job/stats")
+
+
+@pytest.mark.parametrize("error", [TimeoutError(), aiohttp.ClientConnectionError()])
+async def test_optional_data_wraps_transport_errors(
+    session: MagicMock, error: Exception
+) -> None:
+    session.get.side_effect = error
+    with pytest.raises(StirlingPdfConnectionError):
+        await StirlingPdfApiClient(session, "http://pdf.local").async_get_optional_data(
+            "/api/v1/info/requests"
+        )
+
+
+async def test_extended_tool_preserves_status_and_named_file_parts(
+    session: MagicMock,
+) -> None:
+    session.post.return_value = _mock_response(204)
+    client = StirlingPdfApiClient(session, "http://pdf.local")
+    assert await client.async_process(
+        "/api/v1/form/fill",
+        [("a.pdf", b"%PDF-test")],
+        {"flatten": False, "position": 1.0},
+        [("imageFile", "stamp.png", b"png")],
+        "file",
+    ) == (204, b"")
+    fields = _form_fields(session)
+    assert fields == [
+        ("file", b"%PDF-test"),
+        ("imageFile", b"png"),
+        ("flatten", "false"),
+        ("position", "1"),
+    ]
+    session.post.return_value = _mock_response(403)
+    with pytest.raises(_api_module.StirlingPdfPermissionError):
+        await client.async_process("/api/v1/form/fill", [], {})

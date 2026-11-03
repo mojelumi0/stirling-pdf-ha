@@ -8,6 +8,12 @@ description: >-
 icon: mdi:file-document-check-outline
 mode: single
 fields:
+  config_entry_id:
+    name: Stirling-PDF-Server
+    description: Bei mehreren eingerichteten Servern erforderlich. Testet nur diesen Eintrag.
+    selector:
+      config_entry:
+        integration: stirling_pdf
   include_extract_pages:
     name: Seitenextraktion mitpruefen
     description: Nur ausschalten, wenn die installierte Integration diese Aktion noch nicht unterstuetzt.
@@ -40,18 +46,22 @@ sequence:
            | trim | regex_replace('/+$', '') }}
       run_id: "{{ now().strftime('%Y%m%d_%H%M%S_%f') }}"
       extract_enabled: "{{ include_extract_pages | default(true) | bool }}"
+      selected_server: "{{ config_entry_id | default('', true) }}"
+      selected_entities: >-
+        {{ config_entry_entities(selected_server) if selected_server
+           else integration_entities('stirling_pdf') }}
       jobs_candidates: >-
-        {{ expand(integration_entities('stirling_pdf'))
+        {{ expand(selected_entities)
            | selectattr('attributes.state_class', 'defined')
            | selectattr('attributes.state_class', 'eq', 'total_increasing')
            | map(attribute='entity_id') | list }}
       last_candidates: >-
-        {{ expand(integration_entities('stirling_pdf'))
+        {{ expand(selected_entities)
            | selectattr('attributes.device_class', 'defined')
            | selectattr('attributes.device_class', 'eq', 'enum')
            | map(attribute='entity_id') | list }}
       reachable_candidates: >-
-        {{ expand(integration_entities('stirling_pdf'))
+        {{ expand(selected_entities)
            | selectattr('attributes.device_class', 'defined')
            | selectattr('attributes.device_class', 'eq', 'connectivity')
            | map(attribute='entity_id') | list }}
@@ -69,7 +79,8 @@ sequence:
         data:
           title: Stirling PDF - Test nicht gestartet
           message: >-
-            Bitte einen Unterordner von /config angeben und beide
+            Bitte bei mehreren Servern genau einen Server auswaehlen,
+            einen Unterordner von /config angeben und beide
             Statistik-Sensoren und den Erreichbarkeitssensor der Integration aktivieren.
             Gefundene Auftragssensoren: {{ jobs_candidates }}.
             Gefundene Sensoren fuer die letzte Aktion: {{ last_candidates }}.
@@ -294,7 +305,9 @@ sequence:
                 reply: {}
             - alias: PDF-Aktion mit aufgezeichneter Antwort aufrufen
               action: "stirling_pdf.{{ repeat.item.operation }}"
-              data: "{{ repeat.item.data }}"
+              data: >-
+                {{ dict(repeat.item.data, config_entry_id=selected_server)
+                   if selected_server else repeat.item.data }}
               response_variable: reply
               continue_on_error: true
             - if: "{{ reply is mapping and reply | count > 0 }}"

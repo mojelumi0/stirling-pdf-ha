@@ -19,11 +19,9 @@ These rows are separate checks, not proof of every combination in a full test
 matrix. The native report does not capture the HA Core version automatically.
 Do not infer a manual Core version from the separate CI rows.
 
-## Development additions: 0.3.0
+## Historical additions: 0.3.0
 
-New tests have been prepared for selected-page extraction and genuine OCR of a
-synthetic image-only scanned PDF. Their results must be checked on the actual
-development PR; this document does not claim those new tests already passed.
+Selected-page extraction and genuine OCR tests were added for 0.3.0.
 
 - Extraction checks the exact selected page count, text and order on the real
   server, not only the PDF signature. It also uses the synthetic Basic proxy.
@@ -46,6 +44,45 @@ Community App and standalone API-key deployment with extraction enabled. Inspect
 the selected PDF's actual content, all other outputs, exact rejection reasons,
 diagnostic redaction, and retained statistics/entity IDs after reload/restart.
 Do not treat the older 0.2.0 run as validation of the new extraction action.
+
+## Maintainer-reported 0.3.0 acceptance, 2026-10-30
+
+The maintainer reported successful runs on HA Core 2026.10.4, HAOS 18.4,
+Supervisor 2026.10.5, aarch64, with integration version 0.3.0 in diagnostics:
+
+| Deployment | Authentication | Successes | Exact rejections | Local counter |
+|---|---|---|---|---|
+| Community App, backend 2.14.3 | HTTP Basic | 6/6 | 8/8 | 15 to 21 |
+| Standalone Docker, backend 3.2.2 | API key | 6/6 | 8/8 | 27 to 33 |
+
+Generated files, selected-page content, trace rejection reasons, retained values
+after reload/restart, masked credentials and redacted diagnostics were confirmed
+by the maintainer. This does not validate the new 0.4.0 catalog.
+
+## Development additions: 0.4.0, results pending
+
+- Multiple entries, explicit routing, duplicate URL rejection and preservation
+  of existing entry IDs, entity IDs and statistics.
+- Per-server sensitive/external/AI opt-ins and 110 additional static contracts.
+- Parameterized handler tests for each catalog entry, mixed upload fields,
+  output containers, JSON/filter responses, permissions and limits.
+- Optional diagnostics with listener-driven polling, endpoint deduplication and
+  isolation from base status/reauthentication.
+- Representative real HTTP and real-server cases for new tools.
+
+Mocked handler tests do not validate all 110 server contracts. The catalog uses
+official 3.2.2 source and the public OpenAPI document reporting 3.2.1. It must not
+be described as fully tested on 2.14.3. No local Python, pip, pytest or Docker
+execution was performed during preparation. Native Ruff and static JSON/catalog
+checks are separate from CI and live tests. Coverage requirements are unchanged.
+
+Before release, CI must pass on both supported HA test versions. Keep the existing
+server entry, add the second server, and run the native script separately for
+each selected server. The other server's counter must not change. Untargeted
+actions must be rejected with two entries configured. Check reload/restart,
+reconfigure/reauth isolation, optional-entity enabling/disabling and new tools in
+small groups with non-private documents. Do not enable sensitive/network/AI groups
+merely to make a general acceptance report green.
 
 ## Boundaries
 

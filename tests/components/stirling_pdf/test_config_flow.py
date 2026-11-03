@@ -27,6 +27,91 @@ from custom_components.stirling_pdf.const import (
 pytestmark = pytest.mark.usefixtures("enable_custom_integrations")
 
 
+async def test_reconfigure_rejects_another_servers_url_without_changing_settings(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+) -> None:
+    another = MockConfigEntry(domain=DOMAIN, data={CONF_URL: "http://other.local"})
+    another.add_to_hass(hass)
+    original = dict(mock_config_entry.data)
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={
+            "source": config_entries.SOURCE_RECONFIGURE,
+            "entry_id": mock_config_entry.entry_id,
+        },
+    )
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(),
+    ):
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {CONF_URL: "http://other.local/", CONF_API_KEY: "replacement"},
+        )
+    assert result["reason"] == "already_configured"
+    assert dict(mock_config_entry.data) == original
+
+
+async def test_options_are_disabled_by_default_and_saved_per_entry(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+) -> None:
+    result = await hass.config_entries.options.async_init(mock_config_entry.entry_id)
+    assert result["type"] is FlowResultType.FORM
+    defaults = result["data_schema"]({})
+    assert defaults == {
+        "enable_sensitive_actions": False,
+        "enable_external_actions": False,
+        "enable_ai_actions": False,
+        "allowed_url_hosts": "",
+    }
+    options = {
+        **defaults,
+        "enable_sensitive_actions": True,
+        "allowed_url_hosts": "example.org",
+    }
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"], options
+    )
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert dict(mock_config_entry.options) == options
+    reopened = await hass.config_entries.options.async_init(mock_config_entry.entry_id)
+    assert reopened["data_schema"]({}) == options
+
+
+async def test_reconfigure_can_clear_a_friendly_server_name(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+) -> None:
+    hass.config_entries.async_update_entry(
+        mock_config_entry,
+        data={**mock_config_entry.data, "server_name": "Friendly name"},
+        title="Friendly name",
+    )
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={
+            "source": config_entries.SOURCE_RECONFIGURE,
+            "entry_id": mock_config_entry.entry_id,
+        },
+    )
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(),
+    ):
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                CONF_URL: mock_config_entry.data[CONF_URL],
+                CONF_API_KEY: API_KEY_PLACEHOLDER,
+            },
+        )
+    assert result["reason"] == "reconfigure_successful"
+    assert mock_config_entry.data["server_name"] == ""
+    assert mock_config_entry.title == "Stirling PDF (pdf.local)"
+
+
 @pytest.fixture(autouse=True)
 def mock_entry_setup() -> Iterator[None]:
     """Keep background entry setup/reloads out of these isolated flow tests."""
@@ -53,7 +138,7 @@ async def _async_recover_user(hass: HomeAssistant, flow_id: str) -> None:
         result = await hass.config_entries.flow.async_configure(flow_id, expected)
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["data"] == expected
-    # Uniqueness deliberately uses the single-instance guard, not a mutable IP.
+    # URL duplicate detection must not change legacy entry/entity identifiers.
     assert result["result"].unique_id is None
     validate.assert_awaited_once_with(hass, expected)
     await hass.async_block_till_done()
@@ -210,32 +295,41 @@ async def test_user_flow_rejects_invalid_url(hass: HomeAssistant) -> None:
     await _async_recover_user(hass, result["flow_id"])
 
 
-async def test_user_flow_allows_only_one_instance(
+async def test_user_flow_allows_another_server(
     hass: HomeAssistant,
     mock_config_entry: MockConfigEntry,
 ) -> None:
-    """Test that a second Stirling PDF instance is rejected."""
+    """A second distinct URL is accepted and can have a friendly title."""
     result = await hass.config_entries.flow.async_init(
         DOMAIN,
         context={"source": config_entries.SOURCE_USER},
     )
 
-    assert result["type"] is FlowResultType.ABORT
-    assert result["reason"] == "single_instance_allowed"
+    assert result["type"] is FlowResultType.FORM
+    with patch(
+        "custom_components.stirling_pdf.config_flow._async_validate_input",
+        new=AsyncMock(),
+    ):
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {CONF_URL: "http://second.local:8080", "server_name": "Second server"},
+        )
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["title"] == "Second server"
+    assert len(hass.config_entries.async_entries(DOMAIN)) == 2
 
 
 async def test_user_flow_rejects_entry_created_while_form_is_open(
     hass: HomeAssistant,
 ) -> None:
-    """Exercise the integration guard, not just HA's pre-flow instance check."""
+    """Duplicate checks run again after validation of an already-open form."""
     result = await hass.config_entries.flow.async_init(
         DOMAIN,
         context={"source": config_entries.SOURCE_USER},
     )
     assert result["type"] is FlowResultType.FORM
 
-    # HA checks single_config_entry before starting a flow. An entry added
-    # afterwards must also be rejected when this already-open form is submitted.
+    # An equivalent URL added while the form was open must be rejected.
     entry = MockConfigEntry(
         domain=DOMAIN,
         title="Stirling PDF (existing.local)",
@@ -249,12 +343,12 @@ async def test_user_flow_rejects_entry_created_while_form_is_open(
     ) as validate:
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"],
-            {CONF_URL: "http://another.local:8080", CONF_API_KEY: "another-key"},
+            {CONF_URL: "HTTP://EXISTING.LOCAL:8080/", CONF_API_KEY: "another-key"},
         )
 
     assert result["type"] is FlowResultType.ABORT
-    assert result["reason"] == "single_instance_allowed"
-    validate.assert_not_awaited()
+    assert result["reason"] == "already_configured"
+    validate.assert_awaited_once()
     assert hass.config_entries.async_entries(DOMAIN) == [entry]
     assert entry.data == {
         CONF_URL: "http://existing.local:8080",

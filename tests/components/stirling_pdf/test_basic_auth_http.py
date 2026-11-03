@@ -98,7 +98,9 @@ async def test_server_rejects_missing_or_invalid_basic_credentials(
                 await client.async_compress("a.pdf", b"%PDF-a", 5)
 
 
-@pytest.mark.parametrize("route", ["status", "health", "compress", "extract_pages"])
+@pytest.mark.parametrize(
+    "route", ["status", "health", "compress", "extract_pages", "additional_tool"]
+)
 async def test_redirect_target_receives_neither_credentials_nor_documents(
     aiohttp_server, route
 ) -> None:
@@ -135,6 +137,58 @@ async def test_redirect_target_receives_neither_credentials_nor_documents(
                 await client.async_check_authentication()
             elif route == "extract_pages":
                 await client.async_extract_pages("a.pdf", b"%PDF-private-document", "1")
+            elif route == "additional_tool":
+                await client.async_process(
+                    "/api/v1/form/fill",
+                    [("a.pdf", b"%PDF-private-document")],
+                    {},
+                    file_field="file",
+                )
             else:
                 await client.async_compress("a.pdf", b"%PDF-private-document", 5)
     assert redirected_requests == []
+
+
+async def test_named_upload_parts_and_file_free_tools_use_real_multipart(
+    aiohttp_server,
+) -> None:
+    """Do not mistake an urlencoded request for a multipart-only tool contract."""
+    captured = []
+
+    async def handler(request: web.Request) -> web.Response:
+        assert request.headers["X-API-KEY"] == "test-key"
+        assert request.headers["Authorization"].startswith("Basic ")
+        reader = await request.multipart()
+        fields = []
+        async for part in reader:
+            fields.append((part.name, part.filename, bytes(await part.read())))
+        captured.append(fields)
+        return web.Response(body=b"%PDF-result")
+
+    app = web.Application()
+    app.router.add_post("/{path:.*}", handler)
+    server = await aiohttp_server(app)
+    async with aiohttp.ClientSession() as session:
+        client = StirlingPdfApiClient(
+            session,
+            str(server.make_url("/")),
+            "test-key",
+            username="user",
+            password="password",
+        )
+        assert await client.async_process(
+            "/api/v1/form/fill",
+            [("a.pdf", b"%PDF-input")],
+            {"data": '{"field":"value"}'},
+            [("imageFile", "image.png", b"png")],
+            "file",
+        ) == (200, b"%PDF-result")
+        await client.async_process(
+            "/api/v1/convert/url/pdf", [], {"urlInput": "https://example.org"}
+        )
+    assert captured[0] == [
+        ("file", "a.pdf", b"%PDF-input"),
+        ("imageFile", "image.png", b"png"),
+        ("data", None, b'{"field":"value"}'),
+    ]
+    assert captured[1] == [("urlInput", None, b"https://example.org")]

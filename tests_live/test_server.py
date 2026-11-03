@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib
 import io
+import json
 import os
 import re
 import sys
@@ -133,6 +134,49 @@ async def test_compress_preserves_pages_and_text(client) -> None:
 
     assert _markers(compressed) == ["A1", "A2"]
     assert len(compressed) < len(source)
+
+
+@pytest.mark.parametrize(
+    ("endpoint", "fields"),
+    [
+        ("/api/v1/general/rotate-pdf", {"angle": 90}),
+        ("/api/v1/misc/repair", {}),
+        ("/api/v1/misc/flatten", {"flattenOnlyForms": True}),
+        (
+            "/api/v1/misc/update-metadata",
+            {"deleteAll": False, "title": "Synthetic test title"},
+        ),
+    ],
+)
+async def test_representative_additional_tools_preserve_page_content(
+    client, endpoint, fields
+) -> None:
+    """Exercise selected catalog tools on the real pinned server, not all tools."""
+    status, content = await client.async_process(
+        endpoint, [("a.pdf", _pdf("A1", "A2"))], fields
+    )
+    assert status == 200
+    assert _markers(content) == ["A1", "A2"]
+    reader = PdfReader(io.BytesIO(content))
+    if endpoint.endswith("rotate-pdf"):
+        assert all(page.rotation == 90 for page in reader.pages)
+    if endpoint.endswith("update-metadata"):
+        assert reader.metadata.title == "Synthetic test title"
+
+
+async def test_additional_analysis_and_filter_non_match(client) -> None:
+    status, content = await client.async_process(
+        "/api/v1/analysis/page-count", [("a.pdf", _pdf("A1", "A2"))], {}
+    )
+    assert status == 200
+    assert json.loads(content)["pageCount"] == 2
+    status, content = await client.async_process(
+        "/api/v1/filter/filter-contains-text",
+        [("a.pdf", _pdf("A1"))],
+        {"text": "UNIQUE_ABSENT_MARKER"},
+    )
+    assert status == 204
+    assert content == b""
 
 
 @pytest.mark.parametrize(

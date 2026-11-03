@@ -6,9 +6,14 @@ import logging
 from typing import Any
 
 import voluptuous as vol
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
 from homeassistant.const import CONF_API_KEY, CONF_PASSWORD, CONF_URL, CONF_USERNAME
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
     TextSelector,
@@ -27,7 +32,17 @@ from .api import (
     StirlingPdfStatusEndpointDisabledError,
     normalize_base_url,
 )
-from .const import API_KEY_PLACEHOLDER, DEFAULT_URL, DOMAIN, PASSWORD_PLACEHOLDER
+from .const import (
+    API_KEY_PLACEHOLDER,
+    CONF_AI_ACTIONS,
+    CONF_ALLOWED_URL_HOSTS,
+    CONF_EXTERNAL_ACTIONS,
+    CONF_SENSITIVE_ACTIONS,
+    CONF_SERVER_NAME,
+    DEFAULT_URL,
+    DOMAIN,
+    PASSWORD_PLACEHOLDER,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -64,6 +79,10 @@ def _data_schema(defaults: dict[str, Any] | None = None) -> vol.Schema:
     values = defaults or {}
     return vol.Schema(
         {
+            vol.Optional(
+                CONF_SERVER_NAME,
+                description={"suggested_value": values.get(CONF_SERVER_NAME, "")},
+            ): TextSelector(TextSelectorConfig(type=TextSelectorType.TEXT)),
             vol.Required(
                 CONF_URL, default=values.get(CONF_URL, DEFAULT_URL)
             ): TextSelector(TextSelectorConfig(type=TextSelectorType.URL)),
@@ -117,9 +136,6 @@ class StirlingPdfConfigFlow(ConfigFlow, domain=DOMAIN):
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
         """Handle initial setup."""
-        if self._async_current_entries():
-            return self.async_abort(reason="single_instance_allowed")
-
         errors: dict[str, str] = {}
         data = user_input
         if user_input is not None:
@@ -128,9 +144,11 @@ class StirlingPdfConfigFlow(ConfigFlow, domain=DOMAIN):
             self._user_data = data or {}
             if not errors:
                 assert data is not None
+                if self._duplicate_url(data[CONF_URL]):
+                    return self.async_abort(reason="already_configured")
                 host = URL(data[CONF_URL]).host or data[CONF_URL]
                 return self.async_create_entry(
-                    title=f"Stirling PDF ({host})",
+                    title=data.get(CONF_SERVER_NAME) or f"Stirling PDF ({host})",
                     data=data,
                 )
 
@@ -151,14 +169,18 @@ class StirlingPdfConfigFlow(ConfigFlow, domain=DOMAIN):
             submitted_data = _submitted_credentials(
                 user_input, self._user_data or dict(entry.data)
             )
+            if CONF_SERVER_NAME in entry.data:
+                submitted_data[CONF_SERVER_NAME] = user_input.get(CONF_SERVER_NAME, "")
             data, errors = await self._async_validate_and_normalize(submitted_data)
             self._user_data = data or {}
             if not errors:
                 assert data is not None
+                if self._duplicate_url(data[CONF_URL], entry.entry_id):
+                    return self.async_abort(reason="already_configured")
                 host = URL(data[CONF_URL]).host or data[CONF_URL]
                 return self.async_update_reload_and_abort(
                     entry,
-                    title=f"Stirling PDF ({host})",
+                    title=data.get(CONF_SERVER_NAME) or f"Stirling PDF ({host})",
                     data_updates=data,
                 )
 
@@ -229,3 +251,43 @@ class StirlingPdfConfigFlow(ConfigFlow, domain=DOMAIN):
             _LOGGER.exception("Unexpected exception during connection validation")
             return data, {"base": "unknown"}
         return data, {}
+
+    def _duplicate_url(self, url: str, exclude: str | None = None) -> bool:
+        """Compare canonical saved URLs without changing existing unique IDs."""
+        return any(
+            entry.entry_id != exclude
+            and normalize_base_url(entry.data[CONF_URL]) == url
+            for entry in self._async_current_entries()
+        )
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
+        """Expose per-server, explicitly disabled advanced action groups."""
+        return StirlingPdfOptionsFlow()
+
+
+class StirlingPdfOptionsFlow(OptionsFlow):
+    """Keep sensitive, network and AI features off unless deliberately enabled."""
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+        options = self.config_entry.options
+        fields = {
+            vol.Optional(key, default=options.get(key, False)): bool
+            for key in (
+                CONF_SENSITIVE_ACTIONS,
+                CONF_EXTERNAL_ACTIONS,
+                CONF_AI_ACTIONS,
+            )
+        }
+        fields[
+            vol.Optional(
+                CONF_ALLOWED_URL_HOSTS,
+                default=options.get(CONF_ALLOWED_URL_HOSTS, ""),
+            )
+        ] = str
+        return self.async_show_form(step_id="init", data_schema=vol.Schema(fields))

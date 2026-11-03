@@ -1,5 +1,19 @@
 # Native Home Assistant acceptance test
 
+## Additional standard tools
+
+After the regular `ha_test.yaml` run, `ha_tools_test.yaml` is a separate UI script
+for six representative new tools: rotation, repair, metadata, watermark,
+page-count analysis and a no-match text filter. It requires an explicit server
+selection, uses only `a.pdf`, creates four uniquely named PDFs and never enables
+sensitive/external/AI options. Full success adds six to that server's counter.
+Inspect the four outputs and verify the other server's count did not change.
+This does not test the complete additional action catalog.
+
+Install it with **Settings > Automations & scenes > Scripts > Create script >
+Edit in YAML**, as for the main script below. Do not wrap either file in
+`script:` or put two scripts into one UI editor.
+
 `ha_test.yaml` is a single script for Home Assistant's UI YAML editor. Its
 filename and title do not contain an integration version. Optional version and
 deployment labels are user-provided information, not automatically verified
@@ -17,6 +31,10 @@ facts. Script progress and report messages are in German.
 5. Ensure Stirling PDF is reachable and authenticated. Only use OCR languages
    installed on that server; this script requests English (`eng`).
 6. Do not run other PDF actions during this test, as it compares job counters.
+7. With multiple servers, select **Stirling-PDF-Server** when running the script.
+   It discovers only that entry's entities and sends every action to that entry.
+   An omitted selection with multiple matching sensor sets stops before uploads.
+   Run separately for each server and verify that the other's count is unchanged.
 
 ## Install and run the script
 

@@ -8,6 +8,9 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from homeassistant.helpers.selector import validate_selector
+
+from custom_components.stirling_pdf.const import SERVICES
 
 ROOT = Path(__file__).resolve().parents[3]
 INTEGRATION = ROOT / "custom_components" / "stirling_pdf"
@@ -41,7 +44,7 @@ def test_manifest_is_loadable_as_custom_integration() -> None:
     manifest = _load_json(INTEGRATION / "manifest.json")
     assert manifest["domain"] == "stirling_pdf"
     assert manifest["config_flow"] is True
-    assert manifest["single_config_entry"] is True
+    assert manifest["single_config_entry"] is False
     assert manifest["requirements"] == []
     assert manifest["codeowners"] == ["@mojelumi0"]
     assert manifest["documentation"].startswith("https://github.com/")
@@ -56,7 +59,7 @@ def test_service_and_translation_keys_match() -> None:
     english = _load_json(INTEGRATION / "translations" / "en.json")
     german = _load_json(INTEGRATION / "translations" / "de.json")
 
-    assert set(services) == {"merge", "split", "ocr", "compress", "extract_pages"}
+    assert set(services) == set(SERVICES)
     assert set(strings["services"]) == set(services)
     assert set(english["services"]) == set(services)
     assert set(german["services"]) == set(services)
@@ -74,6 +77,15 @@ def test_translation_structures_match() -> None:
 
     assert strings == english
     assert _nested_keys(english) == _nested_keys(german)
+
+
+def test_action_selectors_accept_their_documented_defaults() -> None:
+    services = yaml.safe_load((INTEGRATION / "services.yaml").read_text("utf-8"))
+    for service in services.values():
+        for field in service["fields"].values():
+            selector = validate_selector(field["selector"])
+            if "default" in field:
+                selector(field["default"])
 
 
 def test_hacs_manifest_is_valid() -> None:
@@ -108,6 +120,9 @@ def test_integration_package_contains_runtime_files() -> None:
         "entity.py",
         "manifest.json",
         "sensor.py",
+        "metrics.py",
+        "operations.py",
+        "tools.py",
         "services.yaml",
         "strings.json",
         "brand/icon.png",

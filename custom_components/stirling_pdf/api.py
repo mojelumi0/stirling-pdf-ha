@@ -48,6 +48,10 @@ class StirlingPdfConnectionError(StirlingPdfApiError):
     """Raised when the Stirling PDF instance cannot be reached."""
 
 
+class StirlingPdfPermissionError(StirlingPdfApiError):
+    """An optional tool is forbidden; base credentials need not be wrong."""
+
+
 class StirlingPdfInvalidUrlError(StirlingPdfApiError):
     """Raised when a base URL is invalid."""
 
@@ -102,6 +106,25 @@ def normalize_page_selection(value: str) -> str:
                     "Extraction page ranges must be ascending"
                 )
     return selection
+
+
+def _file_content_type(filename: str) -> str:
+    """Use a static map, never blocking MIME/registry discovery on the loop."""
+    extension = filename.rsplit(".", 1)[-1].lower()
+    return {
+        "pdf": "application/pdf",
+        "png": "image/png",
+        "jpg": "image/jpeg",
+        "jpeg": "image/jpeg",
+        "tif": "image/tiff",
+        "tiff": "image/tiff",
+        "gif": "image/gif",
+        "webp": "image/webp",
+        "svg": "image/svg+xml",
+        "txt": "text/plain",
+        "html": "text/html",
+        "md": "text/markdown",
+    }.get(extension, "application/octet-stream")
 
 
 class StirlingPdfApiClient:
@@ -240,16 +263,27 @@ class StirlingPdfApiClient:
         endpoint: str,
         files: Sequence[tuple[str, bytes]],
         data: Mapping[str, FormValue] | None = None,
-    ) -> bytes:
+        extra_files: Sequence[tuple[str, str, bytes]] = (),
+        *,
+        file_field: str = "fileInput",
+        include_status: bool = False,
+    ) -> bytes | tuple[int, bytes]:
         """POST PDF files and form fields, then return the raw response body."""
         url = f"{self._base_url}{endpoint}"
         form = aiohttp.FormData()
         for filename, content in files:
             form.add_field(
-                "fileInput",
+                file_field,
                 content,
                 filename=filename,
-                content_type="application/pdf",
+                content_type=_file_content_type(filename),
+            )
+        for field, filename, content in extra_files:
+            form.add_field(
+                field,
+                content,
+                filename=filename,
+                content_type=_file_content_type(filename),
             )
         for key, value in (data or {}).items():
             values = (
@@ -260,9 +294,13 @@ class StirlingPdfApiClient:
             for item in values:
                 if isinstance(item, bool):
                     serialized = str(item).lower()
+                elif isinstance(item, float) and item.is_integer():
+                    # Some OpenAPI numeric fields bind to Java integers.
+                    serialized = str(int(item))
                 else:
                     serialized = str(item)
-                form.add_field(key, serialized)
+                # Content type forces multipart even for URL-only tools.
+                form.add_field(key, serialized, content_type="text/plain")
 
         try:
             async with self._session.post(
@@ -272,12 +310,76 @@ class StirlingPdfApiClient:
                 timeout=self._operation_timeout,
                 allow_redirects=False,
             ) as response:
+                if include_status and response.status == 403:
+                    raise StirlingPdfPermissionError("The selected tool is forbidden")
                 await self._raise_for_status(response, endpoint)
-                return await response.read()
+                content = await response.read()
+                return (response.status, content) if include_status else content
         except TimeoutError as err:
             raise StirlingPdfConnectionError(f"Timeout calling {url}") from err
         except aiohttp.ClientError as err:
             raise StirlingPdfConnectionError(f"Cannot connect to {url}") from err
+
+    async def async_process(
+        self,
+        endpoint: str,
+        files: Sequence[tuple[str, bytes]],
+        data: Mapping[str, FormValue],
+        extra_files: Sequence[tuple[str, str, bytes]] = (),
+        file_field: str = "fileInput",
+    ) -> tuple[int, bytes]:
+        """Execute a reviewed tool; callers own its field/output contract."""
+        result = await self._async_post_files(
+            endpoint,
+            files,
+            data,
+            extra_files,
+            file_field=file_field,
+            include_status=True,
+        )
+        assert isinstance(result, tuple)
+        return result
+
+    async def async_get_optional_data(self, endpoint: str) -> Any:
+        """Read a known optional metric without confusing permissions with login.
+
+        Optional 403/404 responses mean unavailable data, not rejected base
+        authentication. Never include server response bodies in errors.
+        """
+        allowed = {
+            "/api/v1/info/uptime",
+            "/api/v1/info/requests",
+            "/api/v1/info/load",
+            "/api/v1/info/requests/all",
+            "/api/v1/info/load/all",
+            "/api/v1/admin/job/stats",
+            "/api/v1/admin/job/queue/stats",
+            "/api/v1/ui-data/ocr-pdf",
+            "/api/v1/ai/health",
+            "/api/v1/ai/status",
+            "/api/v1/docparse/capabilities",
+        }
+        if endpoint not in allowed:
+            raise StirlingPdfApiError("Unknown monitoring endpoint")
+        try:
+            async with self._session.get(
+                f"{self._base_url}{endpoint}",
+                headers=self._headers(),
+                timeout=self._status_timeout,
+                allow_redirects=False,
+            ) as response:
+                if response.status in (403, 404, 405, 501):
+                    return None
+                await self._raise_for_status(response, endpoint)
+                body = await response.text()
+        except (TimeoutError, aiohttp.ClientError) as err:
+            raise StirlingPdfConnectionError("Monitoring request failed") from err
+        try:
+            return json.loads(body)
+        except json.JSONDecodeError as err:
+            if endpoint.endswith("/uptime"):
+                return body.strip()
+            raise StirlingPdfApiError("Invalid monitoring response") from err
 
     @staticmethod
     async def _raise_for_status(

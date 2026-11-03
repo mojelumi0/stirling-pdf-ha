@@ -31,9 +31,9 @@ The coverage gate requires 100% line coverage for `config_flow.py` and more than
 95% for every other integration module. A high total cannot compensate for an
 uncovered module. Keep the report complete; do not weaken the thresholds or add
 coverage exclusions just to make a change pass. Test failures and recovery in
-the same config flow, not only the first displayed error. This integration
-deliberately uses a single-instance guard rather than a mutable URL/IP as its
-config-entry unique ID.
+the same config flow, not only the first displayed error. Multiple entries use
+normalized URL duplicate detection. Existing unique IDs, entry IDs, entity IDs
+and per-entry statistics are not migrated or replaced.
 
 CI tests Home Assistant 2026.9.0 with `requirements-dev-min.txt` and 2026.10.2
 with `requirements-dev.txt`. Keep their framework pins aligned with the
@@ -61,12 +61,19 @@ release validation from pending tests for newly added behavior.
 
 A new action should include:
 
-- a client method in `api.py`;
-- validation and registration in `__init__.py`;
+- an explicit contract in `operations.py` or a dedicated client method;
+- typed validation and registration through `tools.py` or `__init__.py`;
 - action metadata in `services.yaml`;
 - English and German translations;
 - API-client and Home Assistant service tests;
 - README documentation and a sanitized example.
+
+Do not add arbitrary endpoint execution or raw HTTP payload passthrough. Match
+primary and extra multipart file fields to the official source. Distinguish
+PDF/ZIP/images/Office containers, JSON responses and HTTP 204 filter non-matches.
+Protect each local input/output using HA's allowlist and executor-based I/O.
+Optional metrics must remain disabled by default and poll only subscribed groups.
+Source-derived contracts and mocked-handler coverage are not real-server proof.
 
 The maintainer reviews all submitted code and documentation before release,
 including contributions initially prepared with AI assistance.

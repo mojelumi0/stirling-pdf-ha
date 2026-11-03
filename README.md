@@ -24,13 +24,14 @@ integration makes a focused set of those operations available as native Home
 Assistant actions, ready for scripts and automations.
 
 - Local communication directly between Home Assistant and Stirling PDF
-- Configuration through the Home Assistant UI
+- Multiple independently configured servers through the Home Assistant UI
 - Optional Stirling PDF API-key authentication
 - Optional HTTP Basic authentication for protected proxies and the Community App
 - Automatic connection validation and reauthentication
-- Merge, split, OCR, compression, and page-extraction actions
+- Merge, split, OCR, compression and extraction, plus an extensive additional tool catalog
 - Optional response data for scripts and automations
 - Connectivity, version, and persistent local operation-status entities
+- Optional server, queue, OCR and AI diagnostics, disabled by default
 - Privacy-aware diagnostics for easier troubleshooting
 - No cloud service required
 - English and German user-interface translations
@@ -100,6 +101,23 @@ entry only if no other integration or automation still needs that directory.
 
 The setup form asks for the complete root URL and optional API-key or HTTP Basic
 credentials. Use only the authentication methods required by your deployment.
+
+### Multiple servers
+
+Add each server with **Settings > Devices & services > Add integration > Stirling
+PDF**. An optional server name helps distinguish them. The same normalized URL
+cannot be added twice; different ports/subpaths can be different deployments.
+Hostname aliases of the same backend cannot be detected automatically.
+
+Every action has a **Server** (`config_entry_id`) selector. With exactly one
+configured entry, existing actions without this field keep working. With two
+or more entries it is required, even if only one server is currently loaded.
+The integration never silently falls back to another server. Add the selector
+to existing automations before adding a second server.
+
+Each entry has its own device, credentials, local counter and statistics store.
+Updating does not replace existing config entries, entity IDs or statistics.
+Reconfigure the existing entry to change its URL. Do not delete/re-add it.
 
 | Field | Description | Example |
 |---|---|---|
@@ -197,7 +215,8 @@ Restart Home Assistant after changing `configuration.yaml`.
 
 Important behavior:
 
-- Input files must use the `.pdf` extension.
+- The original five actions require `.pdf` input. Conversion and attachment
+  actions accept only their explicitly listed extensions.
 - Merge, OCR, and compression outputs must use `.pdf`.
 - Split output must use `.zip` because Stirling PDF returns an archive.
 - The output directory must already exist.
@@ -210,13 +229,16 @@ Important behavior:
   the final write will succeed.
 - Enabled overwriting uses an atomic replacement to avoid partial output files.
 - PDFs are temporarily held in Home Assistant memory while being transferred.
+- Additional tools accept at most 32 local files with a combined 64 MiB;
+  structured fields and returned JSON are limited to 4 MiB. These are
+  additional-tool limits, not new restrictions on the original five actions.
 
 Home Assistant does not provide a general file picker for arbitrary server or
 container paths. The action editor therefore uses text fields for these paths.
 
 ## Available entities
 
-All entities belong to a single Stirling PDF service device.
+Each server has its own service device and these four base entities.
 
 | Entity | Type | Description |
 |---|---|---|
@@ -247,6 +269,32 @@ saved, without waiting for a poll. Failed actions do not count as completed
 jobs. Reloading the integration or restarting Home Assistant preserves these
 statistics; deleting the integration entry removes them.
 
+### Optional diagnostic entities
+
+There are 22 additional sensors and six additional binary sensors. They are
+disabled in the entity registry by default. Enable only the ones you want under
+**Settings > Devices & services > Stirling PDF > your server > Entities**, then
+open the entity settings and enable it. Enabled diagnostics poll every 60 seconds;
+disabled diagnostics do not request their endpoints. Sensors sharing an endpoint
+reuse the same response in each polling cycle.
+
+- Uptime and server GET/POST request counts. GET counts are not CPU load and
+  POST counts are not successful-document counts. Server restart can reset them.
+- Retained job counts, active/completed/failed/successful jobs, file results,
+  average processing time and oldest/newest active job times.
+- Queue occupancy/capacity, cumulative queued/rejected jobs and resource status.
+- Installed OCR language count with a bounded language-code attribute.
+- AI health, configured smart/fast model names, probe latency and enabled,
+  reachable and authenticated flags.
+- Document parsing enabled/reachable and indexing-configured flags.
+
+Admin-only or missing endpoints can leave these entities unavailable. This does
+not take the base server offline or request replacement credentials. Invalid
+responses are not displayed as zero. Retained job counts are snapshots, not
+lifetime totals. Server-local timestamps have no invented timezone. Optional
+AI/engine requests may cause the server to probe its configured engine; enabling
+a diagnostic entity does not enable or configure that engine.
+
 ## Available actions
 
 | Action | Purpose | Output |
@@ -256,6 +304,59 @@ statistics; deleting the integration entry removes them.
 | `stirling_pdf.ocr` | Make a scanned PDF searchable | PDF |
 | `stirling_pdf.compress` | Reduce PDF file size with levels 1 through 9 | PDF |
 | `stirling_pdf.extract_pages` | Save selected pages in a new PDF | PDF |
+
+### Additional tools and permissions
+
+See the [additional action catalog](docs/ACTIONS.md) for 110 additional named
+contracts: page editing/layout, watermarks, metadata, attachments, forms,
+conversions, analysis, filters and opt-in security/network/AI tools. Fields are
+shown individually in the action editor using their server API names. Actions
+run only when explicitly called; they are not polling entities.
+
+These contracts are source-derived, not a claim that every tool has been
+manually validated on every server. A server may lack a route, dependency,
+edition feature, model or permission. Such calls fail without incrementing the
+local counter. See [testing evidence](docs/TESTING.md).
+
+Open **Settings > Devices & services > Stirling PDF > your server > Configure**
+to opt into sensitive, external network and AI groups, separately for each
+server. They are **off by default**. Their actions remain listed but are rejected
+until opted in. Standard tools need no opt-in. A forbidden optional tool does
+not start reauth; HTTP 401 does so for the selected server only.
+User-initiated sensitive/external/AI calls also require a Home Assistant admin.
+Internal automation calls without a user context follow HA's admin-service rules.
+Options are read on each call; changing a group does not restart another server.
+
+For network tools, configure comma-separated exact hostnames in **Allowed URL
+hosts**, for example `example.org,tsa.example.org`. URL-to-PDF requires HTTP(S)
+without embedded credentials. Timestamping requires an explicit `tsaUrl`; no
+vendor host is silently selected. This is **not an SSRF sandbox**: redirects,
+DNS, embedded resources and server-configured network access still need controls
+in the Stirling PDF deployment and network. Conversions may load embedded
+resources. AI and server-configured conversion backends may transfer documents
+outside your LAN and incur costs. Inspect that server's configuration first.
+
+Secrets supplied to password/signature actions may be retained in automation
+YAML, traces and backups, even when the editor masks the field. Masking is not
+encrypted storage. Redaction/signature results require independent inspection;
+an HTTP success is not a security guarantee. Never execute extracted JavaScript.
+Archives are saved, not extracted automatically.
+
+JSON analysis actions can omit `output_path` and return `result` in action
+response data. Filters return `matches: true` with a validated PDF on a match,
+or `matches: false` on HTTP 204; a non-match writes no file. Successful checks
+also count as successful integration actions. Binary tools require an explicit
+matching output extension. Container signatures do not prove semantic correctness.
+
+```yaml
+action: stirling_pdf.rotate
+data:
+  config_entry_id: "<select your server in the action editor>"
+  file_path: /config/pdf/document.pdf
+  angle: 90
+  output_path: /config/pdf/document-rotated.pdf
+  overwrite: false
+```
 
 ### Merge PDFs
 
