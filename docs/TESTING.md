@@ -59,7 +59,15 @@ Generated files, selected-page content, trace rejection reasons, retained values
 after reload/restart, masked credentials and redacted diagnostics were confirmed
 by the maintainer. This does not validate the new 0.4.0 catalog.
 
-## Development additions: 0.4.0, results pending
+## Experimental pre-release: 0.4.0-alpha.1, results pending
+
+The next public build is planned as an alpha, not as the latest regular release.
+Its tag, manifest version and release title must all be `0.4.0-alpha.1`.
+GitHub's pre-release flag must be enabled. It may be tagged from the development
+branch after CI and the initial smoke tests pass; merging to main is not required
+for alpha distribution. Full acceptance, especially the additional tool catalog,
+remains pending until the corresponding tests have actually been performed.
+There is no automatic publication or release approval in this preparation.
 
 - Multiple entries, explicit routing, duplicate URL rejection and preservation
   of existing entry IDs, entity IDs and statistics.
@@ -76,7 +84,10 @@ be described as fully tested on 2.14.3. No local Python, pip, pytest or Docker
 execution was performed during preparation. Native Ruff and static JSON/catalog
 checks are separate from CI and live tests. Coverage requirements are unchanged.
 
-Before release, CI must pass on both supported HA test versions. Keep the existing
+Before alpha publication, CI must pass on both supported HA test versions and
+initial smoke checks must verify the existing actions and basic multi-server
+routing. The broader acceptance sequence below remains required before promoting
+the tested feature scope to a regular `0.4.0` release. Keep the existing
 server entry, add the second server, and run the native script separately for
 each selected server. The other server's counter must not change. Untargeted
 actions must be rejected with two entries configured. Check reload/restart,

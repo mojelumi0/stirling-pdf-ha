@@ -12,6 +12,13 @@ processing actions, connectivity monitoring, and a simple UI-based setup.
 · [Report an issue](https://github.com/mojelumi0/stirling-pdf-ha/issues)
 · [Stirling PDF](https://www.stirlingpdf.com/)
 
+> [!WARNING]
+> This development branch prepares **0.4.0-alpha.1**, an experimental pre-release.
+> The expanded tool catalog and multi-server behavior are not fully validated.
+> Use a Home Assistant backup and non-sensitive test documents. Stay on the latest
+> regular release for normal use. CI and the initial smoke tests must pass before
+> publishing the alpha; an alpha label is not a substitute for basic verification.
+
 > [!NOTE]
 > This is an actively developed community integration with a focused feature
 > set. Keep backups and use copies of documents when testing a new deployment.
@@ -65,9 +72,11 @@ Home Assistant.
 4. Open **Settings → Devices & services → Add integration**.
 5. Search for **Stirling PDF**.
 
-Normal releases do not require opting into prereleases. To test a future
-prerelease, enable the repository's pre-release switch in HACS. Leave it disabled
-if you only want normal releases.
+Normal releases do not require opting into prereleases. Once an alpha has been
+published, enable the repository's pre-release switch in HACS to include it in
+update checks, then select the alpha release explicitly when downloading.
+Leave the switch disabled if you only want normal releases. The experimental
+branch is not a recommended substitute for the latest regular release.
 
 The HACS update dialog can currently show **Icon not available** even though the
 integration icon appears correctly elsewhere in Home Assistant. This is a
