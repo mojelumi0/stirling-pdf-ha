@@ -19,7 +19,7 @@ body:
     id: home_assistant_version
     attributes:
       label: Home Assistant version
-      placeholder: 2026.9.3
+      placeholder: 2026.11.0
     validations:
       required: true
   - type: input
@@ -34,7 +34,8 @@ body:
     attributes:
       label: Integration installation method
       options:
-        - HACS
+        - Marketplace (Home Assistant 2026.11 or newer)
+        - HACS (Home Assistant before 2026.11)
         - Manual copy
         - Development checkout
     validations:

@@ -47,6 +47,44 @@ the selected PDF's actual content, all other outputs, exact rejection reasons,
 diagnostic redaction, and retained statistics/entity IDs after reload/restart.
 Do not treat the older 0.2.0 run as validation of the new extraction action.
 
+## Separate Marketplace preparation: 0.3.1
+
+This work starts from `main` commit
+`b434eb14409268e781dfaeeb4eda48cff759de79`, not the experimental multi-server
+PR #11. The new version is a preparation target, not a published release.
+`single_config_entry`, runtime actions, credentials and statistics storage stay
+unchanged. No runtime Python module is changed by this preparation.
+
+- Add the official `productivity_information.documents_photos` manifest category.
+- Document Marketplace migration, retained HACS links, pre-release opt-in and
+  restart behavior while retaining the 2026.9.0 minimum.
+- Verify device metadata and that all four entities share the same device.
+- Exercise actual entity-registry renames of each entity, later coordinator
+  updates, availability recovery and reload without changing its registry ID.
+- Verify device display-name changes retain entity IDs and local statistics.
+- Add an explicit-step-ID guard and checks for the prepared manual workflow.
+
+The existing base entity already uses `DeviceInfo(...)`. The two optional
+metric entity classes discussed in the 2026.11 audit exist only in PR #11 and
+are deliberately not imported into this branch. No synthetic compatibility
+hook or runtime refactor is added just to produce a code change.
+
+At the 2026-11-04 dependency check, the latest published
+`pytest-homeassistant-custom-component` was 0.13.375 and required Home Assistant
+2026.10.4. No compatible 2026.11 package version is assumed. The new manual
+workflow requires an explicit version and keeps dependency resolution, exact
+installed-version checks, `pip check` and all coverage gates. It is not part of
+the automatic required `pytest` aggregate yet. It must not be presented as a
+passing 2026.11 CI result before it actually runs successfully.
+
+The maintainer reports HA 2026.11.0 installed on the test Raspberry Pi, still
+running 0.4.0-alpha.1 with two server entries. This is environment information,
+not acceptance evidence for 0.3.1. Do not downgrade that installation or delete
+its entries to test this branch. See [the separate checklist](HA_2026_11.md).
+
+The new Python/HA tests have not been run locally. Static lint, file checks and
+source comparisons do not substitute for GitHub CI or manual HA acceptance.
+
 ## Boundaries
 
 - The synthetic Basic proxy is not the Community App or Supervisor.
