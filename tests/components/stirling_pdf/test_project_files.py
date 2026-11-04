@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import json
 import struct
 from pathlib import Path
@@ -40,6 +41,7 @@ def _nested_keys(value: Any, prefix: str = "") -> set[str]:
 def test_manifest_is_loadable_as_custom_integration() -> None:
     manifest = _load_json(INTEGRATION / "manifest.json")
     assert manifest["domain"] == "stirling_pdf"
+    assert manifest["categories"] == ["productivity_information.documents_photos"]
     assert manifest["config_flow"] is True
     assert manifest["single_config_entry"] is True
     assert manifest["requirements"] == []
@@ -128,6 +130,7 @@ def test_github_validation_workflows_exist() -> None:
         "release-drafter.yml",
         "release-version-check.yml",
         "server-tests.yml",
+        "ha-2026-11.yml",
     }
 
     for name in workflow_names:
@@ -164,6 +167,73 @@ def test_github_validation_workflows_exist() -> None:
     )
     assert "github.event.release.tag_name" in release_version_workflow
     assert "custom_components/stirling_pdf/manifest.json" in release_version_workflow
+
+
+def test_manual_2026_11_workflow_keeps_dependency_and_coverage_checks() -> None:
+    """Do not confuse a prepared manual job with automatic compatibility proof."""
+    workflow = (WORKFLOWS / "ha-2026-11.yml").read_text(encoding="utf-8")
+    parsed = yaml.safe_load(workflow)
+    # PyYAML's YAML 1.1 loader treats the unquoted workflow key `on` as True.
+    triggers = parsed.get("on", parsed.get(True))
+    assert set(triggers) == {"workflow_dispatch"}
+    version_input = triggers["workflow_dispatch"]["inputs"]["test_plugin_version"]
+    assert version_input["required"] is True
+    assert "default" not in version_input
+    job = parsed["jobs"]["compatibility"]
+    assert job["env"]["EXPECTED_HA_VERSION"] == "2026.11.0"
+    assert "continue-on-error" not in job
+    commands = "\n".join(step.get("run", "") for step in job["steps"])
+    assert '"homeassistant==$EXPECTED_HA_VERSION"' in commands
+    assert (
+        '"pytest-homeassistant-custom-component==$HA_TEST_PLUGIN_VERSION"' in commands
+    )
+    assert "-r requirements-dev-common.txt" in commands
+    assert "python -m pip check" in commands
+    assert "--no-deps" not in commands
+    assert "--override" not in commands
+    assert "--cov-fail-under=95" in commands
+    assert "python scripts/check_coverage.py coverage.json" in commands
+    assert all("continue-on-error" not in step for step in job["steps"])
+
+
+def test_config_forms_always_supply_an_explicit_step_id() -> None:
+    """Keep setup, reconfigure, reauth and options compatible with new HA flows."""
+    tree = ast.parse((INTEGRATION / "config_flow.py").read_text(encoding="utf-8"))
+    forms = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr
+        in {
+            "async_show_form",
+            "async_show_menu",
+            "async_show_progress",
+            "async_external_step",
+        }
+    ]
+    assert forms
+    for form in forms:
+        assert any(keyword.arg == "step_id" for keyword in form.keywords)
+
+
+def test_marketplace_documentation_preserves_older_ha_support() -> None:
+    """Document migration without implying catalog acceptance or newer minimum HA."""
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    assert "Settings > Marketplace" in readme
+    assert "hacs_repository/?owner=mojelumi0" in readme
+    assert "### HACS (Home Assistant before 2026.11)" in readme
+    assert (ROOT / "docs" / "HA_2026_11.md").is_file()
+    bug_report = yaml.safe_load(
+        (ROOT / ".github/ISSUE_TEMPLATE/bug_report.yml").read_text("utf-8")
+    )
+    installation = next(
+        item for item in bug_report["body"] if item.get("id") == "installation"
+    )
+    assert installation["attributes"]["options"][:2] == [
+        "Marketplace (Home Assistant 2026.11 or newer)",
+        "HACS (Home Assistant before 2026.11)",
+    ]
 
 
 def test_release_drafter_config_exists() -> None:

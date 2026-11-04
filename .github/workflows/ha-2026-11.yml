@@ -1,0 +1,59 @@
+name: Home Assistant 2026.11 readiness
+
+# Preparatory, manual job. Promote it to the automatic compatibility matrix
+# only after an upstream test package supports the exact stable Core release.
+on:
+  workflow_dispatch:
+    inputs:
+      test_plugin_version:
+        description: "Exact pytest-homeassistant-custom-component version supporting HA 2026.11.0"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compatibility:
+    name: Home Assistant 2026.11.0 (manual)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      EXPECTED_HA_VERSION: "2026.11.0"
+      HA_TEST_PLUGIN_VERSION: ${{ inputs.test_plugin_version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements-dev-common.txt
+      - name: Install matching test dependencies without overrides
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev-common.txt "homeassistant==$EXPECTED_HA_VERSION" "pytest-homeassistant-custom-component==$HA_TEST_PLUGIN_VERSION"
+          python -m pip check
+      - name: Verify actual Home Assistant and test plugin versions
+        run: |
+          python -c 'import importlib.metadata as m, os; actual = m.version("homeassistant"); plugin = m.version("pytest-homeassistant-custom-component"); print(f"Home Assistant: {actual}; test plugin: {plugin}"); assert actual == os.environ["EXPECTED_HA_VERSION"]; assert plugin == os.environ["HA_TEST_PLUGIN_VERSION"]'
+          python -m pip freeze
+      - name: Run tests
+        run: >-
+          python -m pytest -q -p no:cacheprovider
+          --cov=custom_components/stirling_pdf
+          --cov-report=term-missing
+          --cov-report=json:coverage.json
+          --cov-fail-under=95
+      - name: Enforce coverage for every integration module
+        if: ${{ !cancelled() }}
+        run: python scripts/check_coverage.py coverage.json
+      - name: Run Ruff
+        run: ruff check --no-cache custom_components scripts tests tests_live
+      - name: Check Ruff formatting
+        run: ruff format --check --no-cache custom_components scripts tests tests_live
