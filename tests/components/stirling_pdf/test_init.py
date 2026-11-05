@@ -66,7 +66,114 @@ async def test_setup_creates_expected_entities_and_device(
     )
     assert device is not None
     assert device.manufacturer == "Stirling PDF"
+    assert device.model == "Server"
+    assert device.sw_version == "2.14.3"
+    assert device.entry_type is dr.DeviceEntryType.SERVICE
     assert device.configuration_url == "http://pdf.local:8080"
+    for entity_id in (reachable, version, jobs, last_operation):
+        registered = er.async_get(hass).async_get(entity_id)
+        assert registered is not None
+        assert registered.config_entry_id == loaded_entry.entry_id
+        assert registered.device_id == device.id
+
+
+@pytest.mark.parametrize(
+    ("platform", "suffix", "expected"),
+    [
+        ("sensor", "version", "3.2.2"),
+        ("sensor", "jobs_processed", "2"),
+        ("sensor", "last_operation", "extract_pages"),
+        ("binary_sensor", "reachable", "off"),
+    ],
+)
+async def test_registry_rename_keeps_entity_identity_and_coordinator_updates(
+    hass: HomeAssistant,
+    loaded_entry: MockConfigEntry,
+    platform: str,
+    suffix: str,
+    expected: str,
+) -> None:
+    """Exercise actual registry renames on both old and new HA lifecycle paths."""
+    coordinator = loaded_entry.runtime_data
+    coordinator.record_operation("merge")
+    old_id = _entity_id(hass, platform, loaded_entry, suffix)
+    new_id = f"{platform}.renamed_stirling_{suffix}"
+    registry = er.async_get(hass)
+    previous = registry.async_get(old_id)
+    assert previous is not None
+    registry.async_update_entity(old_id, new_entity_id=new_id, name="Custom PDF label")
+    await hass.async_block_till_done()
+
+    current = registry.async_get(new_id)
+    assert current is not None
+    assert current.id == previous.id
+    assert current.unique_id == previous.unique_id
+    assert current.config_entry_id == loaded_entry.entry_id
+    assert current.device_id == previous.device_id
+    assert current.name == "Custom PDF label"
+    assert hass.states.get(old_id) is None
+    assert _entity_id(hass, platform, loaded_entry, suffix) == new_id
+    assert hass.states.get(new_id) is not None
+
+    coordinator.async_set_updated_data({"status": "UP", "version": "3.2.2"})
+    coordinator.record_operation("extract_pages")
+    if suffix == "reachable":
+        coordinator.async_set_update_error(UpdateFailed("offline after rename"))
+    await hass.async_block_till_done()
+    assert _state(hass, new_id).state == expected
+    assert coordinator.jobs_processed == 2
+
+    if suffix == "reachable":
+        coordinator.async_set_updated_data({"status": "UP", "version": "3.2.2"})
+        await hass.async_block_till_done()
+        assert _state(hass, new_id).state == "on"
+
+    with patch(
+        "custom_components.stirling_pdf.api.StirlingPdfApiClient.async_validate_connection",
+        new=AsyncMock(return_value={"status": "UP", "version": "3.2.2"}),
+    ):
+        assert await hass.config_entries.async_reload(loaded_entry.entry_id)
+        await hass.async_block_till_done()
+    assert _entity_id(hass, platform, loaded_entry, suffix) == new_id
+    assert registry.async_get(new_id).id == previous.id
+    assert hass.states.get(old_id) is None
+    assert _state(hass, new_id).state == ("on" if suffix == "reachable" else expected)
+    assert loaded_entry.runtime_data.jobs_processed == 2
+
+
+async def test_device_rename_preserves_entity_ids_and_local_statistics(
+    hass: HomeAssistant, loaded_entry: MockConfigEntry
+) -> None:
+    """A new display-name composition must not rewrite stable entity identities."""
+    coordinator = loaded_entry.runtime_data
+    coordinator.record_operation("ocr")
+    recorded_time = coordinator.last_operation_time
+    entity_ids = {
+        suffix: _entity_id(hass, platform, loaded_entry, suffix)
+        for platform, suffix in (
+            ("sensor", "version"),
+            ("sensor", "jobs_processed"),
+            ("sensor", "last_operation"),
+            ("binary_sensor", "reachable"),
+        )
+    }
+    device_registry = dr.async_get(hass)
+    device = device_registry.async_get_device_by_identifier(
+        (DOMAIN, loaded_entry.entry_id), loaded_entry.entry_id
+    )
+    assert device is not None
+    device_registry.async_update_device(device.id, name_by_user="PDF test server")
+    await hass.async_block_till_done()
+    assert device_registry.async_get(device.id).name_by_user == "PDF test server"
+    for suffix, entity_id in entity_ids.items():
+        assert (
+            _entity_id(hass, entity_id.partition(".")[0], loaded_entry, suffix)
+            == entity_id
+        )
+        assert hass.states.get(entity_id) is not None
+    assert coordinator.jobs_processed == 1
+    assert coordinator.last_operation == "ocr"
+    assert coordinator.last_operation_time == recorded_time
 
 
 async def test_setup_passes_saved_basic_credentials_to_the_runtime_client(

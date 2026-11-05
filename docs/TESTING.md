@@ -236,6 +236,122 @@ YAML of scripts they already copied; a GitHub push cannot update those scripts.
 The new tests have not been run locally and require a fresh CI run. Earlier green
 checks are not evidence that the corrected initial discovery has passed.
 
+## Historical separate Marketplace preparation: 0.3.1
+
+The original separate work started from `main` commit
+`b434eb14409268e781dfaeeb4eda48cff759de79`, not the experimental multi-server
+PR #11. The new version is a preparation target, not a published release.
+`single_config_entry`, runtime actions, credentials and statistics storage stay
+unchanged. No runtime Python module is changed by this preparation.
+
+- Add the official `productivity_information.documents_photos` manifest category.
+- Document Marketplace migration, retained HACS links, pre-release opt-in and
+  restart behavior while retaining the 2026.9.0 minimum.
+- Verify device metadata and that all four entities share the same device.
+- Exercise actual entity-registry renames of each entity, later coordinator
+  updates, availability recovery and reload without changing its registry ID.
+- Verify device display-name changes retain entity IDs and local statistics.
+- Add an explicit-step-ID guard and checks for the prepared manual workflow.
+
+The existing base entity already uses `DeviceInfo(...)`. The two optional
+metric entity classes discussed in the 2026.11 audit exist only in PR #11 and
+are deliberately not imported into this branch. No synthetic compatibility
+hook or runtime refactor is added just to produce a code change.
+
+At the 2026-11-04 dependency check, the latest published
+`pytest-homeassistant-custom-component` was 0.13.375 and required Home Assistant
+2026.10.4. No compatible 2026.11 package version is assumed. The new manual
+workflow requires an explicit version and keeps dependency resolution, exact
+installed-version checks, `pip check` and all coverage gates. It is not part of
+the automatic required `pytest` aggregate yet. It must not be presented as a
+passing 2026.11 CI result before it actually runs successfully.
+
+The maintainer reports HA 2026.11.0 installed on the test Raspberry Pi, still
+running 0.4.0-alpha.1 with two server entries. This is environment information,
+not acceptance evidence for 0.3.1. Do not downgrade that installation or delete
+its entries to test that branch. This section records its original scope, not
+the current combined alpha. See the updated [readiness guide](HA_2026_11.md).
+
+The new Python/HA tests have not been run locally. Static lint, file checks and
+source comparisons do not substitute for GitHub CI or manual HA acceptance.
+
+## Core 2026.11 live baseline, 2026-11-05
+
+The actual test Raspberry Pi reported Core 2026.11.0, HAOS 18.4, aarch64 and
+Python 3.14.10, running the previously installed `0.4.0-alpha.1` with two entries.
+These results do not validate local runtime changes prepared afterward.
+
+| Deployment | Native main script | Additional standard tools | Counter after acceptance |
+|---|---|---|---|
+| Standalone 3.2.2, API key | 6 successes, 8 intended rejections | 6/6 | 30 |
+| Community App backend 2.14.3, HTTP Basic | 6 successes, 8 intended rejections after an explicitly authorized retry | 6/6 | 29 |
+
+The App's first main run failed on the initial merge connection; it was not
+counted as a passing negative test. Its counter did not change. The retry was
+explicitly approved, not performed automatically. The cause was not established.
+
+Both individual entry reloads and an explicitly authorized Core restart retained
+the two counters, last-operation values/timestamps, eight base entity IDs and
+device associations. Redacted diagnostics were inspected. Actual generated
+outputs were acquired through the approved file share with matching hashes.
+Twenty-two PDFs including ZIP members, comprising 46 pages, were rendered and
+inspected: merge order, split/extraction content, compression, rotation, repair,
+metadata and watermarks were consistent with their test cases. Input `a.pdf`
+already contained searchable text, so its OCR output was not recognition proof.
+Repair used a valid input, not a corrupt-document recovery case. No pre-run
+source hashes existed for a historical byte-immutability claim.
+
+## Genuine native image-only OCR, 2026-11-05
+
+A separate `examples/ha_ocr_test.yaml` script and a new copy of the committed
+synthetic scan were created with explicit authorization. Fixture SHA-256:
+`4df4d3d180b7b42720a9bd3af40ef75b20169cf507354799f8c18a6adde88622`.
+The copied bytes matched; independent local inspection found one image-only
+page and no extracted text before testing.
+
+| Deployment | Result | Counter | Isolation |
+|---|---|---|---|
+| Standalone 3.2.2 | All six native checks passed | 30 to 36 | Other entry's counter, operation and timestamp unchanged |
+| Community App 2.14.3 | Initial text-filter request failed to connect, twice | 29 unchanged | Standalone statistics unchanged |
+
+The standalone input had no `STIRLING` match. OCR produced a new one-page PDF;
+subsequent filters found `STIRLING`, `INVOICE` and `12345`, and page-count
+analysis returned one. Each response and expected counter increment was checked.
+The output was also read and rendered independently after acquisition.
+
+Both App attempts stopped before OCR and skipped all later checks. The second
+attempt was explicitly authorized after the first failure. No settings were
+changed; no further retries were attempted. The old installed client reported
+only a generic connection failure, so its precise transport category/root cause
+is unresolved. Do not count these as successful App OCR runs or change opt-ins
+to explain the failures. The new reason-code diagnostics were not installed.
+
+This proves the standalone synthetic English fixture case only. It is not
+general OCR-quality assessment, all-language acceptance, catalog coverage,
+Marketplace-migration proof or automatic merge/release approval.
+
+## Combined PR #11/main preparation, 2026-11-05
+
+The main snapshot at `9ee47ce109e4b3de886fd739d21c36110a7445a7` was combined
+locally with PR #11 at `9027ae819f7088fa1e4d0e57efcec7b2af78ec40`. Version
+`0.4.0-alpha.1`, multiple entries, URL routing, storage format, action contracts,
+dependencies and existing entity identities remain unchanged. The category,
+manual readiness workflow and base lifecycle tests from PR #12 are retained.
+
+New preparation adds typed `DeviceInfo` for both optional metric entity classes,
+actual enabled-entity rename/listener/reload regressions, fixed transport reason
+codes without raw exception chains/private URLs, and tests for request/body
+failures and a lost-response POST without reupload. The native OCR example's
+whole sequence is exercised by new synthetic-service HA tests, including early
+failures, malformed responses, missing counter increments and isolation failure.
+
+No local Python, pip, pytest or Docker run was performed. Fresh CI must validate
+all new tests and unchanged coverage gates. Earlier green PR checks and the
+live baseline above cannot validate code not yet committed or installed. The
+manual Core 2026.11 workflow remains dependency-gated; no matching upstream
+test-plugin pin was available at the metadata check. No automatic matrix,
+coverage threshold or dependency resolver safeguard was weakened.
+
 ## Boundaries
 
 - The synthetic Basic proxy is not the Community App or Supervisor.

@@ -40,6 +40,29 @@ with `requirements-dev.txt`. Keep their framework pins aligned with the
 Home Assistant versions in the workflow; shared pytest dependencies live in
 `requirements-dev-common.txt`.
 
+Home Assistant 2026.11 preparation is tracked separately in
+[`docs/HA_2026_11.md`](docs/HA_2026_11.md). The manual readiness workflow needs an
+exact upstream test-plugin version whose dependencies resolve with Core
+2026.11.0. Never bypass the resolver with `--no-deps` or dependency overrides,
+silence failures with `continue-on-error`, or count a prepared/skipped job as a
+compatibility result. Preserve the two automatic jobs and their aggregate
+`pytest` check. Add the stable 2026.11 job to that matrix after its test package
+and a real passing result are available.
+
+The existing entity base uses the cross-version `DeviceInfo(...)` constructor.
+Keep device information as typed constructor arguments, not plain dictionaries
+or dict-style mutation. The regression suite must cover registry-driven entity
+ID changes and device display-name changes without losing coordinator updates,
+stable registry IDs or saved operation statistics. Do not assert a complete
+`friendly_name` string: Home Assistant owns display-name composition.
+
+The Marketplace still reads `hacs.json` and uses the HACS validation action.
+Keep the older `hacs_repository` My link while older HA versions are supported.
+Check the documented category identifier rather than inventing one, and never
+describe a custom repository as accepted into the public catalog without the
+corresponding catalog merge. A Marketplace listing is not Core inclusion or a
+security audit by the Home Assistant project.
+
 Real-server contract tests live in `tests_live/` and use
 `requirements-live.txt` in a separate environment. See the README for the
 required test-server environment variables. They deliberately avoid real

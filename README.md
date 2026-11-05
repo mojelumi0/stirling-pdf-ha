@@ -3,12 +3,12 @@
 Bring a self-hosted Stirling PDF instance into Home Assistant with native PDF
 processing actions, connectivity monitoring, and a simple UI-based setup.
 
-[![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?logo=home-assistant)](https://my.home-assistant.io/redirect/hacs_repository/?owner=mojelumi0&repository=stirling-pdf-ha&category=integration)
+[![Marketplace / HACS Custom](https://img.shields.io/badge/Marketplace%20%2F%20HACS-Custom-41BDF5.svg?logo=home-assistant)](https://my.home-assistant.io/redirect/hacs_repository/?owner=mojelumi0&repository=stirling-pdf-ha&category=integration)
 [![Tests](https://github.com/mojelumi0/stirling-pdf-ha/actions/workflows/tests.yml/badge.svg)](https://github.com/mojelumi0/stirling-pdf-ha/actions/workflows/tests.yml)
 [![Hassfest](https://github.com/mojelumi0/stirling-pdf-ha/actions/workflows/hassfest.yml/badge.svg)](https://github.com/mojelumi0/stirling-pdf-ha/actions/workflows/hassfest.yml)
 [![HACS validation](https://github.com/mojelumi0/stirling-pdf-ha/actions/workflows/validate.yaml/badge.svg)](https://github.com/mojelumi0/stirling-pdf-ha/actions/workflows/validate.yaml)
 
-[Install with HACS](https://my.home-assistant.io/redirect/hacs_repository/?owner=mojelumi0&repository=stirling-pdf-ha&category=integration)
+[Install with Marketplace / HACS](https://my.home-assistant.io/redirect/hacs_repository/?owner=mojelumi0&repository=stirling-pdf-ha&category=integration)
 · [Report an issue](https://github.com/mojelumi0/stirling-pdf-ha/issues)
 · [Stirling PDF](https://www.stirlingpdf.com/)
 
@@ -23,6 +23,12 @@ processing actions, connectivity monitoring, and a simple UI-based setup.
 > This is an actively developed community integration with a focused feature
 > set. Keep backups and use copies of documents when testing a new deployment.
 > A regular release is not a guarantee of compatibility with every server setup.
+
+> [!IMPORTANT]
+> This alpha supports multiple configured servers. The main-line 0.3.x releases
+> support only one server. Do not downgrade a multi-server installation to 0.3.x
+> or delete entries to make a downgrade work. Use a separate test instance or an
+> explicitly agreed backup/restore plan.
 
 ## What this integration does
 
@@ -47,7 +53,7 @@ Assistant actions, ready for scripts and automations.
 
 - Home Assistant 2026.9.0 or newer
 - A reachable Stirling PDF instance
-- HACS for the recommended installation method
+- Marketplace on Home Assistant 2026.11 or newer, or HACS on older versions
 - A directory that Home Assistant can read and write
 - An API key when authentication is enabled in Stirling PDF
 - HTTP Basic username and password when the direct API port or proxy requires them
@@ -58,9 +64,47 @@ Home Assistant.
 
 ## Installation
 
-### HACS
+### Marketplace (Home Assistant 2026.11 or newer)
 
-1. Select **Install with HACS** above, or open HACS and add this repository as a
+Home Assistant 2026.11 includes the Marketplace under **Settings > Marketplace**.
+It takes over an existing HACS installation automatically. Keep the integration
+and its configuration entry during this migration; do not delete and re-add
+Stirling PDF. Existing custom repositories and update entity IDs are carried
+over according to the official
+[migration documentation](https://www.home-assistant.io/integrations/marketplace/#coming-from-hacs).
+
+For a new installation:
+
+1. Open **Settings > Marketplace** as an administrator. Read its community-code
+   warning and decide whether to accept it before installing anything.
+2. Select **Install with Marketplace / HACS** above, or select **Add from link**
+   in the Marketplace and enter:
+
+   ```text
+   https://github.com/mojelumi0/stirling-pdf-ha
+   ```
+
+3. Adding a custom repository requires a GitHub connection. Complete the GitHub
+   device sign-in if requested; never enter your GitHub password into this
+   integration's authentication form.
+4. Open the repository, select **Install**, and review the selected version.
+5. A fresh config-flow integration can open its setup immediately. If the
+   Marketplace requests a restart, follow that repair first. Otherwise continue
+   with the Stirling PDF setup form, or add it later under
+   **Settings > Devices & services > Add integration**.
+
+Updates to an already loaded integration still require a Home Assistant restart.
+The Marketplace creates a repair when this is needed. A first installation
+without a restart is not a promise that updates are applied without one.
+
+The repository is a community custom integration, not a built-in Core
+integration or an endorsement by Home Assistant. Adding it from a link is not
+the same as acceptance into the public catalog. See the
+[official Marketplace documentation](https://www.home-assistant.io/integrations/marketplace/).
+
+### HACS (Home Assistant before 2026.11)
+
+1. Select **Install with Marketplace / HACS** above, or open HACS and add this repository as a
    custom **Integration** repository:
 
    ```text
@@ -69,19 +113,46 @@ Home Assistant.
 
 2. Find **Stirling PDF** in HACS and select **Download**.
 3. Restart Home Assistant.
-4. Open **Settings → Devices & services → Add integration**.
+4. Open **Settings > Devices & services > Add integration**.
 5. Search for **Stirling PDF**.
 
-Normal releases do not require opting into prereleases. Once an alpha has been
-published, enable the repository's pre-release switch in HACS to include it in
-update checks, then select the alpha release explicitly when downloading.
-Leave the switch disabled if you only want normal releases. The experimental
-branch is not a recommended substitute for the latest regular release.
+The existing `hacs_repository` install link intentionally remains in use: it
+opens HACS on older Home Assistant versions and the Marketplace on 2026.11 or
+newer. There is no separate HACS installation to add on 2026.11.
 
-The HACS update dialog can currently show **Icon not available** even though the
-integration icon appears correctly elsewhere in Home Assistant. This is a
-known HACS frontend issue and does not affect the integration. See
-[HACS issue #5223](https://github.com/hacs/integration/issues/5223).
+Older HACS frontends have shown **Icon not available** in the update dialog
+even when integration icons work elsewhere. The historical report is
+[HACS issue #5223](https://github.com/hacs/integration/issues/5223); it is not a
+confirmed Marketplace defect. Report new Marketplace problems with the exact
+Home Assistant version and a sanitized screenshot.
+
+### Pre-releases
+
+Normal releases do not require opting into pre-releases. In the Marketplace,
+open **Settings > Devices & services > Marketplace**, select this repository's
+device, enable its disabled **Pre-release** entity, then turn that switch on.
+Older HACS versions provide their own repository pre-release switch. Keep it
+off if you only want stable releases. See the
+[official update instructions](https://www.home-assistant.io/integrations/marketplace/#keeping-installations-up-to-date).
+
+Once an alpha is published, select that release explicitly when downloading.
+The experimental development branch is not a recommended substitute for the
+latest regular release.
+
+### Home Assistant 2026.11 compatibility
+
+The manifest includes the official **Documents & photos** category. Base and
+optional monitoring entities construct `DeviceInfo(...)` with keyword arguments
+and provide device-based entity names. Regression tests cover registry renames,
+continued updates, availability recovery and reload, including enabled optional
+sensors and binary sensors. The new HA naming display can change labels, not
+existing entity IDs. These new tests still require a fresh CI run.
+
+The minimum Home Assistant version remains **2026.9.0**. Existing automated jobs
+still target 2026.9.0 and 2026.10.2. A separate manual 2026.11.0 workflow is
+prepared, but no passing result is claimed until a compatible upstream test
+package is selected and the full job succeeds. See the
+[2026.11 readiness and migration checklist](docs/HA_2026_11.md).
 
 ### Manual installation
 
@@ -98,7 +169,7 @@ known HACS frontend issue and does not affect the integration. See
    integration entry. This removes its entities and permanently deletes the
    integration's locally saved job count and last-operation details. Make a
    Home Assistant backup first if you want to retain the option to restore them.
-3. Remove the downloaded integration from HACS. For a manual installation,
+3. Remove the downloaded integration from Marketplace or HACS. For a manual installation,
    remove only `/config/custom_components/stirling_pdf` instead.
 4. Restart Home Assistant after removing the integration files.
 
@@ -472,7 +543,7 @@ automation. The response contains:
 
 | Field | Description |
 |---|---|
-| `operation` | Completed action: `merge`, `split`, `ocr`, or `compress` |
+| `operation` | Completed action: `merge`, `split`, `ocr`, `compress`, or `extract_pages` |
 | `output_path` | Path of the generated file |
 | `output_size` | Size of the generated file in bytes |
 | `input_count` | Number of input files processed |
@@ -502,6 +573,7 @@ unchanged.
 | Split | `/api/v1/general/split-pages` |
 | OCR | `/api/v1/misc/ocr-pdf` |
 | Compress | `/api/v1/misc/compress-pdf` |
+| Extract pages | `/api/v1/general/rearrange-pages` with `customMode=CUSTOM` |
 
 The local Swagger UI at `<STIRLING-PDF-URL>/swagger-ui.html` is the best source
 for the exact API supported by the installed Stirling PDF version.
@@ -510,9 +582,10 @@ for the exact API supported by the installed Stirling PDF version.
 
 ### The integration is not found after downloading
 
-- Confirm that HACS placed the files in
+- Confirm that Marketplace or HACS placed the files in
   `/config/custom_components/stirling_pdf`.
-- Restart Home Assistant after the HACS download.
+- Follow any Marketplace restart repair. After a HACS download or an update to
+  an already loaded integration, restart Home Assistant.
 - Refresh the browser before searching for the integration again.
 
 ### Home Assistant cannot connect
@@ -522,6 +595,25 @@ for the exact API supported by the installed Stirling PDF version.
 - Do not use `localhost` for a different container or computer.
 - Check the API key when Stirling PDF security is enabled, and HTTP Basic
   credentials when using the Community App or a protected proxy.
+
+Transport errors identify the request type and a fixed reason code, without
+echoing the configured URL, uploaded filename, credentials or raw exception text:
+
+| Reason | What to investigate |
+|---|---|
+| `timeout` | Server response time, OCR workload and proxy timeouts |
+| `dns_error` | Hostname resolution from Home Assistant |
+| `tls_error` | Certificate trust, hostname and HTTPS configuration |
+| `connection_refused` | Whether the intended service is listening on its configured port |
+| `connection_failed` | Other connector or network failures |
+| `server_disconnected`, `connection_lost`, `incomplete_response` | Server/proxy logs and interrupted responses |
+| `client_error` | Another HTTP-client failure; inspect the matching server logs |
+
+Correlate HA and server logs at the failed action's timestamp. A category is not
+a root-cause diagnosis. A successful status poll does not prove the next upload
+will succeed. Processing requests are not automatically retried: a lost response
+does not prove the server never processed the document. Check the server before
+manually retrying. Never disable authentication or TLS validation to hide an error.
 
 ### The status endpoint is disabled
 
@@ -546,6 +638,11 @@ Leave the app's authentication enabled. After a rejected login, check the stored
 configuration and use reauthentication/reconfiguration rather than deleting the
 integration. Do not repeatedly retry invalid credentials or share their values.
 
+The failed action is not automatically retried and does not increase the local
+job counter. After correcting credentials or permissions, explicitly run it again.
+A 403 response can also mean an account or access restriction. If replacing
+the key does not help, check permissions on the Stirling PDF server.
+
 ### Extraction rejects a page selection
 
 Use explicit positive pages or ascending ranges such as `1,3-5`. Extraction
@@ -553,11 +650,6 @@ does not accept `all` or function expressions. Clear accidental trailing commas
 and do not use spaces inside a number. The server determines which selected
 pages actually exist; a successful response alone does not prove all requested
 pages were present.
-The failed action is not automatically retried and does not increase the local
-job counter. After updating the key, run the action again.
-
-A 403 response can also mean an account or access restriction. If replacing
-the key does not help, check permissions on the Stirling PDF server.
 
 ### A compression value is rejected with “Got None”
 
@@ -613,15 +705,25 @@ counter increase of 6. Exact rejection reasons, output contents, credentials,
 diagnostics, installed version and reload/restart persistence still need manual
 inspection; the script is not an automatic merge/release approval.
 
+The separate [image-only OCR example](examples/README.md#image-only-ocr-test)
+uses the committed synthetic scan, not `a.pdf` or another already-searchable
+document. It checks absence of a known input word, performs OCR, verifies three
+recognized markers and checks a one-page result. A complete run adds six jobs
+to the selected server and checks the other server's local statistics. It stops
+at the first failure without retrying or overwriting. Verify the fixture hash
+and inspect the generated PDF separately.
+
 See [testing and compatibility evidence](docs/TESTING.md) for the distinction
 between released observations, CI checks and pending development validation.
 
 ## Known limitations
 
-- Only one Stirling PDF instance can currently be configured.
+- With multiple servers, actions require an explicit server selection.
 - Operation statistics only count actions started through this integration.
 - There is no browser-based file picker for Home Assistant host paths.
-- Password, watermark, and office-document conversion actions are not implemented.
+- Additional tools depend on the server version and installed capabilities.
+  Sensitive, external and AI action groups require explicit per-server opt-ins;
+  the full catalog has not been validated on every supported deployment.
 - Compatibility with additional Home Assistant and Stirling PDF versions still
   needs broader community testing.
 
@@ -659,6 +761,13 @@ The `Tests` workflow runs the Home Assistant suite against both the advertised
 minimum (2026.9.0) and current tested Core version (2026.10.2), using separate
 compatible dependency sets. Its final `pytest` job keeps the existing required
 status-check name and only succeeds when both versions pass.
+
+The separate **Home Assistant 2026.11 readiness** workflow is manual and requires
+an exact test-plugin version. Pip must resolve its normal dependencies together
+with `homeassistant==2026.11.0`, and `pip check` must pass. The installed versions
+are checked explicitly before running the same suite and coverage gates. A
+prepared workflow, an older green job or a test run on 2026.10.x does not validate
+2026.11.0. See [the readiness guide](docs/HA_2026_11.md).
 
 All workflows use Ubuntu 24.04 explicitly. Release-version validation checks
 the actual release tag rather than a potentially newer default-branch commit.
@@ -720,6 +829,9 @@ version, installation method, action used, and sanitized error message.
 - [Home Assistant integration manifest](https://developers.home-assistant.io/docs/creating_integration_manifest/)
 - [Home Assistant integration actions](https://developers.home-assistant.io/docs/dev_101_services/)
 - [Home Assistant integration diagnostics](https://developers.home-assistant.io/docs/core/integration/diagnostics/)
+- [Home Assistant Marketplace](https://www.home-assistant.io/integrations/marketplace/)
+- [Publishing a custom integration](https://contributors.home-assistant.io/marketplace/guides/integrations/)
+- [Marketplace and HACS catalog requirements](https://contributors.home-assistant.io/marketplace/guides/catalog/)
 - [Home Assistant config flow](https://developers.home-assistant.io/docs/core/integration/config_flow/)
 - [Stirling PDF 3.2.0 status and health controller](https://github.com/Stirling-Tools/Stirling-PDF/blob/v3.2.0/app/core/src/main/java/stirling/software/SPDF/controller/web/MetricsController.java)
 - [Stirling PDF 3.2.0 authentication filter](https://github.com/Stirling-Tools/Stirling-PDF/blob/v3.2.0/app/proprietary/src/main/java/stirling/software/proprietary/security/filter/UserAuthenticationFilter.java)
