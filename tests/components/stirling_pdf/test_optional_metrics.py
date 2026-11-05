@@ -8,6 +8,7 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from homeassistant.const import MAX_LENGTH_STATE_STATE, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from pytest_homeassistant_custom_component.common import MockConfigEntry
@@ -288,3 +289,74 @@ async def test_all_optional_entity_properties_and_lifecycle(
     assert coordinator.async_request_refresh.await_count == len(METRICS) + len(
         BOOLEAN_METRICS
     )
+
+
+@pytest.mark.parametrize(
+    ("platform", "suffix", "group", "expected"),
+    [
+        ("sensor", "total_jobs", "jobs", "7"),
+        ("binary_sensor", "ai_enabled", "ai_status", "on"),
+    ],
+)
+async def test_optional_metric_device_identity_and_listener_survive_registry_rename(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+    enable_custom_integrations: None,
+    platform: str,
+    suffix: str,
+    group: str,
+    expected: str,
+) -> None:
+    """Exercise actual enabled optional entities, not just their Python properties."""
+    registry = er.async_get(hass)
+    registered = registry.async_get_or_create(
+        platform,
+        DOMAIN,
+        f"{mock_config_entry.entry_id}_{suffix}",
+        config_entry=mock_config_entry,
+        suggested_object_id=f"optional_{suffix}",
+        disabled_by=None,
+    )
+    with (
+        patch(
+            "custom_components.stirling_pdf.api.StirlingPdfApiClient.async_validate_connection",
+            new=AsyncMock(return_value={"status": "UP", "version": "3.2.2"}),
+        ),
+        patch(
+            "custom_components.stirling_pdf.api.StirlingPdfApiClient.async_get_optional_data",
+            new=AsyncMock(return_value={"totalJobs": 7, "enabled": True}),
+        ),
+    ):
+        assert await hass.config_entries.async_setup(mock_config_entry.entry_id)
+        await hass.async_block_till_done()
+        device = dr.async_get(hass).async_get_device_by_identifier(
+            (DOMAIN, mock_config_entry.entry_id), mock_config_entry.entry_id
+        )
+        assert device is not None
+        assert registry.async_get(registered.entity_id).device_id == device.id
+        assert hass.states.get(registered.entity_id).state == expected
+        metrics = mock_config_entry.runtime_data.metrics
+        assert list(metrics.async_contexts()) == [group]
+
+        renamed = f"{platform}.renamed_optional_{suffix}"
+        registry.async_update_entity(registered.entity_id, new_entity_id=renamed)
+        await hass.async_block_till_done()
+        assert hass.states.get(registered.entity_id) is None
+        assert registry.async_get(renamed).id == registered.id
+        assert registry.async_get(renamed).device_id == device.id
+        assert list(metrics.async_contexts()) == [group]
+
+        metrics.async_set_updated_data({group: None})
+        await hass.async_block_till_done()
+        assert hass.states.get(renamed).state == STATE_UNAVAILABLE
+        metrics.async_set_updated_data({group: {"totalJobs": 7, "enabled": True}})
+        await hass.async_block_till_done()
+        assert hass.states.get(renamed).state == expected
+
+        assert await hass.config_entries.async_reload(mock_config_entry.entry_id)
+        await hass.async_block_till_done()
+        assert registry.async_get(renamed).id == registered.id
+        assert registry.async_get(renamed).device_id == device.id
+        assert hass.states.get(renamed).state == expected
+        assert list(mock_config_entry.runtime_data.metrics.async_contexts()) == [group]
+        assert mock_config_entry.runtime_data.jobs_processed == 0

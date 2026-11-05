@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import re
 from copy import deepcopy
 from pathlib import Path
@@ -10,9 +11,11 @@ from typing import Any
 import pytest
 import yaml
 from homeassistant.components.script.config import SCRIPT_ENTITY_SCHEMA
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, SupportsResponse
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity import entity_sources
+from homeassistant.helpers.script import Script
 from homeassistant.helpers.script_variables import ScriptVariables
 from homeassistant.helpers.template import Template
 from pytest_homeassistant_custom_component.common import MockConfigEntry
@@ -86,7 +89,9 @@ def _discovery_entry(hass: HomeAssistant, domain: str, label: str):
     return entry, entities
 
 
-@pytest.mark.parametrize("filename", ["ha_test.yaml", "ha_tools_test.yaml"])
+@pytest.mark.parametrize(
+    "filename", ["ha_test.yaml", "ha_tools_test.yaml", "ha_ocr_test.yaml"]
+)
 @pytest.mark.parametrize("selected_index", [0, 1])
 async def test_initial_discovery_uses_real_ha_functions_and_exact_entry_ids(
     hass: HomeAssistant, filename: str, selected_index: int
@@ -114,7 +119,9 @@ async def test_initial_discovery_uses_real_ha_functions_and_exact_entry_ids(
     )
 
 
-@pytest.mark.parametrize("filename", ["ha_test.yaml", "ha_tools_test.yaml"])
+@pytest.mark.parametrize(
+    "filename", ["ha_test.yaml", "ha_tools_test.yaml", "ha_ocr_test.yaml"]
+)
 @pytest.mark.parametrize("selection", ["missing", "foreign"])
 async def test_invalid_selected_entry_stops_before_any_pdf_action(
     hass: HomeAssistant, filename: str, selection: str
@@ -160,6 +167,136 @@ async def test_additional_tools_without_selection_stop_safely(
     assert values["selected_server"] == ""
     assert values["selected_entities"] == []
     assert _render(hass, script["sequence"][1]["if"], values)
+
+
+@pytest.mark.parametrize(
+    ("scenario", "expected_calls"),
+    [
+        ("success", 6),
+        ("already_searchable", 1),
+        ("ocr_failure", 2),
+        ("missing_recognized_word", 3),
+        ("non_boolean_match", 3),
+        ("wrong_page_count", 6),
+        ("other_server_changed", 6),
+        ("missing_counter_change", 1),
+    ],
+)
+async def test_image_only_ocr_script_executes_and_stops_on_failed_prerequisites(
+    hass: HomeAssistant, scenario: str, expected_calls: int
+) -> None:
+    """Run the full native sequence with synthetic services, not a real PDF server."""
+    script_config = yaml.safe_load(
+        (ROOT / "examples" / "ha_ocr_test.yaml").read_text("utf-8")
+    )
+    loop = next(
+        step["repeat"] for step in script_config["sequence"] if "repeat" in step
+    )
+    # Failure cases should not spend five real seconds waiting for our fake sensor.
+    loop["sequence"][2]["timeout"] = "00:00:00"
+    validated = SCRIPT_ENTITY_SCHEMA(deepcopy(script_config))
+    selected, sensors = _discovery_entry(hass, DOMAIN, "ocr_selected")
+    other, other_sensors = _discovery_entry(hass, DOMAIN, "ocr_other")
+    _discovery_entry(hass, "mqtt", "ocr_foreign")
+    calls = []
+    notifications = []
+
+    async def notify(call):
+        notifications.append(dict(call.data))
+
+    async def process(call):
+        calls.append(call)
+        assert call.data["config_entry_id"] == selected.entry_id
+        assert call.data["overwrite"] is False
+        if call.service == "ocr" and scenario == "ocr_failure":
+            raise HomeAssistantError("Synthetic OCR connection failure")
+        if scenario != "missing_counter_change":
+            previous = int(hass.states.get(sensors["jobs"]).state)
+            hass.states.async_set(
+                sensors["jobs"], str(previous + 1), {"state_class": "total_increasing"}
+            )
+        response = {"operation": call.service, "config_entry_id": selected.entry_id}
+        if call.service == "check_contains_text":
+            matched = len(calls) > 1
+            if scenario == "already_searchable" and len(calls) == 1:
+                matched = True
+            if scenario == "missing_recognized_word" and len(calls) == 3:
+                matched = False
+            response["matches"] = (
+                1 if scenario == "non_boolean_match" and len(calls) == 3 else matched
+            )
+        elif call.service == "ocr":
+            response = {
+                "operation": "ocr",
+                "output_path": call.data["output_path"],
+                "output_size": 1234,
+                "input_count": 1,
+            }
+        else:
+            response["result"] = {
+                "pageCount": 2 if scenario == "wrong_page_count" else 1
+            }
+            if scenario == "other_server_changed":
+                hass.states.async_set(
+                    other_sensors["jobs"], "99", {"state_class": "total_increasing"}
+                )
+        return response
+
+    hass.services.async_register("persistent_notification", "create", notify)
+    for operation in ("ocr", "check_contains_text", "analyze_page_count"):
+        hass.services.async_register(
+            DOMAIN, operation, process, supports_response=SupportsResponse.ONLY
+        )
+    script = Script(hass, validated["sequence"], "Synthetic OCR example", DOMAIN)
+    try:
+        await script.async_run(
+            {"config_entry_id": selected.entry_id, "test_directory": "/config/pdf-test"}
+        )
+    except HomeAssistantError:
+        assert scenario != "success"
+    assert len(calls) == expected_calls
+    assert notifications
+    final = notifications[-1]
+    if scenario == "success":
+        assert "**Result:** PASS" in final["message"]
+        assert "**Counter:** 4 -> 10" in final["message"]
+        assert "**Other server statistics unchanged:** True" in final["message"]
+        assert [call.service for call in calls] == [
+            "check_contains_text",
+            "ocr",
+            "check_contains_text",
+            "check_contains_text",
+            "check_contains_text",
+            "analyze_page_count",
+        ]
+        assert calls[1].data["languages"] == ["eng"]
+        assert (
+            calls[1]
+            .data["output_path"]
+            .startswith("/config/pdf-test/stirling_ocr_test_")
+        )
+        assert calls[1].data["output_path"] != calls[1].data["file_path"]
+        assert [calls[i].data["text"] for i in (2, 3, 4)] == [
+            "STIRLING",
+            "INVOICE",
+            "12345",
+        ]
+        assert hass.states.get(other_sensors["jobs"]).state == "4"
+        assert other.entry_id != selected.entry_id
+    else:
+        assert "FAILED" in final["title"] or "**Result:** FAIL" in final["message"]
+        assert "**Result:** PASS" not in final["message"]
+
+
+def test_ocr_fixture_path_is_bound_to_the_committed_synthetic_asset() -> None:
+    """Keep the example's documented fingerprint in sync without a new dependency."""
+    fixture = ROOT / "tests_live" / "fixtures" / "ocr_scan.pdf"
+    digest = hashlib.sha256(fixture.read_bytes()).hexdigest()
+    script = yaml.safe_load((ROOT / "examples" / "ha_ocr_test.yaml").read_text("utf-8"))
+    assert script["fields"]["fixture_path"]["default"].endswith(
+        f"stirling_ocr_fixture_{digest[:8]}.pdf"
+    )
+    assert digest in (ROOT / "examples" / "ha_ocr_test.yaml").read_text("utf-8")
 
 
 async def test_example_matches_home_assistant_script_schema(
@@ -223,6 +360,7 @@ async def test_extended_example_schema_and_safe_cases(hass: HomeAssistant) -> No
     [
         ("ha_test.yaml", "Stirling PDF - Integration test"),
         ("ha_tools_test.yaml", "Stirling PDF - Additional tool test"),
+        ("ha_ocr_test.yaml", "Stirling PDF - Image-only OCR test"),
     ],
 )
 def test_example_names_and_server_labels_are_english(filename: str, title: str) -> None:

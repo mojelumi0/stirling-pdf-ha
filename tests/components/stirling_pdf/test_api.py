@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import errno
 import importlib.util
 import json
 import sys
+import traceback
 from base64 import b64decode
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import aiohttp
@@ -544,7 +547,9 @@ async def test_status_timeout_is_wrapped(session: MagicMock) -> None:
     """Expose network timeouts through the same typed connection error."""
     session.get.side_effect = TimeoutError()
     client = StirlingPdfApiClient(session, "http://pdf.local")
-    with pytest.raises(StirlingPdfConnectionError, match="Timeout connecting"):
+    with pytest.raises(
+        StirlingPdfConnectionError, match="Status request failed.*timeout"
+    ):
         await client.async_get_status()
 
 
@@ -668,3 +673,125 @@ async def test_extended_tool_preserves_status_and_named_file_parts(
     session.post.return_value = _mock_response(403)
     with pytest.raises(_api_module.StirlingPdfPermissionError):
         await client.async_process("/api/v1/form/fill", [], {})
+
+
+_PRIVATE_FAILURE_TEXT = "PRIVATE-HOST PRIVATE-KEY PRIVATE-PASSWORD PRIVATE-DOCUMENT"
+
+
+def _connector_failure(error_type, os_error):
+    """Construct connector failures without resolving or contacting a host."""
+    key = SimpleNamespace(host="PRIVATE-HOST", port=8443, ssl=True, is_ssl=True)
+    return error_type(key, os_error)
+
+
+@pytest.mark.parametrize(
+    "request_kind", ["status", "authentication", "monitoring", "pdf"]
+)
+@pytest.mark.parametrize("failure_stage", ["enter", "body"])
+@pytest.mark.parametrize(
+    ("factory", "reason"),
+    [
+        (lambda: TimeoutError(_PRIVATE_FAILURE_TEXT), "timeout"),
+        (
+            lambda: _connector_failure(
+                aiohttp.ClientSSLError, OSError(_PRIVATE_FAILURE_TEXT)
+            ),
+            "tls_error",
+        ),
+        (
+            lambda: _connector_failure(
+                aiohttp.ClientConnectorDNSError, OSError(_PRIVATE_FAILURE_TEXT)
+            ),
+            "dns_error",
+        ),
+        (
+            lambda: _connector_failure(
+                aiohttp.ClientConnectorError,
+                ConnectionRefusedError(errno.ECONNREFUSED, _PRIVATE_FAILURE_TEXT),
+            ),
+            "connection_refused",
+        ),
+        (
+            lambda: _connector_failure(
+                aiohttp.ClientConnectorError, OSError(_PRIVATE_FAILURE_TEXT)
+            ),
+            "connection_failed",
+        ),
+        (
+            lambda: aiohttp.ServerDisconnectedError(_PRIVATE_FAILURE_TEXT),
+            "server_disconnected",
+        ),
+        (
+            lambda: aiohttp.ClientPayloadError(_PRIVATE_FAILURE_TEXT),
+            "incomplete_response",
+        ),
+        (
+            lambda: aiohttp.ClientConnectionError(_PRIVATE_FAILURE_TEXT),
+            "connection_lost",
+        ),
+        (lambda: aiohttp.ClientError(_PRIVATE_FAILURE_TEXT), "client_error"),
+    ],
+)
+async def test_transport_categories_are_safe_and_never_retry(
+    session: MagicMock, request_kind: str, failure_stage: str, factory, reason: str
+) -> None:
+    """Classify enter/read failures without leaking exception text or reuploading."""
+    failure = factory()
+    manager = _mock_response(200, json_data={"status": "UP"}, read_data=b"%PDF-test")
+    if failure_stage == "enter":
+        manager.__aenter__.side_effect = failure
+    else:
+        response = manager.__aenter__.return_value
+        (
+            response.read if request_kind == "pdf" else response.text
+        ).side_effect = failure
+    method = session.post if request_kind == "pdf" else session.get
+    method.return_value = manager
+    client = StirlingPdfApiClient(
+        session,
+        "http://PRIVATE-HOST:8443/PRIVATE-PATH",
+        api_key="PRIVATE-KEY",
+        username="PRIVATE-USER",
+        password="PRIVATE-PASSWORD",
+    )
+    with pytest.raises(StirlingPdfConnectionError) as caught:
+        if request_kind == "status":
+            await client.async_get_status()
+        elif request_kind == "authentication":
+            await client.async_check_authentication()
+        elif request_kind == "monitoring":
+            await client.async_get_optional_data("/api/v1/info/requests")
+        else:
+            await client.async_compress("PRIVATE-NAME.pdf", b"PRIVATE-DOCUMENT", 5)
+    method.assert_called_once()
+    assert f"({reason})" in str(caught.value)
+    assert caught.value.__suppress_context__ is True
+    assert caught.value.__cause__ is None
+    formatted = "".join(traceback.format_exception(caught.value))
+    for secret in (
+        "PRIVATE-HOST",
+        "PRIVATE-PATH",
+        "PRIVATE-KEY",
+        "PRIVATE-USER",
+        "PRIVATE-PASSWORD",
+        "PRIVATE-NAME",
+        "PRIVATE-DOCUMENT",
+    ):
+        assert secret not in str(caught.value)
+        # Test-source lines can contain synthetic literals; exception-chain text
+        # must not include the original payload containing all four markers.
+    assert _PRIVATE_FAILURE_TEXT not in formatted
+
+
+async def test_status_http_error_does_not_echo_private_base_url(
+    session: MagicMock,
+) -> None:
+    """HTTP errors must use the known endpoint, not a private configured URL."""
+    session.get.return_value = _mock_response(500, text_data=_PRIVATE_FAILURE_TEXT)
+    client = StirlingPdfApiClient(session, "http://private-host.invalid/private-path")
+    with pytest.raises(StirlingPdfApiError, match="HTTP 500") as caught:
+        await client.async_get_status()
+    assert "/api/v1/info/status" in str(caught.value)
+    assert "private-host" not in str(caught.value)
+    assert "private-path" not in str(caught.value)
+    assert _PRIVATE_FAILURE_TEXT not in str(caught.value)

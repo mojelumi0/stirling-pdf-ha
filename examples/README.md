@@ -17,7 +17,7 @@ Edit in YAML**, as for the main script below. Do not wrap either file in
 `ha_test.yaml` is a single script for Home Assistant's UI YAML editor. Its
 filename and title do not contain an integration version. Optional version and
 deployment labels are user-provided information, not automatically verified
-facts. Both scripts use English field labels, progress messages, reports and
+facts. All three scripts use English field labels, progress messages, reports and
 script-authored errors. Home Assistant's own error messages may still follow
 its configured UI language. The scripts do not change that language setting.
 
@@ -99,6 +99,52 @@ Use a separately labelled run for the Community App and standalone API-key
 deployment. Protect the Community App's direct API port, keep authentication
 enabled, and prefer trusted HTTPS or an isolated trusted local connection.
 
-The CI tests validate the example's HA script schema, render its cases and
-summary with HA templates, and check safe output targets and expected counts.
-They do not execute this whole script against a real HA installation.
+The main/additional-tools CI tests validate HA schemas, render cases and reports,
+and check safe output targets and expected counts. They do not execute those
+whole scripts against a real HA installation.
+
+## Image-only OCR test
+
+`ha_ocr_test.yaml` is a separate UI script for a genuine scan-to-searchable-text
+case. It requires the alpha catalog's `check_contains_text` and
+`analyze_page_count` actions in addition to `ocr`. It does not enable any
+sensitive, external or AI option and never overwrites, retries, reloads or restarts.
+
+1. Copy the committed `tests_live/fixtures/ocr_scan.pdf` to
+   `/config/pdf-test/stirling_ocr_fixture_4df4d3d1.pdf` using your existing file
+   access. Keep the original fixture unchanged. Its SHA-256 is
+   `4df4d3d180b7b42720a9bd3af40ef75b20169cf507354799f8c18a6adde88622`.
+   Verify this outside the script; the script cannot independently hash a file.
+2. Ensure that folder is already allowlisted and the selected server has English
+   OCR (`eng`). Use the exact fixture, not an already-searchable invoice.
+3. Open **Settings > Automations & scenes > Scripts > Create script > Edit in
+   YAML**. Paste `ha_ocr_test.yaml` as a new script, without an outer `script:`
+   wrapper. Do not replace your existing main/tools acceptance scripts.
+4. Save, select the intended **Stirling PDF server**, leave the fixture/output
+   directory defaults unless you deliberately copied it elsewhere, and run once.
+   Do not run other PDF actions while comparing counters.
+5. Open the persistent notification and the trace. A complete PASS means all six
+   checks succeeded: input does not contain `STIRLING`, OCR produces a new PDF,
+   output contains `STIRLING`, `INVOICE` and `12345`, and output has one page.
+   Each successful check records an action, including the expected input no-match.
+   The selected counter rises by six; other server counters/last-operation
+   values must remain unchanged.
+6. Open the reported `stirling_ocr_test_<run>_searchable.pdf`. Check the page is
+   legible and search/copy its text. Keep the report, trace and actual installed
+   integration/backend versions. Run separately for another server only when
+   ready; this creates another unique output and another six recorded actions.
+
+At the first unexpected response/counter or connection failure, the script stops
+and reports FAILED. Later cases are not run. Inspect the trace before deciding
+whether to retry manually; no unchanged counter can prove the server did nothing.
+
+The fixture's source and image-only property are documented in
+[`tests_live/fixtures/README.md`](../tests_live/fixtures/README.md). The input
+word check alone does not prove every possible string is absent. This test proves
+only this synthetic English case, not arbitrary scan quality, all languages,
+the complete tool catalog, security, or automatic merge/release approval.
+Installed integration version and fixture hash are not checked automatically.
+
+The OCR CI tests validate the HA schema and execute the full native sequence with
+synthetic registered services, including early failures and isolation checks.
+That is distinct from actual OCR execution on a real Home Assistant/server pair.

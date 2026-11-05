@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from base64 import b64encode
 
 import aiohttp
@@ -12,9 +13,44 @@ from custom_components.stirling_pdf.api import (
     StirlingPdfApiClient,
     StirlingPdfApiError,
     StirlingPdfAuthError,
+    StirlingPdfConnectionError,
 )
 
 pytestmark = pytest.mark.usefixtures("socket_enabled")
+
+
+async def test_received_pdf_upload_is_not_retried_after_response_disconnect() -> None:
+    """A lost response cannot tell us that the server did not process the POST."""
+    requests = []
+
+    async def receive_then_disconnect(reader, writer):
+        try:
+            header = await reader.readuntil(b"\r\n\r\n")
+            fields = dict(
+                (key.lower(), value)
+                for line in header.split(b"\r\n")[1:]
+                if b":" in line
+                for key, value in [line.split(b":", 1)]
+            )
+            length = int(fields[b"content-length"].strip())
+            body = await reader.readexactly(length)
+            requests.append((header.split(b"\r\n", 1)[0], body))
+        finally:
+            writer.close()
+            await writer.wait_closed()
+
+    server = await asyncio.start_server(receive_then_disconnect, "127.0.0.1", 0)
+    async with server:
+        port = server.sockets[0].getsockname()[1]
+        async with aiohttp.ClientSession() as session:
+            client = StirlingPdfApiClient(session, f"http://127.0.0.1:{port}")
+            with pytest.raises(
+                StirlingPdfConnectionError, match="server_disconnected|connection_lost"
+            ):
+                await client.async_compress("test.pdf", b"%PDF-synthetic-upload", 5)
+    assert len(requests) == 1
+    assert requests[0][0].startswith(b"POST /api/v1/misc/compress-pdf ")
+    assert b"%PDF-synthetic-upload" in requests[0][1]
 
 
 @pytest.mark.parametrize("api_key", [None, "test-api-key"])

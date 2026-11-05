@@ -9,9 +9,11 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
+from .const import DOMAIN
 from .coordinator import StirlingPdfCoordinator
 from .entity import StirlingPdfEntity
 from .metrics import (
@@ -85,7 +87,7 @@ class StirlingPdfOptionalBinarySensor(
         self.description = description
         self._attr_translation_key = description.key
         self._attr_unique_id = f"{entry.entry_id}_{description.key}"
-        self._attr_device_info = {"identifiers": {("stirling_pdf", entry.entry_id)}}
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)})
 
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()

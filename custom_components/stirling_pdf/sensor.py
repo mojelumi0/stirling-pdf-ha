@@ -12,10 +12,11 @@ from homeassistant.components.sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import SERVICES
+from .const import DOMAIN, SERVICES
 from .coordinator import StirlingPdfCoordinator
 from .entity import StirlingPdfEntity
 from .metrics import (
@@ -143,9 +144,7 @@ class StirlingPdfMetricSensor(
         self._attr_translation_key = description.key
         self._attr_unique_id = f"{entry.entry_id}_{description.key}"
         self._attr_native_unit_of_measurement = description.unit
-        self._attr_device_info = {
-            "identifiers": {("stirling_pdf", entry.entry_id)},
-        }
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)})
         # Job counts are a retained snapshot, not monotonic historical totals.
         if description.kind in ("number", "duration"):
             self._attr_state_class = SensorStateClass.MEASUREMENT

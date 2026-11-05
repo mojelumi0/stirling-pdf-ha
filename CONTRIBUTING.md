@@ -49,7 +49,7 @@ compatibility result. Preserve the two automatic jobs and their aggregate
 `pytest` check. Add the stable 2026.11 job to that matrix after its test package
 and a real passing result are available.
 
-The existing entity base uses the cross-version `DeviceInfo(...)` constructor.
+Base and optional metric entities use the cross-version `DeviceInfo(...)` constructor.
 Keep device information as typed constructor arguments, not plain dictionaries
 or dict-style mutation. The regression suite must cover registry-driven entity
 ID changes and device display-name changes without losing coordinator updates,
@@ -79,6 +79,20 @@ version-independent. CI validates its HA schema, renders templates and checks
 safe output targets, but real HA execution and manual trace/output checks remain
 required. Record evidence honestly in `docs/TESTING.md`, distinguishing historical
 release validation from pending tests for newly added behavior.
+
+`examples/ha_ocr_test.yaml` is a separate, explicitly targeted native HA script
+for the committed image-only fixture. Its synthetic HA tests execute the whole
+sequence with registered fake services, including response failures, early stops,
+counter mismatches and cross-server isolation. Those tests are not real OCR.
+For live acceptance, verify the fixture hash, run once per selected server,
+check all six results and inspect/extract text from each output. Keep failed
+attempts in the evidence; do not silently rerun until the report turns green.
+
+Transport failures must use fixed categories without raw exception text or
+configured URLs. Keep exception chains suppressed at that boundary. Test both
+request entry and body-reading failures, and retain the real local HTTP test
+that receives a complete POST then disconnects: the client must not reupload.
+No retry is introduced for a non-idempotent processing request.
 
 ## Pull-request scope
 

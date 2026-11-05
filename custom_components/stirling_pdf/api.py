@@ -60,6 +60,38 @@ class StirlingPdfStatusEndpointDisabledError(StirlingPdfApiError):
     """Raised when Stirling PDF reports that its status endpoint is disabled."""
 
 
+def _connection_error(
+    error: TimeoutError | aiohttp.ClientError, request_name: str
+) -> StirlingPdfConnectionError:
+    """Describe transport failures without untrusted exception text or URLs.
+
+    The exception category is diagnostic evidence, not proof that a PDF job
+    never started. In particular, a lost response must not trigger a POST retry.
+    Callers suppress the original exception chain to keep its text out of logs.
+    """
+    if isinstance(error, TimeoutError):
+        reason = "timeout"
+    elif isinstance(error, aiohttp.ClientSSLError):
+        reason = "tls_error"
+    elif isinstance(error, aiohttp.ClientConnectorDNSError):
+        reason = "dns_error"
+    elif isinstance(error, aiohttp.ClientConnectorError):
+        reason = (
+            "connection_refused"
+            if isinstance(error.os_error, ConnectionRefusedError)
+            else "connection_failed"
+        )
+    elif isinstance(error, aiohttp.ServerDisconnectedError):
+        reason = "server_disconnected"
+    elif isinstance(error, aiohttp.ClientPayloadError):
+        reason = "incomplete_response"
+    elif isinstance(error, aiohttp.ClientConnectionError):
+        reason = "connection_lost"
+    else:
+        reason = "client_error"
+    return StirlingPdfConnectionError(f"{request_name} failed ({reason})")
+
+
 def normalize_base_url(value: str) -> str:
     """Validate and normalize a Stirling PDF base URL."""
     try:
@@ -182,12 +214,10 @@ class StirlingPdfApiClient:
                 timeout=self._status_timeout,
                 allow_redirects=False,
             ) as response:
-                await self._raise_for_status(response, url)
+                await self._raise_for_status(response, ENDPOINT_STATUS)
                 body = await response.text()
-        except TimeoutError as err:
-            raise StirlingPdfConnectionError(f"Timeout connecting to {url}") from err
-        except aiohttp.ClientError as err:
-            raise StirlingPdfConnectionError(f"Cannot connect to {url}") from err
+        except (TimeoutError, aiohttp.ClientError) as err:
+            raise _connection_error(err, "Status request") from None
 
         try:
             data = json.loads(body)
@@ -241,10 +271,8 @@ class StirlingPdfApiClient:
                     return
                 await self._raise_for_status(response, ENDPOINT_HEALTH)
                 body = await response.text()
-        except TimeoutError as err:
-            raise StirlingPdfConnectionError("Authentication check timed out") from err
-        except aiohttp.ClientError as err:
-            raise StirlingPdfConnectionError("Authentication check failed") from err
+        except (TimeoutError, aiohttp.ClientError) as err:
+            raise _connection_error(err, "Authentication check") from None
 
         try:
             data = json.loads(body)
@@ -315,10 +343,8 @@ class StirlingPdfApiClient:
                 await self._raise_for_status(response, endpoint)
                 content = await response.read()
                 return (response.status, content) if include_status else content
-        except TimeoutError as err:
-            raise StirlingPdfConnectionError(f"Timeout calling {url}") from err
-        except aiohttp.ClientError as err:
-            raise StirlingPdfConnectionError(f"Cannot connect to {url}") from err
+        except (TimeoutError, aiohttp.ClientError) as err:
+            raise _connection_error(err, "PDF processing request") from None
 
     async def async_process(
         self,
@@ -373,7 +399,7 @@ class StirlingPdfApiClient:
                 await self._raise_for_status(response, endpoint)
                 body = await response.text()
         except (TimeoutError, aiohttp.ClientError) as err:
-            raise StirlingPdfConnectionError("Monitoring request failed") from err
+            raise _connection_error(err, "Monitoring request") from None
         try:
             return json.loads(body)
         except json.JSONDecodeError as err:
