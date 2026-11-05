@@ -315,6 +315,15 @@
     },
     "tool_forbidden": {
       "message": "The selected tool is forbidden for this server/account. Base authentication was not changed."
+    },
+    "server_version_unknown": {
+      "message": "The stable server version could not be determined for {operation}. Refresh its status. Custom or pre-release versions do not establish support for this version-restricted action or option."
+    },
+    "tool_removed": {
+      "message": "Stirling PDF removed {operation} in version {version}. Select an older server that still supports it. No document was uploaded and statistics were not changed."
+    },
+    "tool_option_unsupported": {
+      "message": "The Stirling Office Convert option for {operation} requires Stirling PDF {version} or newer. Disable that option or select a supported server. No document was uploaded."
     }
   },
   "services": {
@@ -1304,7 +1313,7 @@
     },
     "replace_text": {
       "name": "Replace Text",
-      "description": "Replace Text. Server support and installed dependencies are required.",
+      "description": "Text editing through the legacy API. Removed in Stirling PDF 3.3.0; only available on older servers. Unsupported or unknown versions are rejected before file access.",
       "fields": {
         "config_entry_id": {
           "name": "Server",
@@ -2083,6 +2092,10 @@
         "strict": {
           "name": "Strict",
           "description": "Stirling PDF field: strict."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
         }
       }
     },
@@ -2111,8 +2124,8 @@
           "description": "Stirling PDF field: outputFormat. Values: rtf, txt."
         },
         "use_stirling_office_convert": {
-          "name": "Use stirling office convert",
-          "description": "Stirling PDF field: useStirlingOfficeConvert."
+          "name": "Stirling Office Convert",
+          "description": "Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
         }
       }
     },
@@ -2141,8 +2154,8 @@
           "description": "Stirling PDF field: outputFormat. Values: doc, docx, odt."
         },
         "use_stirling_office_convert": {
-          "name": "Use stirling office convert",
-          "description": "Stirling PDF field: useStirlingOfficeConvert."
+          "name": "Stirling Office Convert",
+          "description": "Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
         }
       }
     },
@@ -2167,8 +2180,8 @@
           "description": "Explicitly replace an existing output file."
         },
         "use_stirling_office_convert": {
-          "name": "Use stirling office convert",
-          "description": "Stirling PDF field: useStirlingOfficeConvert."
+          "name": "Stirling Office Convert",
+          "description": "Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
         }
       }
     },
@@ -2197,8 +2210,8 @@
           "description": "Stirling PDF field: outputFormat. Values: ppt, pptx, odp."
         },
         "use_stirling_office_convert": {
-          "name": "Use stirling office convert",
-          "description": "Stirling PDF field: useStirlingOfficeConvert."
+          "name": "Stirling Office Convert",
+          "description": "Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
         }
       }
     },
@@ -2253,8 +2266,8 @@
           "description": "Stirling PDF field: pageNumbers."
         },
         "use_stirling_office_convert": {
-          "name": "Use stirling office convert",
-          "description": "Stirling PDF field: useStirlingOfficeConvert."
+          "name": "Stirling Office Convert",
+          "description": "Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
         }
       }
     },
@@ -2277,6 +2290,10 @@
         "overwrite": {
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
         }
       }
     },
@@ -2303,6 +2320,10 @@
         "zoom": {
           "name": "Zoom",
           "description": "Stirling PDF field: zoom."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
         }
       }
     },
@@ -2325,6 +2346,10 @@
         "overwrite": {
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
         }
       }
     },
@@ -2347,6 +2372,10 @@
         "overwrite": {
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
         }
       }
     },
@@ -2369,6 +2398,10 @@
         "overwrite": {
           "name": "Overwrite",
           "description": "Explicitly replace an existing output file."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
         }
       }
     },
@@ -2407,6 +2440,10 @@
         "include_all_recipients": {
           "name": "Include all recipients",
           "description": "Stirling PDF field: includeAllRecipients."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
         }
       }
     },
@@ -2471,6 +2508,10 @@
         "optimize_for_ebook": {
           "name": "Optimize for ebook",
           "description": "Stirling PDF field: optimizeForEbook. Values: true, false."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
         }
       }
     },
@@ -2505,6 +2546,10 @@
         "output_format": {
           "name": "Output format",
           "description": "Stirling PDF field: outputFormat. Values: EPUB, AZW3."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
         }
       }
     },

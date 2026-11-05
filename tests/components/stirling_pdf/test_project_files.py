@@ -237,6 +237,65 @@ def test_manual_2026_11_workflow_keeps_dependency_and_coverage_checks() -> None:
     assert all("continue-on-error" not in step for step in job["steps"])
 
 
+def test_server_matrix_pins_both_versions_and_login_modes() -> None:
+    """A green old-server job is not compatibility evidence for the new release."""
+    workflow = yaml.safe_load((WORKFLOWS / "server-tests.yml").read_text("utf-8"))
+    job = workflow["jobs"]["server"]
+    matrix = job["strategy"]["matrix"]
+    assert matrix["version"] == ["3.2.0", "3.3.0"]
+    assert matrix["login"] == ["true", "false"]
+    images = {row["version"]: row["image"] for row in matrix["include"]}
+    assert set(images) == set(matrix["version"])
+    for version, image in images.items():
+        assert re.fullmatch(
+            r"stirlingtools/stirling-pdf:"
+            + re.escape(version)
+            + r"@sha256:[a-f0-9]{64}",
+            image,
+        )
+    assert images["3.2.0"].endswith(
+        "10164ffe04961b02ebc9fa4da12064eeacb8d3bc3e09ceb059f78ce7aaa83207"
+    )
+    assert job["services"]["stirling"]["image"] == "${{ matrix.image }}"
+    step = next(step for step in job["steps"] if "tests_live" in step.get("run", ""))
+    assert step["env"]["STIRLING_PDF_EXPECTED_VERSION"] == "${{ matrix.version }}"
+    assert "continue-on-error" not in job
+
+
+def test_330_contract_metadata_and_converter_defaults_are_explicit() -> None:
+    assert OPERATIONS["replace_text"]["removed_in"] == [3, 3, 0]
+    newer = {
+        name
+        for name, operation in OPERATIONS.items()
+        if "office_convert_since" in operation
+    }
+    assert newer == {
+        "pdf_to_pdfa",
+        "pdf_to_xml",
+        "html_to_pdf",
+        "markdown_to_pdf",
+        "pdf_to_html",
+        "pdf_to_markdown",
+        "eml_to_pdf",
+        "ebook_to_pdf",
+        "pdf_to_epub",
+    }
+    services = yaml.safe_load((INTEGRATION / "services.yaml").read_text("utf-8"))
+    converters = 0
+    for name, operation in OPERATIONS.items():
+        field = operation["fields"].get("useStirlingOfficeConvert")
+        if field is not None:
+            converters += 1
+            assert field["default"] is False
+            assert (
+                services[name]["fields"]["use_stirling_office_convert"]["default"]
+                is False
+            )
+        if name in newer:
+            assert operation["office_convert_since"] == [3, 3, 0]
+    assert converters == 14
+
+
 def test_config_forms_always_supply_an_explicit_step_id() -> None:
     """Keep setup, reconfigure, reauth and options compatible with new HA flows."""
     tree = ast.parse((INTEGRATION / "config_flow.py").read_text(encoding="utf-8"))

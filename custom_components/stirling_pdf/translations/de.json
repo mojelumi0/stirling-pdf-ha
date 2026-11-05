@@ -315,6 +315,15 @@
     },
     "tool_forbidden": {
       "message": "Das gewaehlte Werkzeug ist fuer diesen Server oder Benutzer nicht erlaubt. Die Basisanmeldung wurde nicht geaendert."
+    },
+    "server_version_unknown": {
+      "message": "Die stabile Serverversion für {operation} konnte nicht ermittelt werden. Aktualisiere den Status. Eigene Builds oder Vorabversionen belegen keine Unterstützung für diese versionsabhängige Aktion oder Option."
+    },
+    "tool_removed": {
+      "message": "Stirling PDF hat {operation} ab Version {version} entfernt. Wähle einen älteren Server, der die Aktion noch unterstützt. Es wurde kein Dokument hochgeladen und die Statistik blieb unverändert."
+    },
+    "tool_option_unsupported": {
+      "message": "Die Option Stirling Office Convert für {operation} erfordert Stirling PDF {version} oder neuer. Deaktiviere sie oder wähle einen unterstützten Server. Es wurde kein Dokument hochgeladen."
     }
   },
   "services": {
@@ -1304,7 +1313,7 @@
     },
     "replace_text": {
       "name": "Text ersetzen",
-      "description": "Vorhandenen Text per Suchen/Ersetzen bearbeiten. Der Server muss das Werkzeug unterstuetzen.",
+      "description": "Textbearbeitung über die frühere API. Ab Stirling PDF 3.3.0 entfernt; nur auf älteren Servern verfügbar. Nicht unterstützte oder unbekannte Versionen werden vor Datei-Zugriff abgewiesen.",
       "fields": {
         "config_entry_id": {
           "name": "Server",
@@ -2083,6 +2092,10 @@
         "strict": {
           "name": "Strict",
           "description": "Stirling-PDF-Feld: strict."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
         }
       }
     },
@@ -2111,8 +2124,8 @@
           "description": "Stirling-PDF-Feld: outputFormat."
         },
         "use_stirling_office_convert": {
-          "name": "Use stirling office convert",
-          "description": "Stirling-PDF-Feld: useStirlingOfficeConvert."
+          "name": "Stirling Office Convert",
+          "description": "Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
         }
       }
     },
@@ -2141,8 +2154,8 @@
           "description": "Stirling-PDF-Feld: outputFormat."
         },
         "use_stirling_office_convert": {
-          "name": "Use stirling office convert",
-          "description": "Stirling-PDF-Feld: useStirlingOfficeConvert."
+          "name": "Stirling Office Convert",
+          "description": "Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
         }
       }
     },
@@ -2167,8 +2180,8 @@
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
         },
         "use_stirling_office_convert": {
-          "name": "Use stirling office convert",
-          "description": "Stirling-PDF-Feld: useStirlingOfficeConvert."
+          "name": "Stirling Office Convert",
+          "description": "Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
         }
       }
     },
@@ -2197,8 +2210,8 @@
           "description": "Stirling-PDF-Feld: outputFormat."
         },
         "use_stirling_office_convert": {
-          "name": "Use stirling office convert",
-          "description": "Stirling-PDF-Feld: useStirlingOfficeConvert."
+          "name": "Stirling Office Convert",
+          "description": "Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
         }
       }
     },
@@ -2253,8 +2266,8 @@
           "description": "Stirling-PDF-Feld: pageNumbers."
         },
         "use_stirling_office_convert": {
-          "name": "Use stirling office convert",
-          "description": "Stirling-PDF-Feld: useStirlingOfficeConvert."
+          "name": "Stirling Office Convert",
+          "description": "Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
         }
       }
     },
@@ -2277,6 +2290,10 @@
         "overwrite": {
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
         }
       }
     },
@@ -2303,6 +2320,10 @@
         "zoom": {
           "name": "Zoom",
           "description": "Stirling-PDF-Feld: zoom."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
         }
       }
     },
@@ -2325,6 +2346,10 @@
         "overwrite": {
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
         }
       }
     },
@@ -2347,6 +2372,10 @@
         "overwrite": {
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
         }
       }
     },
@@ -2369,6 +2398,10 @@
         "overwrite": {
           "name": "Ueberschreiben",
           "description": "Vorhandene Ausgabe ausdruecklich ersetzen."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
         }
       }
     },
@@ -2407,6 +2440,10 @@
         "include_all_recipients": {
           "name": "Include all recipients",
           "description": "Stirling-PDF-Feld: includeAllRecipients."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
         }
       }
     },
@@ -2471,6 +2508,10 @@
         "optimize_for_ebook": {
           "name": "Optimize for ebook",
           "description": "Stirling-PDF-Feld: optimizeForEbook."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
         }
       }
     },
@@ -2505,6 +2546,10 @@
         "output_format": {
           "name": "Output format",
           "description": "Stirling-PDF-Feld: outputFormat."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
         }
       }
     },

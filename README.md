@@ -415,6 +415,31 @@ Conversion actions with `use_stirling_office_convert: true` require both the
 selected server's external-action opt-in and the same user-admin check. Local
 conversion calls with this flag omitted or false do not gain an admin restriction.
 
+### Stirling PDF 3.3.0 compatibility
+
+The legacy `replace_text` endpoint was removed upstream in 3.3.0. The action
+remains registered for older servers, but calls targeting 3.3.0 or newer are
+rejected before file access, upload or statistics changes. It is not silently
+redirected to an invented replacement API. Unknown, custom or pre-release
+version strings cannot establish support for this restricted action; refresh
+the selected server's status or use a known supported stable server.
+
+The `use_stirling_office_convert` field is also available for PDF/A, PDF to XML,
+HTML, Markdown, email and ebook conversions. These nine newly exposed choices
+require server 3.3.0 or newer when enabled. Existing converter choices remain
+available with their existing server/dependency limitations.
+
+**Behavior change:** all fourteen converter choices now default explicitly to
+`false`. An omitted field selects the legacy converter instead of inheriting a
+server-wide default that may change independently. Users who want Stirling
+Office Convert must explicitly select `true` and satisfy the per-server opt-in
+and admin checks described above. This does not install converter dependencies
+or guarantee converter availability. PDF/X retains its legacy converter; HTML
+zoom is ignored by the Office Convert path. Conversion can still load embedded
+resources, so neither selection is a network sandbox.
+
+See the [3.3.0 compatibility and testing notes](docs/STIRLING_3_3_0.md).
+
 Integer action fields, including the compression level, reject fractional values
 and booleans rather than silently converting them. Whole numeric values and
 integer strings remain accepted; existing range and enum restrictions still apply.
@@ -776,15 +801,20 @@ can also be selected as required checks in the branch ruleset.
 
 ### Real-server tests
 
-The `Stirling PDF server tests` workflow starts a disposable, version-pinned
-Stirling PDF 3.2.0 container with login enabled and disabled. It runs on pushes,
+The `Stirling PDF server tests` workflow starts disposable, digest-pinned
+Stirling PDF 3.2.0 and 3.3.0 containers, each with login enabled and disabled
+(four jobs). It runs on pushes,
 pull requests, manual dispatch, and weekly. It checks public status versus
 protected health, missing and invalid API keys, merge ordering, Unicode
 filenames, split ZIP contents, compression and selected-page extraction while
 checking page content and order. A synthetic image-only scanned PDF exercises
 real English OCR; the source has no searchable text and recognition must produce
 known words and a number. These added development checks must pass in CI before
-they can be counted as validation of the new release.
+they can be counted as validation of the new release. Each job verifies the
+server's actual reported version. The 3.3.0 jobs additionally check removal of
+the legacy text-editor route and rejection of an out-of-range poster factor.
+Those two version-specific assertions are deliberately skipped on 3.2.0, not
+treated as successful 3.3.0 checks.
 The same jobs also exercise a synthetic HTTP Basic proxy in front of the real
 server, including combined API-key authentication and rejected Basic credentials.
 Local HTTP transport tests cover all five client operations and refusal to
@@ -796,16 +826,20 @@ covered by client/service and manual tests; one synthetic English scan does not
 prove OCR quality for every document or installed language.
 
 To run the server tests locally, use a separate virtual environment with
-`requirements-live.txt`, start a disposable Stirling PDF 3.2.0 server, and set:
+`requirements-live.txt`, start the intended disposable pinned test server, and set:
 
 ```powershell
 $env:STIRLING_PDF_URL = "http://127.0.0.1:8080"
 $env:STIRLING_PDF_API_KEY = "<test-server-api-key>"
 $env:STIRLING_PDF_REQUIRE_AUTH = "true"
+$env:STIRLING_PDF_EXPECTED_VERSION = "3.3.0"
 python -m pytest -q -p no:cacheprovider tests_live
 ```
 
-Use `"false"` for `STIRLING_PDF_REQUIRE_AUTH` when login is disabled. The tests
+Set `STIRLING_PDF_EXPECTED_VERSION` to the actual version being tested (3.2.0 or
+3.3.0 in CI). If omitted, it defaults to the historical 3.2.0 baseline; it is not
+inferred from the server response. Use `"false"` for `STIRLING_PDF_REQUIRE_AUTH`
+when login is disabled. The tests
 upload only synthetic PDFs. Without `STIRLING_PDF_URL`, server-dependent tests
 are skipped. A Docker runtime is required to reproduce the container workflow.
 

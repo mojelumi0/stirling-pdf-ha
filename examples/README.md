@@ -148,3 +148,17 @@ Installed integration version and fixture hash are not checked automatically.
 The OCR CI tests validate the HA schema and execute the full native sequence with
 synthetic registered services, including early failures and isolation checks.
 That is distinct from actual OCR execution on a real Home Assistant/server pair.
+
+## After upgrading the standalone server to 3.3.0
+
+Check the real backend version in diagnostics before a new acceptance run.
+The scripts keep explicit server selection and do not delete/reset entries.
+`reported_version` describes the integration version, not the server version.
+A label such as `standalone 3.3.0` is user-provided, not automatic verification.
+
+Run the main, additional-tools and image-only OCR scripts separately for the
+selected entry and inspect outputs and exact errors. Keep the other server idle
+and compare its statistics. Older 3.2.2 results do not validate 3.3.0. These
+scripts do not exercise `replace_text` or all converter choices; use the
+[separate checklist](../docs/STIRLING_3_3_0.md). Do not enable all optional action
+groups merely to make a report green.

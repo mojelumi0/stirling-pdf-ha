@@ -29,6 +29,7 @@ sys.modules[_PACKAGE_NAME] = _package
 _api = importlib.import_module(f"{_PACKAGE_NAME}.api")
 StirlingPdfApiClient = _api.StirlingPdfApiClient
 StirlingPdfAuthError = _api.StirlingPdfAuthError
+StirlingPdfApiError = _api.StirlingPdfApiError
 
 _OCR_FIXTURE = Path(__file__).parent / "fixtures" / "ocr_scan.pdf"
 
@@ -79,6 +80,12 @@ def server_url() -> str:
 
 
 @pytest.fixture
+def expected_server_version() -> str:
+    """Assert the version selected by CI, not a label inferred from a response."""
+    return os.environ.get("STIRLING_PDF_EXPECTED_VERSION", "3.2.0")
+
+
+@pytest.fixture
 async def session() -> AsyncIterator[aiohttp.ClientSession]:
     """Avoid session cookies masking missing API-key authentication."""
     async with aiohttp.ClientSession(cookie_jar=aiohttp.DummyCookieJar()) as client:
@@ -101,12 +108,54 @@ def test_generated_fixture_has_identifiable_pages() -> None:
     assert _markers(_pdf("A1", "A2")) == ["A1", "A2"]
 
 
-async def test_status_and_authenticated_health(client) -> None:
+async def test_status_and_authenticated_health(client, expected_server_version) -> None:
     status = await client.async_validate_connection()
 
     assert status["status"] == "UP"
-    assert status["version"].removeprefix("v") == "3.2.0"
+    assert status["version"].removeprefix("v") == expected_server_version
     assert client.authentication_check_supported is True
+
+
+async def test_330_removed_text_editor_has_no_processing_route(
+    client, expected_server_version
+) -> None:
+    """Check the documented removal on the pinned new server, not older servers."""
+    if expected_server_version != "3.3.0":
+        pytest.skip("The removed-endpoint assertion applies only to the 3.3.0 job")
+    with pytest.raises(StirlingPdfApiError, match="HTTP 404"):
+        await client.async_process(
+            "/api/v1/general/edit-text",
+            [("synthetic.pdf", _pdf("OLD TEXT EDITOR"))],
+            {"pageNumbers": "all", "edits": "[]"},
+        )
+
+
+async def test_330_rejects_out_of_range_poster_multiplier(
+    client, expected_server_version
+) -> None:
+    """The newer server must reject 11 before allocating an oversized result."""
+    if expected_server_version != "3.3.0":
+        pytest.skip("The newer validation assertion applies only to the 3.3.0 job")
+    with pytest.raises(StirlingPdfApiError, match="HTTP 400"):
+        await client.async_process(
+            "/api/v1/general/split-for-poster-print",
+            [("synthetic.pdf", _pdf("POSTER LIMIT"))],
+            {"pageSize": "A4", "xFactor": 11, "yFactor": 2},
+        )
+
+
+async def test_explicit_legacy_markdown_conversion_produces_searchable_pdf(
+    client,
+) -> None:
+    """Exercise explicit false on both pinned versions, without external resources."""
+    status, content = await client.async_process(
+        "/api/v1/convert/markdown/pdf",
+        [("synthetic.md", b"# CONVERTER LEGACY 12345\n\nSynthetic local test.\n")],
+        {"useStirlingOfficeConvert": False},
+    )
+    assert status == 200
+    text = " ".join(" ".join(_markers(content)).split())
+    assert "CONVERTER LEGACY 12345" in text
 
 
 async def test_merge_preserves_requested_order_and_unicode_filenames(client) -> None:

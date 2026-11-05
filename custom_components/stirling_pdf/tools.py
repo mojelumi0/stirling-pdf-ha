@@ -156,6 +156,67 @@ def validate_remote_url(value: str, allowed_hosts: str) -> None:
         )
 
 
+def server_release(status: object) -> tuple[int, int, int] | None:
+    """Recognize bounded stable server releases, not guessed pre-release versions.
+
+    Unknown/custom/pre-release values cannot establish compatibility for a
+    version-restricted tool. Build metadata does not change a stable release.
+    This uses the selected entry's last polled status, not a global version.
+    """
+    if not isinstance(status, dict):
+        return None
+    value = status.get("version") or status.get("appVersion")
+    if not isinstance(value, str) or len(value) > 64:
+        return None
+    match = re.fullmatch(
+        r"v?([0-9]{1,4})\.([0-9]{1,4})\.([0-9]{1,4})(?:\+[0-9A-Za-z.-]+)?",
+        value.strip(),
+    )
+    if match is None:
+        return None
+    major, minor, patch = match.groups()
+    return int(major), int(minor), int(patch)
+
+
+def _validate_tool_version(
+    call: ServiceCall,
+    coordinator: StirlingPdfCoordinator,
+    operation: dict[str, Any],
+) -> None:
+    """Reject known removed tools and too-new converter choices before file I/O."""
+    removed = operation.get("removed_in")
+    converter_since = operation.get("office_convert_since")
+    if removed is None and not (
+        converter_since and call.data.get("use_stirling_office_convert")
+    ):
+        return
+    release = server_release(getattr(coordinator, "data", None))
+    if release is None:
+        raise ServiceValidationError(
+            translation_domain=DOMAIN,
+            translation_key="server_version_unknown",
+            translation_placeholders={"operation": call.service},
+        )
+    if removed and release >= tuple(removed):
+        raise ServiceValidationError(
+            translation_domain=DOMAIN,
+            translation_key="tool_removed",
+            translation_placeholders={
+                "operation": call.service,
+                "version": ".".join(str(part) for part in removed),
+            },
+        )
+    if converter_since and release < tuple(converter_since):
+        raise ServiceValidationError(
+            translation_domain=DOMAIN,
+            translation_key="tool_option_unsupported",
+            translation_placeholders={
+                "operation": call.service,
+                "version": ".".join(str(part) for part in converter_since),
+            },
+        )
+
+
 async def _read_file(
     hass: HomeAssistant, value: str, suffixes: list[str], remaining: int | None = None
 ) -> tuple[str, bytes]:
@@ -270,6 +331,7 @@ async def async_handle_tool(
                 raise UnknownUser(context=call.context)
             if not user.is_admin:
                 raise Unauthorized(context=call.context)
+    _validate_tool_version(call, coordinator, operation)
     output_path = call.data.get("output_path")
     suffix = Path(output_path).suffix.lower() if output_path else ""
     overwrite = call.data["overwrite"]

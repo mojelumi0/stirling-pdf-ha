@@ -5,6 +5,27 @@ source-derived contracts. Their presence is not a claim of live-server validatio
 The server version, enabled tools, installed dependencies, permissions and license
 determine availability. Actions are on demand, not automatically executed.
 
+### Version-restricted contracts
+
+`replace_text` uses the legacy `/api/v1/general/edit-text` API, removed upstream
+in 3.3.0. Calls are rejected locally for that release and newer releases, before
+file I/O or upload. The same registered action remains available to older
+servers with a recognized stable version. This is not a replacement API for the
+new upstream Text Editor.
+
+Fourteen conversion actions expose `use_stirling_office_convert`, explicitly
+false by default. Nine gained the option in 3.3.0: `pdf_to_pdfa`, `pdf_to_xml`,
+`html_to_pdf`, `markdown_to_pdf`, `pdf_to_html`, `pdf_to_markdown`, `eml_to_pdf`,
+`ebook_to_pdf` and `pdf_to_epub`. Enabling those nine options requires a recognized
+stable server version at least 3.3.0, as well as the existing external-action
+opt-in and user-admin permission. False is sent explicitly rather than inheriting
+the server's converter default. PDF/X remains legacy; native HTML conversion
+does not apply zoom. Installed dependencies still determine availability.
+
+Unknown/custom/pre-release versions are rejected only when needed to establish
+support for a restricted action or an enabled new option; they do not disable
+all unrelated actions. See [the detailed compatibility notes](STIRLING_3_3_0.md).
+
 Each action accepts `config_entry_id`. Binary results require `output_path` with
 the listed extension; JSON and filter outputs may instead use action response data.
 HA fields use `snake_case`, for example `render_dpi`, `page_numbers` and
@@ -35,7 +56,7 @@ in the action editor; descriptions identify their underlying API names.
 | `stirling_pdf.stamp` | standard | .pdf | .pdf | `/api/v1/misc/add-stamp` |
 | `stirling_pdf.add_image` | standard | .pdf | .pdf | `/api/v1/misc/add-image` |
 | `stirling_pdf.add_comments` | standard | .pdf | .pdf | `/api/v1/misc/add-comments` |
-| `stirling_pdf.replace_text` | standard | .pdf | .pdf | `/api/v1/general/edit-text` |
+| `stirling_pdf.replace_text` (before 3.3.0 only) | standard | .pdf | .pdf | `/api/v1/general/edit-text` |
 | `stirling_pdf.metadata` | standard | .pdf | .pdf | `/api/v1/misc/update-metadata` |
 | `stirling_pdf.bookmarks` | standard | .pdf | .json | `/api/v1/general/extract-bookmarks` |
 | `stirling_pdf.edit_bookmarks` | standard | .pdf | .pdf | `/api/v1/general/edit-table-of-contents` |

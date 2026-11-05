@@ -38,6 +38,7 @@ from custom_components.stirling_pdf.tools import (
 
 def _coordinator(options=None):
     return SimpleNamespace(
+        data={"version": "3.2.2", "status": "UP"},
         config_entry=SimpleNamespace(
             options=options or {}, entry_id="test-entry", async_start_reauth=MagicMock()
         ),
@@ -476,7 +477,9 @@ async def test_external_conversion_rejects_non_admin_and_unknown_users_before_io
         "use_stirling_office_convert": True,
     }
     if "outputFormat" in operation["fields"]:
-        payload["output_format"] = operation["suffixes"][0].lstrip(".")
+        choices = operation["fields"]["outputFormat"]["enum"]
+        suffix = operation["suffixes"][0].lstrip(".")
+        payload["output_format"] = suffix if suffix in choices else choices[0]
     client = loaded_entry.runtime_data.client
     client.async_process = AsyncMock()
     with (
@@ -560,7 +563,8 @@ async def test_conversion_admin_and_automation_paths_preserve_local_access(
     assert loaded_entry.runtime_data.jobs_processed == 1
     assert loaded_entry.runtime_data.last_operation == "file_to_pdf"
     sent = client.async_process.await_args.args[2]
-    assert sent.get("useStirlingOfficeConvert") is external
+    # Omitted choices must not silently inherit a newer server's converter default.
+    assert sent["useStirlingOfficeConvert"] is (external is True)
 
 
 async def test_external_conversion_requires_opt_in_even_for_admins(

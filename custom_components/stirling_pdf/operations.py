@@ -632,6 +632,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "replace_text": {
         "endpoint": "/api/v1/general/edit-text",
+        "removed_in": [3, 3, 0],
         "group": "standard",
         "output": "pdf",
         "suffixes": [".pdf"],
@@ -1101,6 +1102,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "pdf_to_pdfa": {
         "endpoint": "/api/v1/convert/pdf/pdfa",
+        "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "pdf",
         "suffixes": [".pdf"],
@@ -1127,6 +1129,11 @@ OPERATIONS: dict[str, dict] = {
             },
             "pdfUa": {"type": "boolean", "required": False, "default": False},
             "strict": {"type": "boolean", "required": False},
+            "useStirlingOfficeConvert": {
+                "type": "boolean",
+                "required": False,
+                "default": False,
+            },
         },
     },
     "pdf_to_text": {
@@ -1144,7 +1151,11 @@ OPERATIONS: dict[str, dict] = {
                 "required": True,
                 "enum": ["rtf", "txt"],
             },
-            "useStirlingOfficeConvert": {"type": "boolean", "required": False},
+            "useStirlingOfficeConvert": {
+                "type": "boolean",
+                "required": False,
+                "default": False,
+            },
         },
     },
     "pdf_to_word": {
@@ -1162,7 +1173,11 @@ OPERATIONS: dict[str, dict] = {
                 "required": True,
                 "enum": ["doc", "docx", "odt"],
             },
-            "useStirlingOfficeConvert": {"type": "boolean", "required": False},
+            "useStirlingOfficeConvert": {
+                "type": "boolean",
+                "required": False,
+                "default": False,
+            },
         },
     },
     "file_to_pdf": {
@@ -1186,7 +1201,13 @@ OPERATIONS: dict[str, dict] = {
         "primary": "fileInput",
         "multiple": False,
         "files": {},
-        "fields": {"useStirlingOfficeConvert": {"type": "boolean", "required": False}},
+        "fields": {
+            "useStirlingOfficeConvert": {
+                "type": "boolean",
+                "required": False,
+                "default": False,
+            }
+        },
     },
     "pdf_to_presentation": {
         "endpoint": "/api/v1/convert/pdf/presentation",
@@ -1203,7 +1224,11 @@ OPERATIONS: dict[str, dict] = {
                 "required": True,
                 "enum": ["ppt", "pptx", "odp"],
             },
-            "useStirlingOfficeConvert": {"type": "boolean", "required": False},
+            "useStirlingOfficeConvert": {
+                "type": "boolean",
+                "required": False,
+                "default": False,
+            },
         },
     },
     "pdf_to_csv": {
@@ -1230,11 +1255,16 @@ OPERATIONS: dict[str, dict] = {
         "files": {},
         "fields": {
             "pageNumbers": {"type": "string", "required": False, "default": "all"},
-            "useStirlingOfficeConvert": {"type": "boolean", "required": False},
+            "useStirlingOfficeConvert": {
+                "type": "boolean",
+                "required": False,
+                "default": False,
+            },
         },
     },
     "pdf_to_xml": {
         "endpoint": "/api/v1/convert/pdf/xml",
+        "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "document",
         "suffixes": [".xml"],
@@ -1242,10 +1272,17 @@ OPERATIONS: dict[str, dict] = {
         "primary": "fileInput",
         "multiple": False,
         "files": {},
-        "fields": {},
+        "fields": {
+            "useStirlingOfficeConvert": {
+                "type": "boolean",
+                "required": False,
+                "default": False,
+            }
+        },
     },
     "html_to_pdf": {
         "endpoint": "/api/v1/convert/html/pdf",
+        "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "pdf",
         "suffixes": [".pdf"],
@@ -1253,10 +1290,18 @@ OPERATIONS: dict[str, dict] = {
         "primary": "fileInput",
         "multiple": False,
         "files": {},
-        "fields": {"zoom": {"type": "number", "required": True, "default": 1}},
+        "fields": {
+            "zoom": {"type": "number", "required": True, "default": 1},
+            "useStirlingOfficeConvert": {
+                "type": "boolean",
+                "required": False,
+                "default": False,
+            },
+        },
     },
     "markdown_to_pdf": {
         "endpoint": "/api/v1/convert/markdown/pdf",
+        "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "pdf",
         "suffixes": [".pdf"],
@@ -1264,10 +1309,17 @@ OPERATIONS: dict[str, dict] = {
         "primary": "fileInput",
         "multiple": False,
         "files": {},
-        "fields": {},
+        "fields": {
+            "useStirlingOfficeConvert": {
+                "type": "boolean",
+                "required": False,
+                "default": False,
+            }
+        },
     },
     "pdf_to_html": {
         "endpoint": "/api/v1/convert/pdf/html",
+        "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "document",
         "suffixes": [".html", ".zip"],
@@ -1275,10 +1327,17 @@ OPERATIONS: dict[str, dict] = {
         "primary": "fileInput",
         "multiple": False,
         "files": {},
-        "fields": {},
+        "fields": {
+            "useStirlingOfficeConvert": {
+                "type": "boolean",
+                "required": False,
+                "default": False,
+            }
+        },
     },
     "pdf_to_markdown": {
         "endpoint": "/api/v1/convert/pdf/markdown",
+        "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "document",
         "suffixes": [".md", ".zip"],
@@ -1286,10 +1345,17 @@ OPERATIONS: dict[str, dict] = {
         "primary": "fileInput",
         "multiple": False,
         "files": {},
-        "fields": {},
+        "fields": {
+            "useStirlingOfficeConvert": {
+                "type": "boolean",
+                "required": False,
+                "default": False,
+            }
+        },
     },
     "eml_to_pdf": {
         "endpoint": "/api/v1/convert/eml/pdf",
+        "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "pdf",
         "suffixes": [".pdf"],
@@ -1307,6 +1373,11 @@ OPERATIONS: dict[str, dict] = {
             },
             "downloadHtml": {"type": "boolean", "required": False},
             "includeAllRecipients": {"type": "boolean", "required": False},
+            "useStirlingOfficeConvert": {
+                "type": "boolean",
+                "required": False,
+                "default": False,
+            },
         },
     },
     "svg_to_pdf": {
@@ -1328,6 +1399,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "ebook_to_pdf": {
         "endpoint": "/api/v1/convert/ebook/pdf",
+        "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "pdf",
         "suffixes": [".pdf"],
@@ -1360,10 +1432,16 @@ OPERATIONS: dict[str, dict] = {
                 "enum": [True, False],
                 "default": False,
             },
+            "useStirlingOfficeConvert": {
+                "type": "boolean",
+                "required": False,
+                "default": False,
+            },
         },
     },
     "pdf_to_epub": {
         "endpoint": "/api/v1/convert/pdf/epub",
+        "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "document",
         "suffixes": [".epub", ".azw3"],
@@ -1394,6 +1472,11 @@ OPERATIONS: dict[str, dict] = {
                 "required": False,
                 "enum": ["EPUB", "AZW3", "EPUB", "AZW3"],
                 "default": "EPUB",
+            },
+            "useStirlingOfficeConvert": {
+                "type": "boolean",
+                "required": False,
+                "default": False,
             },
         },
     },

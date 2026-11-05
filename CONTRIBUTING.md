@@ -68,6 +68,24 @@ Real-server contract tests live in `tests_live/` and use
 required test-server environment variables. They deliberately avoid real
 documents and run with both enabled and disabled server authentication.
 
+Keep both digest-pinned 3.2.0 and 3.3.0 server versions in the matrix, each with
+both login modes. Pass `STIRLING_PDF_EXPECTED_VERSION` and verify the actual
+reported version. Do not replace the older baseline or use a floating `latest`
+tag. Version-specific removed-route/validation checks must clearly identify
+their scope, not hide failures behind generic skips.
+
+Version guards use the explicitly selected entry's cached status. Unknown,
+custom and pre-release strings do not prove compatibility for restricted
+actions/options. Test rejection before file I/O, network calls and statistics
+changes, plus multi-server isolation and older-server behavior. The legacy text
+editor remains registered for older deployments; no new Text Editor API is
+assumed. Keep UI metadata, translations and contract fields aligned.
+
+Converter fields default explicitly to false so a server-default change cannot
+silently select the new converter. New 3.3.0 choices still require the existing
+per-server opt-in and admin checks. Mocked wire-field tests do not establish
+real Office/email/ebook/PDF/A rendering quality or complete SSRF protection.
+
 The real-server suite includes selected-page extraction and OCR from a committed
 image-only synthetic scan. Do not replace it with an already-searchable PDF or
 skip OCR when the pinned standard image lacks its expected capability. Fixture

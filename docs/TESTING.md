@@ -352,11 +352,38 @@ manual Core 2026.11 workflow remains dependency-gated; no matching upstream
 test-plugin pin was available at the metadata check. No automatic matrix,
 coverage threshold or dependency resolver safeguard was weakened.
 
+## Stirling PDF 3.3.0 preparation, 2026-11-05
+
+The maintainer reports upgrading the standalone Test-PC from 3.2.2 to 3.3.0.
+Older evidence remains historical, not a new 3.3.0 acceptance run. Preparation
+starts from PR #11 head `db17afb8985cd4b7a872cb620e9e7c97076740b5`; its 72
+files matched the preceding package and its 19 remote checks passed before
+these additional changes.
+
+- Keep `replace_text` registered for older servers, but reject it locally from
+  3.3.0 where the legacy route was removed. Do not guess unknown versions.
+- Add nine converter-choice fields, retaining existing opt-in/admin rules.
+  All fourteen choices default explicitly to false rather than inheriting
+  server defaults. This is a documented behavior change.
+- Prepare four digest-pinned server jobs: 3.2.0 and 3.3.0, each with login on/off
+  and actual version assertions. Preserve the older image digest.
+- Add new-server removal/input-rejection checks, representative explicit-legacy
+  Markdown conversion on both versions, and mocked HA release-gate/choice/
+  permission/isolation tests. Mocked responses do not prove rendering quality.
+
+No new Python/HA, container or live Raspi run has been performed for this work.
+Native Ruff/static checks do not replace those runs. The specifically authorized
+test-Raspi MCP connection could not be initialized during preparation; no other
+HA MCP, direct HA HTTP or SSH route was substituted. No deployment, restart or
+publication follows automatically.
+See [the detailed 3.3.0 notes](STIRLING_3_3_0.md).
+
 ## Boundaries
 
 - The synthetic Basic proxy is not the Community App or Supervisor.
-- Real-server CI targets the pinned Stirling PDF 3.2.0 image, not every server
-  release or architecture. The new action's API contract was checked in official
+- Prepared real-server CI targets pinned Stirling PDF 3.2.0 and 3.3.0 images,
+  not every release or architecture. New runs remain pending. The original
+  extraction API contract was checked in official
   2.14.3 and 3.2.0 source, but source compatibility is not an end-to-end test.
 - There is no automatic OCR-quality score for arbitrary real-world scans.
 - Invalid extraction syntax is checked locally. Page-count handling belongs to
