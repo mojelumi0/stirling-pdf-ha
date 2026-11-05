@@ -31,9 +31,9 @@ The coverage gate requires 100% line coverage for `config_flow.py` and more than
 95% for every other integration module. A high total cannot compensate for an
 uncovered module. Keep the report complete; do not weaken the thresholds or add
 coverage exclusions just to make a change pass. Test failures and recovery in
-the same config flow, not only the first displayed error. This integration
-deliberately uses a single-instance guard rather than a mutable URL/IP as its
-config-entry unique ID.
+the same config flow, not only the first displayed error. Multiple entries use
+normalized URL duplicate detection. Existing unique IDs, entry IDs, entity IDs
+and per-entry statistics are not migrated or replaced.
 
 CI tests Home Assistant 2026.9.0 with `requirements-dev-min.txt` and 2026.10.2
 with `requirements-dev.txt`. Keep their framework pins aligned with the
@@ -49,7 +49,7 @@ compatibility result. Preserve the two automatic jobs and their aggregate
 `pytest` check. Add the stable 2026.11 job to that matrix after its test package
 and a real passing result are available.
 
-The existing entity base uses the cross-version `DeviceInfo(...)` constructor.
+Base and optional metric entities use the cross-version `DeviceInfo(...)` constructor.
 Keep device information as typed constructor arguments, not plain dictionaries
 or dict-style mutation. The regression suite must cover registry-driven entity
 ID changes and device display-name changes without losing coordinator updates,
@@ -68,6 +68,24 @@ Real-server contract tests live in `tests_live/` and use
 required test-server environment variables. They deliberately avoid real
 documents and run with both enabled and disabled server authentication.
 
+Keep both digest-pinned 3.2.0 and 3.3.0 server versions in the matrix, each with
+both login modes. Pass `STIRLING_PDF_EXPECTED_VERSION` and verify the actual
+reported version. Do not replace the older baseline or use a floating `latest`
+tag. Version-specific removed-route/validation checks must clearly identify
+their scope, not hide failures behind generic skips.
+
+Version guards use the explicitly selected entry's cached status. Unknown,
+custom and pre-release strings do not prove compatibility for restricted
+actions/options. Test rejection before file I/O, network calls and statistics
+changes, plus multi-server isolation and older-server behavior. The legacy text
+editor remains registered for older deployments; no new Text Editor API is
+assumed. Keep UI metadata, translations and contract fields aligned.
+
+Converter fields default explicitly to false so a server-default change cannot
+silently select the new converter. New 3.3.0 choices still require the existing
+per-server opt-in and admin checks. Mocked wire-field tests do not establish
+real Office/email/ebook/PDF/A rendering quality or complete SSRF protection.
+
 The real-server suite includes selected-page extraction and OCR from a committed
 image-only synthetic scan. Do not replace it with an already-searchable PDF or
 skip OCR when the pinned standard image lacks its expected capability. Fixture
@@ -80,16 +98,37 @@ safe output targets, but real HA execution and manual trace/output checks remain
 required. Record evidence honestly in `docs/TESTING.md`, distinguishing historical
 release validation from pending tests for newly added behavior.
 
+`examples/ha_ocr_test.yaml` is a separate, explicitly targeted native HA script
+for the committed image-only fixture. Its synthetic HA tests execute the whole
+sequence with registered fake services, including response failures, early stops,
+counter mismatches and cross-server isolation. Those tests are not real OCR.
+For live acceptance, verify the fixture hash, run once per selected server,
+check all six results and inspect/extract text from each output. Keep failed
+attempts in the evidence; do not silently rerun until the report turns green.
+
+Transport failures must use fixed categories without raw exception text or
+configured URLs. Keep exception chains suppressed at that boundary. Test both
+request entry and body-reading failures, and retain the real local HTTP test
+that receives a complete POST then disconnects: the client must not reupload.
+No retry is introduced for a non-idempotent processing request.
+
 ## Pull-request scope
 
 A new action should include:
 
-- a client method in `api.py`;
-- validation and registration in `__init__.py`;
+- an explicit contract in `operations.py` or a dedicated client method;
+- typed validation and registration through `tools.py` or `__init__.py`;
 - action metadata in `services.yaml`;
 - English and German translations;
 - API-client and Home Assistant service tests;
 - README documentation and a sanitized example.
+
+Do not add arbitrary endpoint execution or raw HTTP payload passthrough. Match
+primary and extra multipart file fields to the official source. Distinguish
+PDF/ZIP/images/Office containers, JSON responses and HTTP 204 filter non-matches.
+Protect each local input/output using HA's allowlist and executor-based I/O.
+Optional metrics must remain disabled by default and poll only subscribed groups.
+Source-derived contracts and mocked-handler coverage are not real-server proof.
 
 The maintainer reviews all submitted code and documentation before release,
 including contributions initially prepared with AI assistance.

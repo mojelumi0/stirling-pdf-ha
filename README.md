@@ -12,16 +12,23 @@ processing actions, connectivity monitoring, and a simple UI-based setup.
 · [Report an issue](https://github.com/mojelumi0/stirling-pdf-ha/issues)
 · [Stirling PDF](https://www.stirlingpdf.com/)
 
+> [!WARNING]
+> This development branch prepares **0.4.0-alpha.1**, an experimental pre-release.
+> The expanded tool catalog and multi-server behavior are not fully validated.
+> Use a Home Assistant backup and non-sensitive test documents. Stay on the latest
+> regular release for normal use. CI and the initial smoke tests must pass before
+> publishing the alpha; an alpha label is not a substitute for basic verification.
+
 > [!NOTE]
 > This is an actively developed community integration with a focused feature
 > set. Keep backups and use copies of documents when testing a new deployment.
 > A regular release is not a guarantee of compatibility with every server setup.
 
 > [!IMPORTANT]
-> This 0.3.x line supports one configured server. The experimental multi-server
-> work remains separate in PR #11. Do not install this version over a 0.4.x
-> development installation with multiple entries. Use a separate test instance
-> or an agreed backup/restore plan instead of deleting existing entries.
+> This alpha supports multiple configured servers. The main-line 0.3.x releases
+> support only one server. Do not downgrade a multi-server installation to 0.3.x
+> or delete entries to make a downgrade work. Use a separate test instance or an
+> explicitly agreed backup/restore plan.
 
 ## What this integration does
 
@@ -30,13 +37,14 @@ integration makes a focused set of those operations available as native Home
 Assistant actions, ready for scripts and automations.
 
 - Local communication directly between Home Assistant and Stirling PDF
-- Configuration through the Home Assistant UI
+- Multiple independently configured servers through the Home Assistant UI
 - Optional Stirling PDF API-key authentication
 - Optional HTTP Basic authentication for protected proxies and the Community App
 - Automatic connection validation and reauthentication
-- Merge, split, OCR, compression, and page-extraction actions
+- Merge, split, OCR, compression and extraction, plus an extensive additional tool catalog
 - Optional response data for scripts and automations
 - Connectivity, version, and persistent local operation-status entities
+- Optional server, queue, OCR and AI diagnostics, disabled by default
 - Privacy-aware diagnostics for easier troubleshooting
 - No cloud service required
 - English and German user-interface translations
@@ -127,13 +135,18 @@ Older HACS versions provide their own repository pre-release switch. Keep it
 off if you only want stable releases. See the
 [official update instructions](https://www.home-assistant.io/integrations/marketplace/#keeping-installations-up-to-date).
 
+Once an alpha is published, select that release explicitly when downloading.
+The experimental development branch is not a recommended substitute for the
+latest regular release.
+
 ### Home Assistant 2026.11 compatibility
 
-The manifest includes the official **Documents & photos** category. The existing
-entities already construct `DeviceInfo(...)` with keyword arguments and provide
-device-based entity names. New regression tests exercise entity-ID changes,
-device renaming, continued coordinator updates and retained identities after
-reload. The new HA naming display can change labels, not existing entity IDs.
+The manifest includes the official **Documents & photos** category. Base and
+optional monitoring entities construct `DeviceInfo(...)` with keyword arguments
+and provide device-based entity names. Regression tests cover registry renames,
+continued updates, availability recovery and reload, including enabled optional
+sensors and binary sensors. The new HA naming display can change labels, not
+existing entity IDs. These new tests still require a fresh CI run.
 
 The minimum Home Assistant version remains **2026.9.0**. Existing automated jobs
 still target 2026.9.0 and 2026.10.2. A separate manual 2026.11.0 workflow is
@@ -168,6 +181,23 @@ entry only if no other integration or automation still needs that directory.
 
 The setup form asks for the complete root URL and optional API-key or HTTP Basic
 credentials. Use only the authentication methods required by your deployment.
+
+### Multiple servers
+
+Add each server with **Settings > Devices & services > Add integration > Stirling
+PDF**. An optional server name helps distinguish them. The same normalized URL
+cannot be added twice; different ports/subpaths can be different deployments.
+Hostname aliases of the same backend cannot be detected automatically.
+
+Every action has a **Server** (`config_entry_id`) selector. With exactly one
+configured entry, existing actions without this field keep working. With two
+or more entries it is required, even if only one server is currently loaded.
+The integration never silently falls back to another server. Add the selector
+to existing automations before adding a second server.
+
+Each entry has its own device, credentials, local counter and statistics store.
+Updating does not replace existing config entries, entity IDs or statistics.
+Reconfigure the existing entry to change its URL. Do not delete/re-add it.
 
 | Field | Description | Example |
 |---|---|---|
@@ -265,7 +295,8 @@ Restart Home Assistant after changing `configuration.yaml`.
 
 Important behavior:
 
-- Input files must use the `.pdf` extension.
+- The original five actions require `.pdf` input. Conversion and attachment
+  actions accept only their explicitly listed extensions.
 - Merge, OCR, and compression outputs must use `.pdf`.
 - Split output must use `.zip` because Stirling PDF returns an archive.
 - The output directory must already exist.
@@ -278,13 +309,19 @@ Important behavior:
   the final write will succeed.
 - Enabled overwriting uses an atomic replacement to avoid partial output files.
 - PDFs are temporarily held in Home Assistant memory while being transferred.
+- Additional tools accept at most 32 local files with a combined 64 MiB;
+  structured fields and returned JSON are limited to 4 MiB. These are
+  additional-tool limits, not new restrictions on the original five actions.
+  The JSON response limit also applies to tools offering `.json` as an optional
+  output format, before parsing or writing. Responses are received into memory
+  before this validation; it is not a streaming download memory limit.
 
 Home Assistant does not provide a general file picker for arbitrary server or
 container paths. The action editor therefore uses text fields for these paths.
 
 ## Available entities
 
-All entities belong to a single Stirling PDF service device.
+Each server has its own service device and these four base entities.
 
 | Entity | Type | Description |
 |---|---|---|
@@ -315,6 +352,32 @@ saved, without waiting for a poll. Failed actions do not count as completed
 jobs. Reloading the integration or restarting Home Assistant preserves these
 statistics; deleting the integration entry removes them.
 
+### Optional diagnostic entities
+
+There are 22 additional sensors and six additional binary sensors. They are
+disabled in the entity registry by default. Enable only the ones you want under
+**Settings > Devices & services > Stirling PDF > your server > Entities**, then
+open the entity settings and enable it. Enabled diagnostics poll every 60 seconds;
+disabled diagnostics do not request their endpoints. Sensors sharing an endpoint
+reuse the same response in each polling cycle.
+
+- Uptime and server GET/POST request counts. GET counts are not CPU load and
+  POST counts are not successful-document counts. Server restart can reset them.
+- Retained job counts, active/completed/failed/successful jobs, file results,
+  average processing time and oldest/newest active job times.
+- Queue occupancy/capacity, cumulative queued/rejected jobs and resource status.
+- Installed OCR language count with a bounded language-code attribute.
+- AI health, configured smart/fast model names, probe latency and enabled,
+  reachable and authenticated flags.
+- Document parsing enabled/reachable and indexing-configured flags.
+
+Admin-only or missing endpoints can leave these entities unavailable. This does
+not take the base server offline or request replacement credentials. Invalid
+responses are not displayed as zero. Retained job counts are snapshots, not
+lifetime totals. Server-local timestamps have no invented timezone. Optional
+AI/engine requests may cause the server to probe its configured engine; enabling
+a diagnostic entity does not enable or configure that engine.
+
 ## Available actions
 
 | Action | Purpose | Output |
@@ -324,6 +387,93 @@ statistics; deleting the integration entry removes them.
 | `stirling_pdf.ocr` | Make a scanned PDF searchable | PDF |
 | `stirling_pdf.compress` | Reduce PDF file size with levels 1 through 9 | PDF |
 | `stirling_pdf.extract_pages` | Save selected pages in a new PDF | PDF |
+
+### Additional tools and permissions
+
+See the [additional action catalog](docs/ACTIONS.md) for 110 additional named
+contracts: page editing/layout, watermarks, metadata, attachments, forms,
+conversions, analysis, filters and opt-in security/network/AI tools. Fields are
+shown individually in the action editor using HA-compatible `snake_case` names.
+The integration maps names such as `render_dpi`, `page_numbers` and `image_file`
+to the original Stirling PDF API fields without renaming multipart fields. Actions
+run only when explicitly called; they are not polling entities.
+
+These contracts are source-derived, not a claim that every tool has been
+manually validated on every server. A server may lack a route, dependency,
+edition feature, model or permission. Such calls fail without incrementing the
+local counter. See [testing evidence](docs/TESTING.md).
+
+Open **Settings > Devices & services > Stirling PDF > your server > Configure**
+to opt into sensitive, external network and AI groups, separately for each
+server. They are **off by default**. Their actions remain listed but are rejected
+until opted in. Standard tools need no opt-in. A forbidden optional tool does
+not start reauth; HTTP 401 does so for the selected server only.
+User-initiated sensitive/external/AI calls also require a Home Assistant admin.
+Internal automation calls without a user context follow HA's admin-service rules.
+Options are read on each call; changing a group does not restart another server.
+Conversion actions with `use_stirling_office_convert: true` require both the
+selected server's external-action opt-in and the same user-admin check. Local
+conversion calls with this flag omitted or false do not gain an admin restriction.
+
+### Stirling PDF 3.3.0 compatibility
+
+The legacy `replace_text` endpoint was removed upstream in 3.3.0. The action
+remains registered for older servers, but calls targeting 3.3.0 or newer are
+rejected before file access, upload or statistics changes. It is not silently
+redirected to an invented replacement API. Unknown, custom or pre-release
+version strings cannot establish support for this restricted action; refresh
+the selected server's status or use a known supported stable server.
+
+The `use_stirling_office_convert` field is also available for PDF/A, PDF to XML,
+HTML, Markdown, email and ebook conversions. These nine newly exposed choices
+require server 3.3.0 or newer when enabled. Existing converter choices remain
+available with their existing server/dependency limitations.
+
+**Behavior change:** all fourteen converter choices now default explicitly to
+`false`. An omitted field selects the legacy converter instead of inheriting a
+server-wide default that may change independently. Users who want Stirling
+Office Convert must explicitly select `true` and satisfy the per-server opt-in
+and admin checks described above. This does not install converter dependencies
+or guarantee converter availability. PDF/X retains its legacy converter; HTML
+zoom is ignored by the Office Convert path. Conversion can still load embedded
+resources, so neither selection is a network sandbox.
+
+See the [3.3.0 compatibility and testing notes](docs/STIRLING_3_3_0.md).
+
+Integer action fields, including the compression level, reject fractional values
+and booleans rather than silently converting them. Whole numeric values and
+integer strings remain accepted; existing range and enum restrictions still apply.
+
+For network tools, configure comma-separated exact hostnames in **Allowed URL
+hosts**, for example `example.org,tsa.example.org`. URL-to-PDF requires HTTP(S)
+without embedded credentials. Timestamping requires an explicit `tsa_url`; no
+vendor host is silently selected. This is **not an SSRF sandbox**: redirects,
+DNS, embedded resources and server-configured network access still need controls
+in the Stirling PDF deployment and network. Conversions may load embedded
+resources. AI and server-configured conversion backends may transfer documents
+outside your LAN and incur costs. Inspect that server's configuration first.
+
+Secrets supplied to password/signature actions may be retained in automation
+YAML, traces and backups, even when the editor masks the field. Masking is not
+encrypted storage. Redaction/signature results require independent inspection;
+an HTTP success is not a security guarantee. Never execute extracted JavaScript.
+Archives are saved, not extracted automatically.
+
+JSON analysis actions can omit `output_path` and return `result` in action
+response data. Filters return `matches: true` with a validated PDF on a match,
+or `matches: false` on HTTP 204; a non-match writes no file. Successful checks
+also count as successful integration actions. Binary tools require an explicit
+matching output extension. Container signatures do not prove semantic correctness.
+
+```yaml
+action: stirling_pdf.rotate
+data:
+  config_entry_id: "<select your server in the action editor>"
+  file_path: /config/pdf/document.pdf
+  angle: 90
+  output_path: /config/pdf/document-rotated.pdf
+  overwrite: false
+```
 
 ### Merge PDFs
 
@@ -471,6 +621,25 @@ for the exact API supported by the installed Stirling PDF version.
 - Check the API key when Stirling PDF security is enabled, and HTTP Basic
   credentials when using the Community App or a protected proxy.
 
+Transport errors identify the request type and a fixed reason code, without
+echoing the configured URL, uploaded filename, credentials or raw exception text:
+
+| Reason | What to investigate |
+|---|---|
+| `timeout` | Server response time, OCR workload and proxy timeouts |
+| `dns_error` | Hostname resolution from Home Assistant |
+| `tls_error` | Certificate trust, hostname and HTTPS configuration |
+| `connection_refused` | Whether the intended service is listening on its configured port |
+| `connection_failed` | Other connector or network failures |
+| `server_disconnected`, `connection_lost`, `incomplete_response` | Server/proxy logs and interrupted responses |
+| `client_error` | Another HTTP-client failure; inspect the matching server logs |
+
+Correlate HA and server logs at the failed action's timestamp. A category is not
+a root-cause diagnosis. A successful status poll does not prove the next upload
+will succeed. Processing requests are not automatically retried: a lost response
+does not prove the server never processed the document. Check the server before
+manually retrying. Never disable authentication or TLS validation to hide an error.
+
 ### The status endpoint is disabled
 
 The integration needs `/api/v1/info/status` for setup and availability
@@ -494,6 +663,11 @@ Leave the app's authentication enabled. After a rejected login, check the stored
 configuration and use reauthentication/reconfiguration rather than deleting the
 integration. Do not repeatedly retry invalid credentials or share their values.
 
+The failed action is not automatically retried and does not increase the local
+job counter. After correcting credentials or permissions, explicitly run it again.
+A 403 response can also mean an account or access restriction. If replacing
+the key does not help, check permissions on the Stirling PDF server.
+
 ### Extraction rejects a page selection
 
 Use explicit positive pages or ascending ranges such as `1,3-5`. Extraction
@@ -501,11 +675,6 @@ does not accept `all` or function expressions. Clear accidental trailing commas
 and do not use spaces inside a number. The server determines which selected
 pages actually exist; a successful response alone does not prove all requested
 pages were present.
-The failed action is not automatically retried and does not increase the local
-job counter. After updating the key, run the action again.
-
-A 403 response can also mean an account or access restriction. If replacing
-the key does not help, check permissions on the Stirling PDF server.
 
 ### A compression value is rejected with “Got None”
 
@@ -561,15 +730,25 @@ counter increase of 6. Exact rejection reasons, output contents, credentials,
 diagnostics, installed version and reload/restart persistence still need manual
 inspection; the script is not an automatic merge/release approval.
 
+The separate [image-only OCR example](examples/README.md#image-only-ocr-test)
+uses the committed synthetic scan, not `a.pdf` or another already-searchable
+document. It checks absence of a known input word, performs OCR, verifies three
+recognized markers and checks a one-page result. A complete run adds six jobs
+to the selected server and checks the other server's local statistics. It stops
+at the first failure without retrying or overwriting. Verify the fixture hash
+and inspect the generated PDF separately.
+
 See [testing and compatibility evidence](docs/TESTING.md) for the distinction
 between released observations, CI checks and pending development validation.
 
 ## Known limitations
 
-- Only one Stirling PDF instance can currently be configured.
+- With multiple servers, actions require an explicit server selection.
 - Operation statistics only count actions started through this integration.
 - There is no browser-based file picker for Home Assistant host paths.
-- Password, watermark, and office-document conversion actions are not implemented.
+- Additional tools depend on the server version and installed capabilities.
+  Sensitive, external and AI action groups require explicit per-server opt-ins;
+  the full catalog has not been validated on every supported deployment.
 - Compatibility with additional Home Assistant and Stirling PDF versions still
   needs broader community testing.
 
@@ -622,15 +801,20 @@ can also be selected as required checks in the branch ruleset.
 
 ### Real-server tests
 
-The `Stirling PDF server tests` workflow starts a disposable, version-pinned
-Stirling PDF 3.2.0 container with login enabled and disabled. It runs on pushes,
+The `Stirling PDF server tests` workflow starts disposable, digest-pinned
+Stirling PDF 3.2.0 and 3.3.0 containers, each with login enabled and disabled
+(four jobs). It runs on pushes,
 pull requests, manual dispatch, and weekly. It checks public status versus
 protected health, missing and invalid API keys, merge ordering, Unicode
 filenames, split ZIP contents, compression and selected-page extraction while
 checking page content and order. A synthetic image-only scanned PDF exercises
 real English OCR; the source has no searchable text and recognition must produce
 known words and a number. These added development checks must pass in CI before
-they can be counted as validation of the new release.
+they can be counted as validation of the new release. Each job verifies the
+server's actual reported version. The 3.3.0 jobs additionally check removal of
+the legacy text-editor route and rejection of an out-of-range poster factor.
+Those two version-specific assertions are deliberately skipped on 3.2.0, not
+treated as successful 3.3.0 checks.
 The same jobs also exercise a synthetic HTTP Basic proxy in front of the real
 server, including combined API-key authentication and rejected Basic credentials.
 Local HTTP transport tests cover all five client operations and refusal to
@@ -642,16 +826,20 @@ covered by client/service and manual tests; one synthetic English scan does not
 prove OCR quality for every document or installed language.
 
 To run the server tests locally, use a separate virtual environment with
-`requirements-live.txt`, start a disposable Stirling PDF 3.2.0 server, and set:
+`requirements-live.txt`, start the intended disposable pinned test server, and set:
 
 ```powershell
 $env:STIRLING_PDF_URL = "http://127.0.0.1:8080"
 $env:STIRLING_PDF_API_KEY = "<test-server-api-key>"
 $env:STIRLING_PDF_REQUIRE_AUTH = "true"
+$env:STIRLING_PDF_EXPECTED_VERSION = "3.3.0"
 python -m pytest -q -p no:cacheprovider tests_live
 ```
 
-Use `"false"` for `STIRLING_PDF_REQUIRE_AUTH` when login is disabled. The tests
+Set `STIRLING_PDF_EXPECTED_VERSION` to the actual version being tested (3.2.0 or
+3.3.0 in CI). If omitted, it defaults to the historical 3.2.0 baseline; it is not
+inferred from the server response. Use `"false"` for `STIRLING_PDF_REQUIRE_AUTH`
+when login is disabled. The tests
 upload only synthetic PDFs. Without `STIRLING_PDF_URL`, server-dependent tests
 are skipped. A Docker runtime is required to reproduce the container workflow.
 

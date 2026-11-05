@@ -73,6 +73,7 @@ async def test_diagnostics_redact_basic_credentials_and_nested_authorization(
             **loaded_entry.data,
             CONF_USERNAME: "private-ha-username",
             CONF_PASSWORD: "private-ha-password",
+            "server_name": "private-server-name",
         },
     )
     loaded_entry.runtime_data.async_set_updated_data(
@@ -92,6 +93,7 @@ async def test_diagnostics_redact_basic_credentials_and_nested_authorization(
     for secret in (
         "private-ha-username",
         "private-ha-password",
+        "private-server-name",
         "echoed-username",
         "echoed-password",
         "private-encoded-header",

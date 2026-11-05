@@ -1,114 +1,6101 @@
-merge:
-  fields:
-    file_paths:
-      required: true
-      example:
-        - "/config/pdf/a.pdf"
-        - "/config/pdf/b.pdf"
-      selector:
-        text:
-          multiple: true
-    output_path:
-      required: true
-      example: "/config/pdf/merged.pdf"
-      selector:
-        text:
-    overwrite:
-      default: false
-      selector:
-        boolean:
-
-split:
-  fields:
-    file_path:
-      required: true
-      example: "/config/pdf/document.pdf"
-      selector:
-        text:
-    page_numbers:
-      required: true
-      example: "2,5"
-      selector:
-        text:
-    output_path:
-      required: true
-      example: "/config/pdf/document_split.zip"
-      selector:
-        text:
-    overwrite:
-      default: false
-      selector:
-        boolean:
-
-ocr:
-  fields:
-    file_path:
-      required: true
-      example: "/config/pdf/scan.pdf"
-      selector:
-        text:
-    languages:
-      default:
-        - "eng"
-      example:
-        - "eng"
-        - "deu"
-      selector:
-        text:
-          multiple: true
-    output_path:
-      required: true
-      example: "/config/pdf/scan_ocr.pdf"
-      selector:
-        text:
-    overwrite:
-      default: false
-      selector:
-        boolean:
-
-extract_pages:
-  fields:
-    file_path:
-      required: true
-      example: "/config/pdf/document.pdf"
-      selector:
-        text:
-    page_numbers:
-      required: true
-      example: "1,3-5"
-      selector:
-        text:
-    output_path:
-      required: true
-      example: "/config/pdf/selected_pages.pdf"
-      selector:
-        text:
-    overwrite:
-      default: false
-      selector:
-        boolean:
-
-compress:
-  fields:
-    file_path:
-      required: true
-      example: "/config/pdf/large.pdf"
-      selector:
-        text:
-    optimize_level:
-      default: 5
-      selector:
-        number:
-          min: 1
-          max: 9
-          step: 1
-          mode: slider
-    output_path:
-      required: true
-      example: "/config/pdf/large_compressed.pdf"
-      selector:
-        text:
-    overwrite:
-      default: false
-      selector:
-        boolean:
+{
+  "merge": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_paths": {
+        "required": true,
+        "selector": {
+          "text": {
+            "multiple": true
+          }
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "split": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "page_numbers": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "ocr": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "languages": {
+        "default": [
+          "eng"
+        ],
+        "selector": {
+          "text": {
+            "multiple": true
+          }
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "compress": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "optimize_level": {
+        "default": 5,
+        "selector": {
+          "number": {
+            "min": 1,
+            "max": 9,
+            "step": 1,
+            "mode": "slider"
+          }
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "extract_pages": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "page_numbers": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "rotate": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "angle": {
+        "required": true,
+        "selector": {
+          "select": {
+            "options": [
+              "0",
+              "90",
+              "180",
+              "270"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      }
+    }
+  },
+  "auto_rotate": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "detection_mode": {
+        "required": false,
+        "default": "auto",
+        "selector": {
+          "select": {
+            "options": [
+              "auto",
+              "text",
+              "osd"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "confidence_threshold": {
+        "required": false,
+        "default": 14,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "dry_run": {
+        "required": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "infer_undetected": {
+        "required": false,
+        "default": true,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "page_rotations": {
+        "required": false,
+        "selector": {
+          "object": {}
+        }
+      }
+    }
+  },
+  "remove_pages": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "page_numbers": {
+        "required": false,
+        "default": "all",
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "crop": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "page_numbers": {
+        "required": false,
+        "default": "all",
+        "selector": {
+          "text": {}
+        }
+      },
+      "x": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "y": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "width": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "height": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "remove_data_outside_crop": {
+        "required": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "auto_crop": {
+        "required": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "scale_pages": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "page_size": {
+        "required": false,
+        "default": "KEEP",
+        "selector": {
+          "select": {
+            "options": [
+              "A0",
+              "A1",
+              "A2",
+              "A3",
+              "A4",
+              "A5",
+              "A6",
+              "LETTER",
+              "LEGAL",
+              "KEEP"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "orientation": {
+        "required": false,
+        "default": "PORTRAIT",
+        "selector": {
+          "select": {
+            "options": [
+              "PORTRAIT",
+              "LANDSCAPE"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "scale_factor": {
+        "required": false,
+        "default": 1,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      }
+    }
+  },
+  "remove_blanks": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "threshold": {
+        "required": true,
+        "default": 10,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 255,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "white_percent": {
+        "required": true,
+        "default": 99.9,
+        "selector": {
+          "number": {
+            "min": 0.1,
+            "max": 100,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      }
+    }
+  },
+  "repair": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "split_by_size": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "split_type": {
+        "required": false,
+        "default": "0",
+        "selector": {
+          "select": {
+            "options": [
+              "0",
+              "1",
+              "2"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "split_value": {
+        "required": false,
+        "default": "10MB",
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "split_by_chapters": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "include_metadata": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "allow_duplicates": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "bookmark_level": {
+        "required": false,
+        "default": 1,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      }
+    }
+  },
+  "auto_split": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "duplex_mode": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "split_by_sections": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "page_numbers": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "split_mode": {
+        "required": false,
+        "selector": {
+          "select": {
+            "options": [
+              "CUSTOM",
+              "SPLIT_ALL_EXCEPT_FIRST_AND_LAST",
+              "SPLIT_ALL_EXCEPT_FIRST",
+              "SPLIT_ALL_EXCEPT_LAST",
+              "SPLIT_ALL"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "horizontal_divisions": {
+        "required": true,
+        "default": 0,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 50,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "vertical_divisions": {
+        "required": true,
+        "default": 1,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 50,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "merge": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "poster": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "page_size": {
+        "required": true,
+        "selector": {
+          "select": {
+            "options": [
+              "A4",
+              "Letter",
+              "A3",
+              "A5",
+              "Legal",
+              "Tabloid"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "right_to_left": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "x_factor": {
+        "required": false,
+        "default": 2,
+        "selector": {
+          "number": {
+            "min": 1,
+            "max": 10,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "y_factor": {
+        "required": false,
+        "default": 2,
+        "selector": {
+          "number": {
+            "min": 1,
+            "max": 10,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      }
+    }
+  },
+  "booklet": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "pages_per_sheet": {
+        "required": true,
+        "default": "2",
+        "selector": {
+          "select": {
+            "options": [
+              "2"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "add_border": {
+        "required": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "spine_location": {
+        "required": false,
+        "default": "LEFT",
+        "selector": {
+          "select": {
+            "options": [
+              "LEFT",
+              "RIGHT"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "add_gutter": {
+        "required": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "gutter_size": {
+        "required": false,
+        "default": 12,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "double_sided": {
+        "required": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "duplex_pass": {
+        "required": false,
+        "default": "BOTH",
+        "selector": {
+          "select": {
+            "options": [
+              "BOTH",
+              "FIRST",
+              "SECOND"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "flip_on_short_edge": {
+        "required": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "multi_page_layout": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "mode": {
+        "required": true,
+        "default": "DEFAULT",
+        "selector": {
+          "select": {
+            "options": [
+              "DEFAULT",
+              "CUSTOM"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "pages_per_sheet": {
+        "required": false,
+        "selector": {
+          "select": {
+            "options": [
+              "2",
+              "4",
+              "9",
+              "16"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "arrangement": {
+        "required": false,
+        "default": "BY_ROWS",
+        "selector": {
+          "select": {
+            "options": [
+              "BY_ROWS",
+              "BY_COLUMNS"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "reading_direction": {
+        "required": false,
+        "default": "LTR",
+        "selector": {
+          "select": {
+            "options": [
+              "LTR",
+              "RTL"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "rows": {
+        "required": false,
+        "default": 1,
+        "selector": {
+          "number": {
+            "min": 1,
+            "max": 300,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "cols": {
+        "required": false,
+        "default": 2,
+        "selector": {
+          "number": {
+            "min": 1,
+            "max": 300,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "orientation": {
+        "required": false,
+        "default": "PORTRAIT",
+        "selector": {
+          "select": {
+            "options": [
+              "PORTRAIT",
+              "LANDSCAPE"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "inner_margin": {
+        "required": false,
+        "default": 0,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "top_margin": {
+        "required": false,
+        "default": 0,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "bottom_margin": {
+        "required": false,
+        "default": 0,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "left_margin": {
+        "required": false,
+        "default": 0,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "right_margin": {
+        "required": false,
+        "default": 0,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "border_width": {
+        "required": false,
+        "default": 1,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "add_border": {
+        "required": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "single_page": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "overlay": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "overlay_files": {
+        "required": true,
+        "selector": {
+          "text": {
+            "multiple": true
+          }
+        }
+      },
+      "overlay_mode": {
+        "required": true,
+        "selector": {
+          "select": {
+            "options": [
+              "SequentialOverlay",
+              "InterleavedOverlay",
+              "FixedRepeatOverlay"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "counts": {
+        "required": false,
+        "selector": {
+          "text": {
+            "multiple": true
+          }
+        }
+      },
+      "overlay_position": {
+        "required": true,
+        "selector": {
+          "select": {
+            "options": [
+              "0",
+              "1"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      }
+    }
+  },
+  "page_numbers": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "page_numbers": {
+        "required": false,
+        "default": "all",
+        "selector": {
+          "text": {}
+        }
+      },
+      "font_type": {
+        "required": true,
+        "selector": {
+          "select": {
+            "options": [
+              "helvetica",
+              "courier",
+              "times"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "position": {
+        "required": true,
+        "default": "8",
+        "selector": {
+          "select": {
+            "options": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7",
+              "8",
+              "9"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "custom_text": {
+        "required": false,
+        "default": "{n}",
+        "selector": {
+          "text": {}
+        }
+      },
+      "pages_to_number": {
+        "required": false,
+        "default": "all",
+        "selector": {
+          "text": {}
+        }
+      },
+      "starting_number": {
+        "required": false,
+        "default": 1,
+        "selector": {
+          "number": {
+            "min": 1,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "font_size": {
+        "required": false,
+        "default": 12,
+        "selector": {
+          "number": {
+            "min": 1,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "font_color": {
+        "required": false,
+        "default": "#000000",
+        "selector": {
+          "text": {}
+        }
+      },
+      "custom_margin": {
+        "required": false,
+        "default": "medium",
+        "selector": {
+          "select": {
+            "options": [
+              "small",
+              "medium",
+              "large",
+              "x-large"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "zero_pad": {
+        "required": false,
+        "default": 0,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      }
+    }
+  },
+  "watermark": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "watermark_image": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "watermark_type": {
+        "required": false,
+        "selector": {
+          "select": {
+            "options": [
+              "text",
+              "image"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "watermark_text": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "alphabet": {
+        "required": false,
+        "default": "roman",
+        "selector": {
+          "select": {
+            "options": [
+              "roman",
+              "arabic",
+              "japanese",
+              "korean",
+              "chinese",
+              "thai"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "font_size": {
+        "required": false,
+        "default": 12,
+        "selector": {
+          "number": {
+            "min": 1,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "rotation": {
+        "required": false,
+        "default": 0,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "opacity": {
+        "required": false,
+        "default": 0.5,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "custom_color": {
+        "required": false,
+        "default": "#d3d3d3",
+        "selector": {
+          "text": {}
+        }
+      },
+      "convert_pdf_to_image": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "width_spacer": {
+        "required": false,
+        "default": 50,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "height_spacer": {
+        "required": false,
+        "default": 50,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      }
+    }
+  },
+  "stamp": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "stamp_image": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "page_numbers": {
+        "required": false,
+        "default": "all",
+        "selector": {
+          "text": {}
+        }
+      },
+      "stamp_type": {
+        "required": false,
+        "selector": {
+          "select": {
+            "options": [
+              "text",
+              "image",
+              "qr"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "stamp_text": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "position": {
+        "required": false,
+        "default": "5",
+        "selector": {
+          "select": {
+            "options": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7",
+              "8",
+              "9"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "font_size": {
+        "required": false,
+        "default": 40,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "opacity": {
+        "required": false,
+        "default": 0.5,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "custom_color": {
+        "required": false,
+        "default": "#d3d3d3",
+        "selector": {
+          "text": {}
+        }
+      },
+      "rotation": {
+        "required": false,
+        "default": 0,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "alphabet": {
+        "required": false,
+        "default": "roman",
+        "selector": {
+          "select": {
+            "options": [
+              "roman",
+              "arabic",
+              "japanese",
+              "korean",
+              "chinese",
+              "thai"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "override_x": {
+        "required": false,
+        "default": -1,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "override_y": {
+        "required": false,
+        "default": -1,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "custom_margin": {
+        "required": false,
+        "default": "medium",
+        "selector": {
+          "select": {
+            "options": [
+              "small",
+              "medium",
+              "large",
+              "x-large"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      }
+    }
+  },
+  "add_image": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "image_file": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "x": {
+        "required": true,
+        "default": 0,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "y": {
+        "required": true,
+        "default": 0,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "every_page": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "add_comments": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "comments": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "replace_text": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "page_numbers": {
+        "required": false,
+        "default": "all",
+        "selector": {
+          "text": {}
+        }
+      },
+      "edits": {
+        "required": true,
+        "selector": {
+          "object": {}
+        }
+      },
+      "whole_word_search": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "metadata": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "delete_all": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "author": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "creation_date": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "creator": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "keywords": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "modification_date": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "producer": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "subject": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "title": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "trapped": {
+        "required": false,
+        "selector": {
+          "select": {
+            "options": [
+              "True",
+              "False",
+              "Unknown"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "all_request_params": {
+        "required": false,
+        "selector": {
+          "object": {}
+        }
+      }
+    }
+  },
+  "bookmarks": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "edit_bookmarks": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "bookmark_data": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "replace_existing": {
+        "required": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "remove_images": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "invert_colors": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "replace_and_invert_option": {
+        "required": true,
+        "default": "HIGH_CONTRAST_COLOR",
+        "selector": {
+          "select": {
+            "options": [
+              "HIGH_CONTRAST_COLOR",
+              "CUSTOM_COLOR",
+              "FULL_INVERSION",
+              "COLOR_SPACE_CONVERSION"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "high_contrast_color_combination": {
+        "required": true,
+        "default": "WHITE_TEXT_ON_BLACK",
+        "selector": {
+          "select": {
+            "options": [
+              "WHITE_TEXT_ON_BLACK",
+              "BLACK_TEXT_ON_WHITE",
+              "YELLOW_TEXT_ON_BLACK",
+              "GREEN_TEXT_ON_BLACK"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "back_ground_color": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "text_color": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "scanner_effect": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "quality": {
+        "required": true,
+        "selector": {
+          "select": {
+            "options": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "rotation": {
+        "required": true,
+        "selector": {
+          "select": {
+            "options": [
+              "none",
+              "slight",
+              "moderate",
+              "severe"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "colorspace": {
+        "required": false,
+        "selector": {
+          "select": {
+            "options": [
+              "grayscale",
+              "color"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "advanced_enabled": {
+        "required": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "brightness": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "contrast": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "blur": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "noise": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "resolution": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "border": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "rotate": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "rotate_variance": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "yellowish": {
+        "required": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "rotation_value": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      }
+    }
+  },
+  "decompress": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "auto_rename": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "use_first_text_as_fallback": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "extract_images": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "format": {
+        "required": true,
+        "default": "png",
+        "selector": {
+          "select": {
+            "options": [
+              "png",
+              "jpeg",
+              "gif"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      }
+    }
+  },
+  "extract_scans": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "angle_threshold": {
+        "required": true,
+        "default": 10,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "tolerance": {
+        "required": true,
+        "default": 30,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "min_area": {
+        "required": true,
+        "default": 10000,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "min_contour_area": {
+        "required": true,
+        "default": 500,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "border_size": {
+        "required": true,
+        "default": 1,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      }
+    }
+  },
+  "list_attachments": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "extract_attachments": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "add_attachments": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "attachments": {
+        "required": true,
+        "selector": {
+          "text": {
+            "multiple": true
+          }
+        }
+      },
+      "convert_to_pdf_a3b": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "delete_attachment": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "attachment_name": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "rename_attachment": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "attachment_name": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "new_name": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "batch_process_attachments": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "attachments": {
+        "required": false,
+        "selector": {
+          "text": {
+            "multiple": true
+          }
+        }
+      },
+      "ops_json": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "convert_to_pdf_a3b": {
+        "required": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "create_portfolio": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_paths": {
+        "required": true,
+        "selector": {
+          "text": {
+            "multiple": true
+          }
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "cover_title": {
+        "required": false,
+        "default": "PDF Portfolio",
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "flatten_portfolio": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "flatten": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "flatten_only_forms": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "render_dpi": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": 72,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      }
+    }
+  },
+  "unlock_pdf_forms": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "images_to_pdf": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_paths": {
+        "required": true,
+        "selector": {
+          "text": {
+            "multiple": true
+          }
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "fit_option": {
+        "required": true,
+        "default": "fillPage",
+        "selector": {
+          "select": {
+            "options": [
+              "fillPage",
+              "fitDocumentToImage",
+              "fitDocumentToPage",
+              "maintainAspectRatio"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "color_type": {
+        "required": true,
+        "default": "color",
+        "selector": {
+          "select": {
+            "options": [
+              "color",
+              "greyscale",
+              "blackwhite"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "auto_rotate": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "pdf_to_img": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "page_numbers": {
+        "required": false,
+        "default": "all",
+        "selector": {
+          "text": {}
+        }
+      },
+      "image_format": {
+        "required": true,
+        "default": "png",
+        "selector": {
+          "select": {
+            "options": [
+              "png",
+              "jpeg",
+              "jpg",
+              "gif",
+              "webp"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "single_or_multiple": {
+        "required": true,
+        "default": "multiple",
+        "selector": {
+          "select": {
+            "options": [
+              "single",
+              "multiple"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "color_type": {
+        "required": true,
+        "default": "color",
+        "selector": {
+          "select": {
+            "options": [
+              "color",
+              "greyscale",
+              "blackwhite"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "dpi": {
+        "required": true,
+        "default": 300,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "include_annotations": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "pdf_to_pdfa": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "output_format": {
+        "required": true,
+        "selector": {
+          "select": {
+            "options": [
+              "pdfa",
+              "pdfa-1",
+              "pdfa-2",
+              "pdfa-2b",
+              "pdfa-3",
+              "pdfa-3b",
+              "pdfa-1a",
+              "pdfa-2a",
+              "pdfa-3a",
+              "pdfx"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "pdf_ua": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "strict": {
+        "required": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "use_stirling_office_convert": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "pdf_to_text": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "output_format": {
+        "required": true,
+        "selector": {
+          "select": {
+            "options": [
+              "rtf",
+              "txt"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "use_stirling_office_convert": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "pdf_to_word": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "output_format": {
+        "required": true,
+        "selector": {
+          "select": {
+            "options": [
+              "doc",
+              "docx",
+              "odt"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "use_stirling_office_convert": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "file_to_pdf": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "use_stirling_office_convert": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "pdf_to_presentation": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "output_format": {
+        "required": true,
+        "selector": {
+          "select": {
+            "options": [
+              "ppt",
+              "pptx",
+              "odp"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "use_stirling_office_convert": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "pdf_to_csv": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "page_numbers": {
+        "required": false,
+        "default": "all",
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "pdf_to_xlsx": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "page_numbers": {
+        "required": false,
+        "default": "all",
+        "selector": {
+          "text": {}
+        }
+      },
+      "use_stirling_office_convert": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "pdf_to_xml": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "use_stirling_office_convert": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "html_to_pdf": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "zoom": {
+        "required": true,
+        "default": 1,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "use_stirling_office_convert": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "markdown_to_pdf": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "use_stirling_office_convert": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "pdf_to_html": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "use_stirling_office_convert": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "pdf_to_markdown": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "use_stirling_office_convert": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "eml_to_pdf": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "include_attachments": {
+        "required": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "max_attachment_size_mb": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "download_html": {
+        "required": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "include_all_recipients": {
+        "required": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "use_stirling_office_convert": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "svg_to_pdf": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_paths": {
+        "required": true,
+        "selector": {
+          "text": {
+            "multiple": true
+          }
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "combine_into_single_pdf": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "ebook_to_pdf": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "embed_all_fonts": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "include_table_of_contents": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "include_page_numbers": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "optimize_for_ebook": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "use_stirling_office_convert": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "pdf_to_epub": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "detect_chapters": {
+        "required": false,
+        "default": true,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "target_device": {
+        "required": false,
+        "default": "TABLET_PHONE_IMAGES",
+        "selector": {
+          "select": {
+            "options": [
+              "TABLET_PHONE_IMAGES",
+              "KINDLE_EINK_TEXT"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "output_format": {
+        "required": false,
+        "default": "EPUB",
+        "selector": {
+          "select": {
+            "options": [
+              "EPUB",
+              "AZW3"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "use_stirling_office_convert": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "cbr_to_pdf": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "optimize_for_ebook": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "cbz_to_pdf": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "optimize_for_ebook": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "pdf_to_cbr": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "dpi": {
+        "required": true,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      }
+    }
+  },
+  "pdf_to_cbz": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "dpi": {
+        "required": true,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      }
+    }
+  },
+  "pdf_to_vector": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "output_format": {
+        "required": false,
+        "default": "eps",
+        "selector": {
+          "select": {
+            "options": [
+              "eps",
+              "ps",
+              "pcl",
+              "xps"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "prepress": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "vector_to_pdf": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "output_format": {
+        "required": false,
+        "default": "eps",
+        "selector": {
+          "select": {
+            "options": [
+              "eps",
+              "ps",
+              "pcl",
+              "xps"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "prepress": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "pdf_to_ua": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "profile": {
+        "required": false,
+        "default": "ua1",
+        "selector": {
+          "select": {
+            "options": [
+              "ua1",
+              "ua2"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "title": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "language": {
+        "required": false,
+        "default": "en-GB",
+        "selector": {
+          "text": {}
+        }
+      },
+      "override_language": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "existing_tags": {
+        "required": false,
+        "default": "auto",
+        "selector": {
+          "select": {
+            "options": [
+              "auto",
+              "keep",
+              "rebuild"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "figure_policy": {
+        "required": false,
+        "default": "require-alt",
+        "selector": {
+          "select": {
+            "options": [
+              "require-alt",
+              "mark-decorative"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "embed_fonts": {
+        "required": false,
+        "default": true,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "alt_text": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "url_to_pdf": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "url_input": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "analyze_basic_info": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "analyze_page_count": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "analyze_page_dimensions": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "analyze_document_properties": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "analyze_font_info": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "analyze_annotation_info": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "analyze_form_fields": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "analyze_security_info": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "pdf_info": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "check_contains_text": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "page_numbers": {
+        "required": false,
+        "default": "all",
+        "selector": {
+          "text": {}
+        }
+      },
+      "text": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "check_contains_image": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "page_numbers": {
+        "required": false,
+        "default": "all",
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "check_page_count": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "comparator": {
+        "required": true,
+        "selector": {
+          "select": {
+            "options": [
+              "Greater",
+              "Equal",
+              "Less"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "page_count": {
+        "required": true,
+        "default": 0,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      }
+    }
+  },
+  "check_page_size": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "comparator": {
+        "required": true,
+        "selector": {
+          "select": {
+            "options": [
+              "Greater",
+              "Equal",
+              "Less"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "standard_page_size": {
+        "required": true,
+        "default": "A4",
+        "selector": {
+          "select": {
+            "options": [
+              "A0",
+              "A1",
+              "A2",
+              "A3",
+              "A4",
+              "A5",
+              "A6",
+              "LETTER",
+              "LEGAL"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      }
+    }
+  },
+  "check_file_size": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "comparator": {
+        "required": true,
+        "selector": {
+          "select": {
+            "options": [
+              "Greater",
+              "Equal",
+              "Less"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "file_size": {
+        "required": true,
+        "default": 0,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      }
+    }
+  },
+  "check_page_rotation": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "comparator": {
+        "required": true,
+        "selector": {
+          "select": {
+            "options": [
+              "Greater",
+              "Equal",
+              "Less"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "rotation": {
+        "required": true,
+        "default": 0,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      }
+    }
+  },
+  "form_fields": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "form_fields_with_coordinates": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "form_fill": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "data": {
+        "required": false,
+        "selector": {
+          "object": {}
+        }
+      },
+      "flatten": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "form_extract_csv": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "data": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "form_extract_xlsx": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "data": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "form_add_fields": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "fields": {
+        "required": false,
+        "selector": {
+          "object": {}
+        }
+      }
+    }
+  },
+  "form_modify_fields": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "updates": {
+        "required": false,
+        "selector": {
+          "object": {}
+        }
+      }
+    }
+  },
+  "form_edit_fields": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "edits": {
+        "required": false,
+        "selector": {
+          "object": {}
+        }
+      },
+      "include_fields": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "form_delete_fields": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "names": {
+        "required": false,
+        "selector": {
+          "object": {}
+        }
+      }
+    }
+  },
+  "form_detect": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "conf_threshold": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "apply_to_pdf": {
+        "required": false,
+        "default": true,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "add_password": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "owner_password": {
+        "required": false,
+        "selector": {
+          "text": {
+            "type": "password"
+          }
+        }
+      },
+      "password": {
+        "required": false,
+        "selector": {
+          "text": {
+            "type": "password"
+          }
+        }
+      },
+      "source_password": {
+        "required": false,
+        "selector": {
+          "text": {
+            "type": "password"
+          }
+        }
+      },
+      "preserve_existing": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "key_length": {
+        "required": false,
+        "default": "256",
+        "selector": {
+          "select": {
+            "options": [
+              "40",
+              "128",
+              "256"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "prevent_assembly": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "prevent_extract_content": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "prevent_extract_for_accessibility": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "prevent_fill_in_form": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "prevent_modify": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "prevent_modify_annotations": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "prevent_printing": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "prevent_printing_faithful": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "remove_password": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "password": {
+        "required": false,
+        "selector": {
+          "text": {
+            "type": "password"
+          }
+        }
+      },
+      "remove_all": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "owner_password": {
+        "required": false,
+        "selector": {
+          "text": {
+            "type": "password"
+          }
+        }
+      },
+      "source_password": {
+        "required": false,
+        "selector": {
+          "text": {
+            "type": "password"
+          }
+        }
+      },
+      "retained_opening_password": {
+        "required": false,
+        "selector": {
+          "text": {
+            "type": "password"
+          }
+        }
+      }
+    }
+  },
+  "auto_redact": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "list_of_text": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "use_regex": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "whole_word_search": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "case_sensitive": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "redact_color": {
+        "required": true,
+        "default": "#000000",
+        "selector": {
+          "text": {}
+        }
+      },
+      "custom_padding": {
+        "required": true,
+        "default": 0,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      },
+      "convert_pdf_to_image": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "redact": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "page_numbers": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "redactions": {
+        "required": true,
+        "selector": {
+          "object": {}
+        }
+      },
+      "convert_pdf_to_image": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "page_redaction_color": {
+        "required": true,
+        "default": "#000000",
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "redact_execute": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "text_values": {
+        "required": false,
+        "selector": {
+          "text": {
+            "multiple": true
+          }
+        }
+      },
+      "regex_patterns": {
+        "required": false,
+        "selector": {
+          "text": {
+            "multiple": true
+          }
+        }
+      },
+      "wipe_pages": {
+        "required": false,
+        "selector": {
+          "text": {
+            "multiple": true
+          }
+        }
+      },
+      "ranges": {
+        "required": false,
+        "selector": {
+          "object": {}
+        }
+      },
+      "image_boxes": {
+        "required": false,
+        "selector": {
+          "object": {}
+        }
+      },
+      "redact_image_pages": {
+        "required": false,
+        "selector": {
+          "text": {
+            "multiple": true
+          }
+        }
+      },
+      "style": {
+        "required": false,
+        "selector": {
+          "object": {}
+        }
+      }
+    }
+  },
+  "cert_sign": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "private_key_file": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "cert_file": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "p12_file": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "jks_file": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "cert_type": {
+        "required": true,
+        "selector": {
+          "select": {
+            "options": [
+              "PEM",
+              "PKCS12",
+              "PFX",
+              "JKS"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      },
+      "password": {
+        "required": false,
+        "selector": {
+          "text": {
+            "type": "password"
+          }
+        }
+      },
+      "alias": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "show_signature": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "reason": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "location": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "name": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "page_number": {
+        "required": false,
+        "default": 1,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 1,
+            "mode": "box"
+          }
+        }
+      },
+      "show_logo": {
+        "required": true,
+        "default": true,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "timestamp": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "tsa_url": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "remove_cert_sign": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "sanitize": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "remove_java_script": {
+        "required": true,
+        "default": true,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "remove_embedded_files": {
+        "required": true,
+        "default": true,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "remove_xmp_metadata": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "remove_metadata": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "remove_links": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "remove_fonts": {
+        "required": true,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "validate_signature": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "cert_file": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  },
+  "verify": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "validate_compliance": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "accessibility_report": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "profile": {
+        "required": false,
+        "default": "ua1",
+        "selector": {
+          "select": {
+            "options": [
+              "ua1",
+              "ua2"
+            ],
+            "mode": "dropdown"
+          }
+        }
+      }
+    }
+  },
+  "show_javascript": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "classify_and_label": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "reclassify": {
+        "required": false,
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      }
+    }
+  },
+  "math_auditor_agent": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": false,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "tolerance": {
+        "required": false,
+        "default": 0.01,
+        "selector": {
+          "number": {
+            "min": -1000000000,
+            "max": 1000000000,
+            "step": 0.01,
+            "mode": "box"
+          }
+        }
+      }
+    }
+  },
+  "pdf_comment_agent": {
+    "fields": {
+      "config_entry_id": {
+        "selector": {
+          "config_entry": {
+            "integration": "stirling_pdf"
+          }
+        }
+      },
+      "file_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "output_path": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      },
+      "overwrite": {
+        "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "prompt": {
+        "required": true,
+        "selector": {
+          "text": {}
+        }
+      }
+    }
+  }
+}

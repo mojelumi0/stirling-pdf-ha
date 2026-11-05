@@ -1,0 +1,243 @@
+alias: Stirling PDF - Image-only OCR test
+description: >-
+  Tests the committed synthetic scan fixture for one selected server. Confirms
+  that STIRLING is absent before OCR and STIRLING, INVOICE and 12345 are present
+  afterward, then checks the one-page output. A complete run records six actions.
+  No overwrite, deletion, retry, reload, restart or option change is performed.
+mode: single
+icon: mdi:text-recognition
+fields:
+  config_entry_id:
+    name: Stirling PDF server
+    required: true
+    selector:
+      config_entry:
+        integration: stirling_pdf
+  test_directory:
+    name: Allowed output directory
+    default: /config/pdf-test
+    selector:
+      text:
+  fixture_path:
+    name: Synthetic image-only fixture
+    default: /config/pdf-test/stirling_ocr_fixture_4df4d3d1.pdf
+    selector:
+      text:
+sequence:
+  - variables:
+      directory: "{{ test_directory | default('/config/pdf-test', true) | trim | regex_replace('/+$', '') }}"
+      source_path: "{{ fixture_path | default('/config/pdf-test/stirling_ocr_fixture_4df4d3d1.pdf', true) | trim }}"
+      selected_server: "{{ config_entry_id if config_entry_id is string else '' }}"
+      selected_entities: >-
+        {% set matching = namespace(entities=[]) %}
+        {% if config_entry_attr(selected_server, 'domain') == 'stirling_pdf' %}
+          {% for entity_id in integration_entities(config_entry_attr(selected_server, 'title')) %}
+            {% if (entity_id | config_entry_id) == selected_server %}
+              {% set matching.entities = matching.entities + [entity_id] %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        {{ matching.entities }}
+      jobs_candidates: >-
+        {{ expand(selected_entities)
+           | selectattr('attributes.state_class', 'defined')
+           | selectattr('attributes.state_class', 'eq', 'total_increasing')
+           | map(attribute='entity_id') | list }}
+      reachable_candidates: >-
+        {{ expand(selected_entities)
+           | selectattr('attributes.device_class', 'defined')
+           | selectattr('attributes.device_class', 'eq', 'connectivity')
+           | map(attribute='entity_id') | list }}
+      run_id: "{{ now().strftime('%Y%m%d_%H%M%S_%f') }}"
+      results: []
+  - if: >-
+      {{ not directory.startswith('/config/') or '..' in directory.split('/')
+         or not source_path.startswith('/config/') or '..' in source_path.split('/')
+         or not source_path.endswith('.pdf')
+         or jobs_candidates | count != 1 or reachable_candidates | count != 1 }}
+    then:
+      - stop: Invalid paths or no unique selected-server sensors. No PDF action was started.
+        error: true
+  - variables:
+      jobs_entity: "{{ jobs_candidates | first }}"
+      reachable_entity: "{{ reachable_candidates | first }}"
+      start_count: "{{ states(jobs_entity) | int(-1) }}"
+      output_path: "{{ directory }}/stirling_ocr_test_{{ run_id }}_searchable.pdf"
+      notification_id: "stirling_ocr_test_{{ run_id }}"
+      other_statistics: >-
+        {% set snapshot = namespace(values={}) %}
+        {% for entity_id in integration_entities('stirling_pdf') %}
+          {% if (entity_id | config_entry_id) != selected_server
+                and (state_attr(entity_id, 'state_class') == 'total_increasing'
+                     or state_attr(entity_id, 'device_class') == 'enum') %}
+            {% set snapshot.values = dict(snapshot.values,
+               **{entity_id: [states(entity_id), state_attr(entity_id, 'last_run')]}) %}
+          {% endif %}
+        {% endfor %}
+        {{ snapshot.values }}
+  - if: "{{ start_count < 0 or not is_state(reachable_entity, 'on') or source_path == output_path }}"
+    then:
+      - stop: The selected server is not ready or the output would equal the input. No PDF action was started.
+        error: true
+  - variables:
+      test_cases:
+        - name: Input does not contain STIRLING
+          operation: check_contains_text
+          matches: false
+          data:
+            file_path: "{{ source_path }}"
+            text: STIRLING
+        - name: OCR the synthetic scan
+          operation: ocr
+          data:
+            file_path: "{{ source_path }}"
+            languages:
+              - eng
+            output_path: "{{ output_path }}"
+        - name: Output contains STIRLING
+          operation: check_contains_text
+          matches: true
+          data:
+            file_path: "{{ output_path }}"
+            text: STIRLING
+        - name: Output contains INVOICE
+          operation: check_contains_text
+          matches: true
+          data:
+            file_path: "{{ output_path }}"
+            text: INVOICE
+        - name: Output contains 12345
+          operation: check_contains_text
+          matches: true
+          data:
+            file_path: "{{ output_path }}"
+            text: "12345"
+        - name: Output has exactly one page
+          operation: analyze_page_count
+          data:
+            file_path: "{{ output_path }}"
+  - action: persistent_notification.create
+    data:
+      notification_id: "{{ notification_id }}"
+      title: Stirling PDF - Image-only OCR test running
+      message: >-
+        Synthetic fixture only: {{ source_path }}. Server: {{ selected_server }}.
+        Do not run other PDF actions until this test finishes. OCR may take a few
+        minutes. A failure stops the sequence without retrying or overwriting.
+  - repeat:
+      for_each: "{{ test_cases }}"
+      sequence:
+        - variables:
+            before_count: "{{ states(jobs_entity) | int(-1) }}"
+            reply: {}
+        - alias: Call OCR acceptance action and capture response
+          choose:
+            - conditions: "{{ repeat.item.operation == 'ocr' }}"
+              sequence:
+                - action: stirling_pdf.ocr
+                  data: "{{ dict(repeat.item.data, config_entry_id=selected_server, overwrite=false) }}"
+                  response_variable: reply
+                  continue_on_error: true
+            - conditions: "{{ repeat.item.operation == 'check_contains_text' }}"
+              sequence:
+                - action: stirling_pdf.check_contains_text
+                  data: "{{ dict(repeat.item.data, config_entry_id=selected_server, overwrite=false) }}"
+                  response_variable: reply
+                  continue_on_error: true
+            - conditions: "{{ repeat.item.operation == 'analyze_page_count' }}"
+              sequence:
+                - action: stirling_pdf.analyze_page_count
+                  data: "{{ dict(repeat.item.data, config_entry_id=selected_server, overwrite=false) }}"
+                  response_variable: reply
+                  continue_on_error: true
+          default:
+            - stop: Unsupported OCR acceptance action. No request was sent for this case.
+              error: true
+        - wait_template: "{{ states(jobs_entity) | int(-1) != before_count }}"
+          note: The response may update the counter before this wait starts; check its current value rather than waiting for another transition.
+          timeout: "00:00:05"
+          continue_on_timeout: true
+        - variables:
+            after_count: "{{ states(jobs_entity) | int(-1) }}"
+            valid_response: >-
+              {% if reply is not mapping or reply.get('operation') != repeat.item.operation %}
+                {{ false }}
+              {% elif repeat.item.operation == 'ocr' %}
+                {{ reply.get('output_path') == output_path
+                   and reply.get('output_size', 0) | int(0) > 0
+                   and reply.get('input_count') == 1 }}
+              {% elif reply.get('config_entry_id') != selected_server %}
+                {{ false }}
+              {% elif repeat.item.operation == 'check_contains_text' %}
+                {{ reply.get('matches') is boolean
+                   and reply.get('matches') == repeat.item.matches }}
+              {% else %}
+                {{ reply.get('result') is mapping
+                   and reply['result'].get('pageCount') is integer
+                   and reply['result'].get('pageCount') == 1 }}
+              {% endif %}
+            ok: "{{ valid_response and after_count == before_count + 1 }}"
+            results: >-
+              {{ results + [dict(name=repeat.item.name, operation=repeat.item.operation,
+                 ok=ok, before=before_count, after=after_count)] }}
+        - if: "{{ not ok }}"
+          then:
+            - action: persistent_notification.create
+              data:
+                notification_id: "{{ notification_id }}"
+                title: Stirling PDF - Image-only OCR test FAILED
+                message: >-
+                  Failed at {{ repeat.item.name }}. Counter: {{ before_count }} -> {{ after_count }}.
+                  Inspect the action trace for the actual error. Remaining cases
+                  were not run. No retry or overwrite was attempted. This is not
+                  a successful OCR test or automatic merge approval.
+            - stop: OCR acceptance failed. Inspect the action trace before another attempt.
+              error: true
+  - variables:
+      other_statistics_unchanged: >-
+        {% set check = namespace(ok=true) %}
+        {% for entity_id, previous in other_statistics.items() %}
+          {% if [states(entity_id), state_attr(entity_id, 'last_run')] != previous %}
+            {% set check.ok = false %}
+          {% endif %}
+        {% endfor %}
+        {{ check.ok }}
+      passed: >-
+        {{ results | count == 6
+           and results | selectattr('ok', 'eq', true) | list | count == 6
+           and states(jobs_entity) | int(-1) == start_count + 6
+           and other_statistics_unchanged }}
+  - action: persistent_notification.create
+    data:
+      notification_id: "{{ notification_id }}"
+      title: Stirling PDF - Image-only OCR test report
+      message: >-
+        **Result:** {{ 'PASS' if passed else 'FAIL' }}
+
+        **Test run:** {{ run_id }}
+
+        **Server entry:** {{ selected_server }}
+
+        **Counter:** {{ start_count }} -> {{ states(jobs_entity) }}; expected {{ start_count + 6 }}.
+
+        **Other server statistics unchanged:** {{ other_statistics_unchanged }}.
+
+        {% for result in results %}
+        - {{ result.name }}: {{ 'OK' if result.ok else 'FAILED' }}.
+
+        {% endfor %}
+
+        **Output:** {{ output_path }}
+
+        Input STIRLING check: absent. Output checks: STIRLING, INVOICE and 12345
+        present, exactly one page. Use the committed image-only fixture with
+        SHA-256 4df4d3d180b7b42720a9bd3af40ef75b20169cf507354799f8c18a6adde88622.
+        This script does not independently verify that hash or that every possible
+        text string is absent from the input. Inspect the output visually.
+        Installed integration version is not verified automatically. This proves
+        only this synthetic English OCR case, not arbitrary OCR quality, all
+        languages, the entire catalog, or automatic merge/release approval.
+  - if: "{{ not passed }}"
+    then:
+      - stop: OCR acceptance failed the final statistics or isolation check.
+        error: true

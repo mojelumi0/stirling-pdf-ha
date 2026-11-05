@@ -9,6 +9,6 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/mojelumi0/stirling-pdf-ha/issues",
   "requirements": [],
-  "single_config_entry": true,
-  "version": "0.3.1"
+  "single_config_entry": false,
+  "version": "0.4.0-alpha.1"
 }

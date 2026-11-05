@@ -223,7 +223,9 @@ async def test_local_statistics_remain_available_during_api_failure(
     assert "last_run" in _state(hass, last_operation).attributes
 
 
-@pytest.mark.parametrize("operation", ["ocr", "extract_pages"])
+@pytest.mark.parametrize(
+    "operation", ["ocr", "extract_pages", "repair", "analyze_page_count"]
+)
 async def test_local_statistics_persist_across_reload(
     hass: HomeAssistant,
     loaded_entry: MockConfigEntry,

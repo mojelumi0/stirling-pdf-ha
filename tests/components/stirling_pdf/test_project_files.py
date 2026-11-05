@@ -4,11 +4,17 @@ from __future__ import annotations
 
 import ast
 import json
+import re
 import struct
 from pathlib import Path
 from typing import Any
 
 import yaml
+from homeassistant.helpers.selector import selector as selector_factory
+
+from custom_components.stirling_pdf.const import SERVICES
+from custom_components.stirling_pdf.operations import OPERATIONS
+from custom_components.stirling_pdf.tools import ha_field_name, tool_schema
 
 ROOT = Path(__file__).resolve().parents[3]
 INTEGRATION = ROOT / "custom_components" / "stirling_pdf"
@@ -43,7 +49,7 @@ def test_manifest_is_loadable_as_custom_integration() -> None:
     assert manifest["domain"] == "stirling_pdf"
     assert manifest["categories"] == ["productivity_information.documents_photos"]
     assert manifest["config_flow"] is True
-    assert manifest["single_config_entry"] is True
+    assert manifest["single_config_entry"] is False
     assert manifest["requirements"] == []
     assert manifest["codeowners"] == ["@mojelumi0"]
     assert manifest["documentation"].startswith("https://github.com/")
@@ -58,12 +64,15 @@ def test_service_and_translation_keys_match() -> None:
     english = _load_json(INTEGRATION / "translations" / "en.json")
     german = _load_json(INTEGRATION / "translations" / "de.json")
 
-    assert set(services) == {"merge", "split", "ocr", "compress", "extract_pages"}
+    assert set(services) == set(SERVICES)
     assert set(strings["services"]) == set(services)
     assert set(english["services"]) == set(services)
     assert set(german["services"]) == set(services)
     for service, description in services.items():
         field_keys = set(description["fields"])
+        assert re.fullmatch(r"[a-z0-9]+(?:[_-][a-z0-9]+)*", service), service
+        for key in field_keys:
+            assert re.fullmatch(r"[a-z0-9]+(?:[_-][a-z0-9]+)*", key), (service, key)
         assert set(strings["services"][service]["fields"]) == field_keys
         assert set(english["services"][service]["fields"]) == field_keys
         assert set(german["services"][service]["fields"]) == field_keys
@@ -76,6 +85,35 @@ def test_translation_structures_match() -> None:
 
     assert strings == english
     assert _nested_keys(english) == _nested_keys(german)
+
+
+def test_action_selectors_accept_their_documented_defaults() -> None:
+    services = yaml.safe_load((INTEGRATION / "services.yaml").read_text("utf-8"))
+    for service in services.values():
+        for field in service["fields"].values():
+            selector = selector_factory(field["selector"])
+            if "default" in field:
+                selector(field["default"])
+
+
+def test_catalog_public_fields_are_unique_and_match_service_schemas() -> None:
+    services = yaml.safe_load((INTEGRATION / "services.yaml").read_text("utf-8"))
+    for name, operation in OPERATIONS.items():
+        public_names = [
+            ha_field_name(api_name)
+            for api_name in [*operation["fields"], *operation["files"]]
+        ]
+        reserved = {
+            "config_entry_id",
+            "output_path",
+            "overwrite",
+            "file_path",
+            "file_paths",
+        }
+        assert len(public_names) == len(set(public_names)), name
+        assert not (reserved & set(public_names)), name
+        schema_keys = {key.schema for key in tool_schema(operation).schema}
+        assert schema_keys == set(services[name]["fields"]), name
 
 
 def test_hacs_manifest_is_valid() -> None:
@@ -110,6 +148,9 @@ def test_integration_package_contains_runtime_files() -> None:
         "entity.py",
         "manifest.json",
         "sensor.py",
+        "metrics.py",
+        "operations.py",
+        "tools.py",
         "services.yaml",
         "strings.json",
         "brand/icon.png",
@@ -194,6 +235,65 @@ def test_manual_2026_11_workflow_keeps_dependency_and_coverage_checks() -> None:
     assert "--cov-fail-under=95" in commands
     assert "python scripts/check_coverage.py coverage.json" in commands
     assert all("continue-on-error" not in step for step in job["steps"])
+
+
+def test_server_matrix_pins_both_versions_and_login_modes() -> None:
+    """A green old-server job is not compatibility evidence for the new release."""
+    workflow = yaml.safe_load((WORKFLOWS / "server-tests.yml").read_text("utf-8"))
+    job = workflow["jobs"]["server"]
+    matrix = job["strategy"]["matrix"]
+    assert matrix["version"] == ["3.2.0", "3.3.0"]
+    assert matrix["login"] == ["true", "false"]
+    images = {row["version"]: row["image"] for row in matrix["include"]}
+    assert set(images) == set(matrix["version"])
+    for version, image in images.items():
+        assert re.fullmatch(
+            r"stirlingtools/stirling-pdf:"
+            + re.escape(version)
+            + r"@sha256:[a-f0-9]{64}",
+            image,
+        )
+    assert images["3.2.0"].endswith(
+        "10164ffe04961b02ebc9fa4da12064eeacb8d3bc3e09ceb059f78ce7aaa83207"
+    )
+    assert job["services"]["stirling"]["image"] == "${{ matrix.image }}"
+    step = next(step for step in job["steps"] if "tests_live" in step.get("run", ""))
+    assert step["env"]["STIRLING_PDF_EXPECTED_VERSION"] == "${{ matrix.version }}"
+    assert "continue-on-error" not in job
+
+
+def test_330_contract_metadata_and_converter_defaults_are_explicit() -> None:
+    assert OPERATIONS["replace_text"]["removed_in"] == [3, 3, 0]
+    newer = {
+        name
+        for name, operation in OPERATIONS.items()
+        if "office_convert_since" in operation
+    }
+    assert newer == {
+        "pdf_to_pdfa",
+        "pdf_to_xml",
+        "html_to_pdf",
+        "markdown_to_pdf",
+        "pdf_to_html",
+        "pdf_to_markdown",
+        "eml_to_pdf",
+        "ebook_to_pdf",
+        "pdf_to_epub",
+    }
+    services = yaml.safe_load((INTEGRATION / "services.yaml").read_text("utf-8"))
+    converters = 0
+    for name, operation in OPERATIONS.items():
+        field = operation["fields"].get("useStirlingOfficeConvert")
+        if field is not None:
+            converters += 1
+            assert field["default"] is False
+            assert (
+                services[name]["fields"]["use_stirling_office_convert"]["default"]
+                is False
+            )
+        if name in newer:
+            assert operation["office_convert_since"] == [3, 3, 0]
+    assert converters == 14
 
 
 def test_config_forms_always_supply_an_explicit_step_id() -> None:

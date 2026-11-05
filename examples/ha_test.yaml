@@ -1,63 +1,84 @@
-alias: Stirling PDF - Integrationstest
+alias: Stirling PDF - Integration test
 description: >-
-  Manueller Integrationstest mit a.pdf und b.pdf. Erstellt eigene Ergebnisdateien,
-  prueft Aktionsantworten und Statistik-Sensoren und zeigt einen Bericht.
-  Ueberschreibt nur eine zuvor selbst erstellte Testausgabe, nie a.pdf oder b.pdf.
-  Fuehrt keinen Reload oder Neustart durch und loescht keine Dateien.
-  Prueft die installierte Integrationsversion nicht automatisch.
+  Manual integration test using a.pdf and b.pdf. Creates its own output files,
+  checks action responses and statistics sensors, and displays a report.
+  Overwrites only a test output it created earlier, never a.pdf or b.pdf.
+  Does not reload, restart or delete files.
+  Does not automatically verify the installed integration version.
 icon: mdi:file-document-check-outline
 mode: single
 fields:
+  config_entry_id:
+    name: Stirling PDF server
+    description: Required when multiple servers are configured. Tests only this entry.
+    selector:
+      config_entry:
+        integration: stirling_pdf
   include_extract_pages:
-    name: Seitenextraktion mitpruefen
-    description: Nur ausschalten, wenn die installierte Integration diese Aktion noch nicht unterstuetzt.
+    name: Include page extraction
+    description: Disable only if the installed integration does not support this action yet.
     default: true
     selector:
       boolean:
   reported_version:
-    name: Installierte Integrationsversion (manuelle Angabe)
-    description: Optional aus den Diagnosedaten uebernehmen. Wird nicht automatisch verifiziert.
+    name: Installed integration version (manual entry)
+    description: Optionally copy this from diagnostics. It is not verified automatically.
     default: ""
     selector:
       text:
   deployment_label:
-    name: Testumgebung (freiwillige Angabe)
-    description: Zum Beispiel Community App oder eigener Server. Keine Zugangsdaten eintragen.
+    name: Deployment label (optional)
+    description: For example, Community App or standalone server. Do not enter credentials.
     default: ""
     selector:
       text:
   test_directory:
-    name: PDF-Testordner
-    description: HA-Pfad des bereits erlaubten Ordners mit a.pdf und b.pdf.
+    name: PDF test directory
+    description: HA path to the already allowlisted directory containing a.pdf and b.pdf.
     default: /config/pdf-test
     selector:
       text:
 sequence:
-  - alias: Testlauf und Sensorerkennung vorbereiten
+  - alias: Prepare the test run and sensor discovery
     variables:
       directory: >-
         {{ test_directory | default('/config/pdf-test', true)
            | trim | regex_replace('/+$', '') }}
       run_id: "{{ now().strftime('%Y%m%d_%H%M%S_%f') }}"
       extract_enabled: "{{ include_extract_pages | default(true) | bool }}"
+      selected_server: "{{ config_entry_id if config_entry_id is string else '' }}"
+      selected_entities: >-
+        {% if selected_server %}
+          {% set matching = namespace(entities=[]) %}
+          {% if config_entry_attr(selected_server, 'domain') == 'stirling_pdf' %}
+            {% for entity_id in integration_entities(config_entry_attr(selected_server, 'title')) %}
+              {% if (entity_id | config_entry_id) == selected_server %}
+                {% set matching.entities = matching.entities + [entity_id] %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+          {{ matching.entities }}
+        {% else %}
+          {{ integration_entities('stirling_pdf') }}
+        {% endif %}
       jobs_candidates: >-
-        {{ expand(integration_entities('stirling_pdf'))
+        {{ expand(selected_entities)
            | selectattr('attributes.state_class', 'defined')
            | selectattr('attributes.state_class', 'eq', 'total_increasing')
            | map(attribute='entity_id') | list }}
       last_candidates: >-
-        {{ expand(integration_entities('stirling_pdf'))
+        {{ expand(selected_entities)
            | selectattr('attributes.device_class', 'defined')
            | selectattr('attributes.device_class', 'eq', 'enum')
            | map(attribute='entity_id') | list }}
       reachable_candidates: >-
-        {{ expand(integration_entities('stirling_pdf'))
+        {{ expand(selected_entities)
            | selectattr('attributes.device_class', 'defined')
            | selectattr('attributes.device_class', 'eq', 'connectivity')
            | map(attribute='entity_id') | list }}
       results: []
       successful_operations: []
-  - alias: Bei unklarem Testordner oder fehlenden Sensoren sicher abbrechen
+  - alias: Stop safely if the test directory or sensors are ambiguous
     if: >-
       {{ not directory.startswith('/config/')
          or '..' in directory.split('/')
@@ -67,14 +88,15 @@ sequence:
     then:
       - action: persistent_notification.create
         data:
-          title: Stirling PDF - Test nicht gestartet
+          title: Stirling PDF - Test not started
           message: >-
-            Bitte einen Unterordner von /config angeben und beide
-            Statistik-Sensoren und den Erreichbarkeitssensor der Integration aktivieren.
-            Gefundene Auftragssensoren: {{ jobs_candidates }}.
-            Gefundene Sensoren fuer die letzte Aktion: {{ last_candidates }}.
-            Gefundene Erreichbarkeitssensoren: {{ reachable_candidates }}.
-      - stop: Testvoraussetzungen fehlen; keine PDF-Aktion ausgefuehrt.
+            Select exactly one server if multiple servers are configured,
+            specify a subdirectory of /config, and enable both
+            statistics sensors and the integration's reachability sensor.
+            Discovered job-counter sensors: {{ jobs_candidates }}.
+            Discovered last-operation sensors: {{ last_candidates }}.
+            Discovered reachability sensors: {{ reachable_candidates }}.
+      - stop: Test prerequisites are missing; no PDF action was executed.
   - variables:
       jobs_entity: "{{ jobs_candidates | first }}"
       last_entity: "{{ last_candidates | first }}"
@@ -86,25 +108,25 @@ sequence:
     then:
       - action: persistent_notification.create
         data:
-          title: Stirling PDF - Test nicht gestartet
-          message: "Der Auftragssensor {{ jobs_entity }} liefert keine Zahl."
-      - stop: Kein gueltiger Ausgangswert; keine PDF-Aktion ausgefuehrt.
-  - alias: Bei nicht bestaetigter Erreichbarkeit keine Testaktionen starten
+          title: Stirling PDF - Test not started
+          message: "The job-counter sensor {{ jobs_entity }} does not report a number."
+      - stop: No valid starting value; no PDF action was executed.
+  - alias: Do not start test actions until reachability is confirmed
     if: "{{ not is_state(reachable_entity, 'on') }}"
     then:
       - action: persistent_notification.create
         data:
-          title: Stirling PDF - Test nicht gestartet
+          title: Stirling PDF - Test not started
           message: >-
-            {{ reachable_entity }} meldet {{ states(reachable_entity) }}.
-            Bitte zuerst Verbindung und Zugangsdaten pruefen. Nach Wiederherstellung
-            bis zum naechsten Statusabruf warten (normalerweise etwa 60 Sekunden).
-            Keine PDF-Aktion wurde ausgefuehrt.
-      - stop: Erreichbarkeit nicht bestaetigt; keine PDF-Aktion ausgefuehrt.
-  - alias: Nur eigene Ergebnisdateien als Ausgabeziele verwenden
+            {{ reachable_entity }} reports {{ states(reachable_entity) }}.
+            Check the connection and credentials first. After restoring access,
+            wait for the next status poll (normally about 60 seconds).
+            No PDF action was executed.
+      - stop: Reachability is not confirmed; no PDF action was executed.
+  - alias: Use only this run's own files as output targets
     variables:
       test_cases:
-        - name: Zusammenfuehren
+        - name: Merge
           operation: merge
           expect: success
           available: true
@@ -115,7 +137,7 @@ sequence:
               - "{{ directory }}/b.pdf"
             output_path: "{{ prefix }}_merged.pdf"
             overwrite: false
-        - name: Aufteilen
+        - name: Split
           operation: split
           expect: success
           available: true
@@ -138,7 +160,7 @@ sequence:
               - eng
             output_path: "{{ prefix }}_ocr.pdf"
             overwrite: false
-        - name: Komprimieren
+        - name: Compress
           operation: compress
           expect: success
           available: true
@@ -149,17 +171,17 @@ sequence:
             optimize_level: 5
             output_path: "{{ prefix }}_compressed.pdf"
             overwrite: false
-        - name: Vorhandene Testausgabe ohne Ueberschreiben
+        - name: Existing test output without overwrite
           operation: compress
           expect: rejection
           available: true
           requires: compress
-          expected_error: Die Ausgabedatei existiert bereits.
+          expected_error: The output file already exists.
           data:
             file_path: "{{ directory }}/a.pdf"
             output_path: "{{ prefix }}_compressed.pdf"
             overwrite: false
-        - name: Bewusstes Ueberschreiben nur der eigenen Testausgabe
+        - name: Explicitly overwrite only this run's own test output
           operation: compress
           expect: success
           available: true
@@ -170,58 +192,58 @@ sequence:
             optimize_level: 5
             output_path: "{{ prefix }}_compressed.pdf"
             overwrite: true
-        - name: Falsche Endung beim Komprimieren
+        - name: Wrong compression output extension
           operation: compress
           expect: rejection
           available: true
           requires: compress
-          expected_error: Die Ausgabe muss die Endung .pdf verwenden.
+          expected_error: The output must use the .pdf extension.
           data:
             file_path: "{{ directory }}/a.pdf"
             output_path: "{{ prefix }}_wrong_compress.zip"
             overwrite: false
-        - name: Falsche Endung beim Aufteilen
+        - name: Wrong split output extension
           operation: split
           expect: rejection
           available: true
           requires: split
-          expected_error: Die Ausgabe muss die Endung .zip verwenden.
+          expected_error: The output must use the .zip extension.
           data:
             file_path: "{{ directory }}/a.pdf"
             page_numbers: "1"
             output_path: "{{ prefix }}_wrong_split.pdf"
             overwrite: false
-        - name: Fehlender Ausgabeordner
+        - name: Missing output directory
           operation: compress
           expect: rejection
           available: true
           requires: compress
-          expected_error: Datei konnte nicht gelesen oder geschrieben werden.
+          expected_error: The file could not be read or written.
           data:
             file_path: "{{ directory }}/a.pdf"
             output_path: "{{ prefix }}_missing_directory/result.pdf"
             overwrite: false
-        - name: Ausgabe ausserhalb der erlaubten Ordner
+        - name: Output outside allowlisted directories
           operation: compress
           expect: rejection
           available: true
           requires: compress
-          expected_error: Der Pfad ist in Home Assistant nicht erlaubt.
+          expected_error: The path is not allowed by Home Assistant.
           data:
             file_path: "{{ directory }}/a.pdf"
             output_path: "/stirling_pdf_test_{{ run_id }}/outside.pdf"
             overwrite: false
-        - name: Fehlende Eingabedatei
+        - name: Missing input file
           operation: compress
           expect: rejection
           available: true
           requires: compress
-          expected_error: Datei konnte nicht gelesen oder geschrieben werden.
+          expected_error: The file could not be read or written.
           data:
             file_path: "{{ prefix }}_does_not_exist.pdf"
             output_path: "{{ prefix }}_missing_input.pdf"
             overwrite: false
-        - name: Seiten extrahieren
+        - name: Extract pages
           operation: extract_pages
           expect: success
           available: "{{ extract_enabled }}"
@@ -232,23 +254,23 @@ sequence:
             page_numbers: "1"
             output_path: "{{ prefix }}_extracted.pdf"
             overwrite: false
-        - name: Falsche Endung beim Extrahieren
+        - name: Wrong extraction output extension
           operation: extract_pages
           expect: rejection
           available: "{{ extract_enabled }}"
           requires: extract_pages
-          expected_error: Die Ausgabe muss die Endung .pdf verwenden.
+          expected_error: The output must use the .pdf extension.
           data:
             file_path: "{{ directory }}/a.pdf"
             page_numbers: "1"
             output_path: "{{ prefix }}_wrong_extract.zip"
             overwrite: false
-        - name: Ungueltige Seitenauswahl beim Extrahieren
+        - name: Invalid extraction page selection
           operation: extract_pages
           expect: rejection
           available: "{{ extract_enabled }}"
           requires: extract_pages
-          expected_error: Nur positive Seitenzahlen und aufsteigende Bereiche sind erlaubt.
+          expected_error: Only positive page numbers and ascending ranges are allowed.
           data:
             file_path: "{{ directory }}/a.pdf"
             page_numbers: "0"
@@ -262,15 +284,15 @@ sequence:
   - action: persistent_notification.create
     data:
       notification_id: "{{ notification_id }}"
-      title: Stirling PDF - Test laeuft
+      title: Stirling PDF - Test running
       message: >-
-        Ordner: {{ directory }}. Eingaben: a.pdf und b.pdf.
-        Ausgangszaehler: {{ start_count }}.
-        Bitte waehrenddessen keine anderen PDF-Aktionen starten.
-        Erwartete Fehler erscheinen absichtlich im Trace und Protokoll.
-        OCR kann mehrere Minuten dauern. Die installierte Integrationsversion
-        wird nicht automatisch erkannt; der Skriptname bestaetigt keine Version.
-  - alias: Testfaelle nacheinander ausfuehren
+        Directory: {{ directory }}. Inputs: a.pdf and b.pdf.
+        Starting count: {{ start_count }}.
+        Do not run other PDF actions during this test.
+        Expected errors intentionally appear in the trace and logs.
+        OCR may take several minutes. The installed integration version
+        is not detected automatically; the script name does not confirm a version.
+  - alias: Run test cases sequentially
     repeat:
       for_each: "{{ test_cases }}"
       sequence:
@@ -282,19 +304,21 @@ sequence:
             - variables:
                 results: >-
                   {{ results + [dict(name=repeat.item.name,
-                     status='UEBERSPRUNGEN',
-                     detail=('Testoption deaktiviert: ' ~ repeat.item.operation
+                     status='SKIPPED',
+                     detail=('Test option disabled: ' ~ repeat.item.operation
                        if not repeat.item.available else
-                       'Voraussetzung nicht erfolgreich: ' ~ repeat.item.requires))] }}
+                       'Prerequisite did not succeed: ' ~ repeat.item.requires))] }}
           else:
             - variables:
                 before_count: "{{ states(jobs_entity) | int(-1) }}"
                 before_last: "{{ states(last_entity) }}"
                 before_time: "{{ state_attr(last_entity, 'last_run') }}"
                 reply: {}
-            - alias: PDF-Aktion mit aufgezeichneter Antwort aufrufen
+            - alias: Call PDF action and capture response
               action: "stirling_pdf.{{ repeat.item.operation }}"
-              data: "{{ repeat.item.data }}"
+              data: >-
+                {{ dict(repeat.item.data, config_entry_id=selected_server)
+                   if selected_server else repeat.item.data }}
               response_variable: reply
               continue_on_error: true
             - if: "{{ reply is mapping and reply | count > 0 }}"
@@ -330,9 +354,9 @@ sequence:
                   {% if repeat.item.expect == 'success' and success_observed %}
                     OK
                   {% elif repeat.item.expect == 'rejection' and rejection_observed %}
-                    ABGEWIESEN
+                    REJECTED
                   {% else %}
-                    FEHLER
+                    FAILED
                   {% endif %}
                 successful_operations: >-
                   {{ successful_operations + [repeat.item.operation]
@@ -343,58 +367,58 @@ sequence:
                      size=reply.get('output_size', 0) if reply is mapping else 0,
                      expected=repeat.item.get('expected_error', ''),
                      path=repeat.item.data.output_path)] }}
-        - alias: Fortschritt auch bei spaeterem Abbruch sichtbar halten
+        - alias: Keep progress visible even if the script stops later
           action: persistent_notification.create
           data:
             notification_id: "{{ notification_id }}"
-            title: Stirling PDF - Test laeuft
+            title: Stirling PDF - Test running
             message: |-
-              {{ results | count }} / {{ test_cases | count }} Testfaelle bearbeitet.
+              {{ results | count }} / {{ test_cases | count }} test cases processed.
 
               {% for row in results %}
               - {{ row.status }}: {{ row.name }}
               {% endfor %}
-  - alias: Abschlussbericht mit Grenzen der automatischen Auswertung
+  - alias: Final report with automated-check limitations
     action: persistent_notification.create
     data:
       notification_id: "{{ notification_id }}"
-      title: Stirling PDF - Testbericht
+      title: Stirling PDF - Test report
       message: |-
-        **Testlauf:** {{ run_id }}
-        **Ordner:** `{{ directory }}`
-        **Installierte Integrationsversion:** nicht automatisch geprueft.
-        **Versionsangabe des Nutzers:** {{ reported_version | default('', true) or 'nicht angegeben' }} (nicht verifiziert).
-        **Testumgebung:** {{ deployment_label | default('', true) or 'nicht angegeben' }}.
-        **Seitenextraktion angefordert:** {{ extract_enabled }}.
+        **Test run:** {{ run_id }}
+        **Directory:** `{{ directory }}`
+        **Installed integration version:** not verified automatically.
+        **User-reported version:** {{ reported_version | default('', true) or 'not provided' }} (unverified).
+        **Deployment:** {{ deployment_label | default('', true) or 'not provided' }}.
+        **Page extraction requested:** {{ extract_enabled }}.
 
-        **Erfolgreich:** {{ results | selectattr('status', 'eq', 'OK') | list | count }} / {{ expected_successes }}
-        **Abgewiesen, Fehlergrund noch im Trace pruefen:** {{ results | selectattr('status', 'eq', 'ABGEWIESEN') | list | count }} / {{ expected_rejections }}
-        **Fehler:** {{ results | selectattr('status', 'eq', 'FEHLER') | list | count }}
-        **Uebersprungen:** {{ results | selectattr('status', 'eq', 'UEBERSPRUNGEN') | list | count }}
+        **Successful:** {{ results | selectattr('status', 'eq', 'OK') | list | count }} / {{ expected_successes }}
+        **Rejected, check the reason in the trace:** {{ results | selectattr('status', 'eq', 'REJECTED') | list | count }} / {{ expected_rejections }}
+        **Failed:** {{ results | selectattr('status', 'eq', 'FAILED') | list | count }}
+        **Skipped:** {{ results | selectattr('status', 'eq', 'SKIPPED') | list | count }}
 
         {% for row in results %}
         **{{ loop.index }}. {{ row.name }}: {{ row.status }}**
-        {% if row.status == 'UEBERSPRUNGEN' %}
+        {% if row.status == 'SKIPPED' %}
         {{ row.detail }}
         {% else %}
-        Auftraege: {{ row.before }} -> {{ row.after }}. Antwortgroesse: {{ row.size }} Bytes.
+        Jobs: {{ row.before }} -> {{ row.after }}. Response size: {{ row.size }} bytes.
         {% if row.expected %}
-        Erwarteter Fehlergrund: {{ row.expected }}
+        Expected rejection reason: {{ row.expected }}
         {% endif %}
         {% endif %}
 
         {% endfor %}
-        **Zaehler:** {{ start_count }} -> {{ states(jobs_entity) }}; bei komplett erfolgreichem Lauf erwartet: {{ start_count + expected_successes }}.
-        **Letzte Aktion:** {{ states(last_entity) }}
-        **Zeit:** {{ state_attr(last_entity, 'last_run') }}
-        **Sensoren:** `{{ jobs_entity }}`, `{{ last_entity }}`
-        **Erreichbarkeit am Ende:** {{ states(reachable_entity) }}
+        **Counter:** {{ start_count }} -> {{ states(jobs_entity) }}; expected for a fully successful run: {{ start_count + expected_successes }}.
+        **Last operation:** {{ states(last_entity) }}
+        **Time:** {{ state_attr(last_entity, 'last_run') }}
+        **Sensors:** `{{ jobs_entity }}`, `{{ last_entity }}`
+        **Reachability at the end:** {{ states(reachable_entity) }}
 
-        **Falls der erste normale Test fehlschlaegt:** Den Fehler im Trace bei
-        "PDF-Aktion mit aufgezeichneter Antwort aufrufen", Iteration 1, kopieren.
-        Abhaengige Tests werden dann uebersprungen, nicht als bestanden gewertet.
+        **If the first normal test fails:** Copy the trace error from
+        "Call PDF action and capture response", iteration 1.
+        Dependent tests are then skipped, not counted as passed.
 
-        **Diese Ergebnisse bitte oeffnen:**
+        **Please open these outputs:**
         - `{{ prefix }}_merged.pdf`
         - `{{ prefix }}_split.zip`
         - `{{ prefix }}_ocr.pdf`
@@ -403,18 +427,18 @@ sequence:
         - `{{ prefix }}_extracted.pdf`
         {% endif %}
 
-        **Grenzen:** ABGEWIESEN bedeutet nur: keine Erfolgsantwort und keine Aenderung der Statistik. Den konkreten Fehlergrund im Trace pruefen; ein Verbindungsfehler koennte sonst aehnlich aussehen. Erwartete Fehler stehen absichtlich im Protokoll.
+        **Limitations:** REJECTED means only that there was no success response and statistics did not change. Check the actual reason in the trace; a connection failure could otherwise look similar. Expected errors are intentionally logged.
 
-        Dateiinhalte, unveraenderte Dateibytes, OCR-Qualitaet, installierte Integrationsversion, Diagnose-Redaktion und Persistenz nach Reload/Neustart wurden nicht automatisch geprueft. Dieser Bericht ist keine automatische Merge-Freigabe.
+        File contents, unchanged file bytes, OCR quality, installed integration version, diagnostic redaction and persistence after reload/restart were not checked automatically. This report is not automatic merge approval.
 
-        **Danach:** Bericht kopieren, alle erzeugten Ausgaben ansehen und die konkreten
-        Gruende aller absichtlichen Abweisungen im Trace pruefen. Die extrahierte
-        PDF muss genau die erste Seite der zusammengefuehrten PDF enthalten. Dann den
-        Endzaehler, die letzte Aktion und ihren Zeitpunkt notieren. Integration
-        manuell neu laden und HA manuell neu starten; die drei Werte muessen
-        jeweils erhalten bleiben. Das Skript dafuer nicht erneut starten.
+        **Afterwards:** Copy the report, inspect every generated output and check the actual
+        reasons for all deliberate rejections in the trace. The extracted
+        PDF must contain exactly the first page of the merged PDF. Then note the
+        final count, last operation and its timestamp. Manually reload the integration
+        and restart HA; all three values must remain unchanged after each step.
+        Do not run the script again for these persistence checks.
 
-        **Noch separat manuell pruefen:** Tatsaechlich installierte Version in den
-        Diagnosedaten, Neukonfiguration mit unveraenderten maskierten Geheimnissen,
-        Diagnose-Redaktion und Erhalt der bisherigen Entity-IDs. Die Integration
-        fuer diesen Test nicht loeschen, weil das ihre lokale Statistik entfernt.
+        **Also check separately:** The actually installed version in
+        diagnostics, reconfiguration with unchanged masked secrets,
+        diagnostic redaction and preservation of existing entity IDs. Do not delete
+        the integration for this test, as that removes its local statistics.
