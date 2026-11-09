@@ -1,9 +1,8 @@
 # Additional action catalog
 
-The five established actions remain available. This release adds the following
-source-derived contracts. Their presence is not a claim of live-server validation.
-The server version, enabled tools, installed dependencies, permissions and license
-determine availability. Actions are on demand, not automatically executed.
+For merge, split, OCR, compression and page extraction, see the
+[README](../README.md#available-actions). The additional actions below depend
+on the server version, enabled tools, installed dependencies and permissions.
 
 ### Version-restricted contracts
 
@@ -24,7 +23,7 @@ does not apply zoom. Installed dependencies still determine availability.
 
 Unknown/custom/pre-release versions are rejected only when needed to establish
 support for a restricted action or an enabled new option; they do not disable
-all unrelated actions. See [the detailed compatibility notes](STIRLING_3_3_0.md).
+unrelated actions.
 
 Each action accepts `config_entry_id`. Binary results require `output_path` with
 the listed extension; JSON and filter outputs may instead use action response data.
@@ -32,6 +31,16 @@ HA fields use `snake_case`, for example `render_dpi`, `page_numbers` and
 `image_file`. The integration maps them to the original Stirling PDF multipart
 names (`renderDpi`, `pageNumbers` and `imageFile`). Fields are shown individually
 in the action editor; descriptions identify their underlying API names.
+
+Additional tools accept up to 32 local files and 64 MiB total input. Structured
+fields and returned JSON have a 4 MiB limit. These limits do not make downloads
+streaming or cap memory used by every response.
+
+For URL-to-PDF and timestamping, use **Allowed URL hosts** on the selected
+server entry. Enter exact hostnames separated by commas. URL-to-PDF requires
+HTTP(S) without embedded credentials, and timestamping requires an explicit
+`tsa_url`. The host list is not a sandbox for redirects, DNS, embedded
+resources or server-side backends. Review the server's own network controls.
 
 | Action | Group | Input extensions | Output extensions | Endpoint |
 |---|---|---|---|---|
@@ -154,12 +163,14 @@ calls, account/team/database/billing administration, server-wide cleanup, pipeli
 execution and document-index ingestion are not included. These need separate
 permissions and lifecycle/response handling; they are not silently added here.
 Single-attachment arbitrary-format downloads and the JSON-only AI HTML creation
-agent are also not included. No automatic archive extraction is performed.
+agent are also not included. Archives are not extracted automatically. Do not
+execute JavaScript extracted from a PDF.
 
 ## Sources
 
 - [Official Stirling PDF 3.2.2 source](https://github.com/Stirling-Tools/Stirling-PDF/tree/684608d143779bf3a8ffc67639f077a1202c62ff)
-- [Official Stirling PDF API specification](https://api.stirling.com/v1/api-docs), reporting version 3.2.1 when inventoried on 2026-10-30.
+- [Stirling PDF API specification](https://api.stirling.com/v1/api-docs)
+- [Stirling PDF 3.3.0 release notes](https://github.com/Stirling-Tools/Stirling-PDF/releases/tag/v3.3.0)
 
 The static catalog combines the official specification with source checks. It is
 not downloaded or trusted dynamically at runtime. A 404 or a missing dependency

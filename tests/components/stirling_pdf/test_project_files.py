@@ -168,7 +168,6 @@ def test_github_validation_workflows_exist() -> None:
         "tests.yml",
         "hassfest.yml",
         "validate.yaml",
-        "release-drafter.yml",
         "release-version-check.yml",
         "server-tests.yml",
         "ha-2026-11.yml",
@@ -197,11 +196,6 @@ def test_github_validation_workflows_exist() -> None:
     hacs_workflow = (WORKFLOWS / "validate.yaml").read_text(encoding="utf-8")
     assert "hacs/action@main" in hacs_workflow
     assert "category: integration" in hacs_workflow
-
-    release_drafter_workflow = (WORKFLOWS / "release-drafter.yml").read_text(
-        encoding="utf-8"
-    )
-    assert "release-drafter/release-drafter@v7" in release_drafter_workflow
 
     release_version_workflow = (WORKFLOWS / "release-version-check.yml").read_text(
         encoding="utf-8"
@@ -323,7 +317,7 @@ def test_marketplace_documentation_preserves_older_ha_support() -> None:
     assert "Settings > Marketplace" in readme
     assert "hacs_repository/?owner=mojelumi0" in readme
     assert "### HACS (Home Assistant before 2026.11)" in readme
-    assert (ROOT / "docs" / "HA_2026_11.md").is_file()
+    assert "marketplace/#coming-from-hacs" in readme
     bug_report = yaml.safe_load(
         (ROOT / ".github/ISSUE_TEMPLATE/bug_report.yml").read_text("utf-8")
     )
@@ -336,14 +330,11 @@ def test_marketplace_documentation_preserves_older_ha_support() -> None:
     ]
 
 
-def test_release_drafter_config_exists() -> None:
-    config = (ROOT / ".github" / "release-drafter.yml").read_text(encoding="utf-8")
-    parsed = yaml.safe_load(config)
+def test_issue_chooser_allows_blank_issues() -> None:
+    config = ROOT / ".github" / "ISSUE_TEMPLATE" / "config.yml"
+    parsed = yaml.safe_load(config.read_text(encoding="utf-8"))
 
-    assert isinstance(parsed, dict)
-    assert parsed["tag-template"] == "$RESOLVED_VERSION"
-    assert parsed["include-pre-releases"] is True
-    assert "$CHANGES" in parsed["template"]
+    assert parsed["blank_issues_enabled"] is True
 
 
 def test_community_health_files_exist() -> None:
