@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import re
 import tempfile
+from functools import partial
 from pathlib import Path
 from typing import cast
 
@@ -26,6 +27,7 @@ from homeassistant.core import (
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.service import async_register_admin_service
 from homeassistant.helpers.typing import ConfigType
 
 from .api import (
@@ -36,6 +38,7 @@ from .api import (
     normalize_page_selection,
 )
 from .const import (
+    ATTR_CONFIG_ENTRY_ID,
     ATTR_FILE_PATH,
     ATTR_FILE_PATHS,
     ATTR_INPUT_COUNT,
@@ -56,6 +59,8 @@ from .const import (
     SERVICE_SPLIT,
 )
 from .coordinator import StirlingPdfCoordinator, async_remove_statistics
+from .operations import OPERATIONS
+from .tools import async_handle_tool, integer_value, tool_schema
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
@@ -101,7 +106,7 @@ _COMPRESS_SCHEMA = vol.Schema(
     {
         vol.Required(ATTR_FILE_PATH): cv.string,
         vol.Optional(ATTR_OPTIMIZE_LEVEL, default=5): vol.All(
-            vol.Coerce(int), vol.Range(min=1, max=9)
+            integer_value, vol.Range(min=1, max=9)
         ),
         vol.Required(ATTR_OUTPUT_PATH): cv.string,
         vol.Optional(ATTR_OVERWRITE, default=False): cv.boolean,
@@ -120,11 +125,25 @@ _SERVICE_SCHEMAS = {
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up service actions so automations can always be validated."""
     for service, schema in _SERVICE_SCHEMAS.items():
+        schema = schema.extend({vol.Optional(ATTR_CONFIG_ENTRY_ID): cv.string})
         hass.services.async_register(
             DOMAIN,
             service,
             _async_handle_action,
             schema=schema,
+            supports_response=SupportsResponse.OPTIONAL,
+        )
+    for service, operation in OPERATIONS.items():
+        register = (
+            hass.services.async_register
+            if operation["group"] == "standard"
+            else partial(async_register_admin_service, hass)
+        )
+        register(
+            DOMAIN,
+            service,
+            _async_handle_tool_action,
+            schema=tool_schema(operation),
             supports_response=SupportsResponse.OPTIONAL,
         )
     return True
@@ -153,6 +172,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: StirlingPdfConfigEntry) 
     return True
 
 
+async def _async_handle_tool_action(call: ServiceCall) -> ServiceResponse | None:
+    """Share server resolution and atomic output handling with existing actions."""
+    coordinator = _get_coordinator(call.hass, call.data.get(ATTR_CONFIG_ENTRY_ID))
+    return await async_handle_tool(
+        call, coordinator, _validate_output_path, _async_write_result
+    )
+
+
 async def async_unload_entry(
     hass: HomeAssistant, entry: StirlingPdfConfigEntry
 ) -> bool:
@@ -170,8 +197,10 @@ async def async_remove_entry(
     await async_remove_statistics(hass, entry.entry_id)
 
 
-def _get_coordinator(hass: HomeAssistant) -> StirlingPdfCoordinator:
-    """Return the coordinator for the single supported config entry."""
+def _get_coordinator(
+    hass: HomeAssistant, config_entry_id: str | None = None
+) -> StirlingPdfCoordinator:
+    """Resolve an explicit server; preserve untargeted calls with one entry."""
     entries = hass.config_entries.async_entries(DOMAIN)
     if not entries:
         raise ServiceValidationError(
@@ -179,7 +208,20 @@ def _get_coordinator(hass: HomeAssistant) -> StirlingPdfCoordinator:
             translation_key="not_configured",
         )
 
-    entry = entries[0]
+    if config_entry_id is not None:
+        entry = hass.config_entries.async_get_entry(config_entry_id)
+        if entry is None or entry.domain != DOMAIN:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="invalid_server",
+            )
+    elif len(entries) == 1:
+        entry = entries[0]
+    else:
+        raise ServiceValidationError(
+            translation_domain=DOMAIN,
+            translation_key="server_required",
+        )
     if entry.state is not ConfigEntryState.LOADED:
         raise ServiceValidationError(
             translation_domain=DOMAIN,
@@ -296,7 +338,7 @@ def _normalize_languages(values: list[str]) -> list[str]:
 
 async def _async_handle_action(call: ServiceCall) -> ServiceResponse | None:
     """Handle a Stirling PDF service action."""
-    coordinator = _get_coordinator(call.hass)
+    coordinator = _get_coordinator(call.hass, call.data.get(ATTR_CONFIG_ENTRY_ID))
     overwrite = call.data[ATTR_OVERWRITE]
     output_suffix = ".zip" if call.service == SERVICE_SPLIT else ".pdf"
 

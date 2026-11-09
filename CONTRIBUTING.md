@@ -1,20 +1,12 @@
 # Contributing
 
-Thanks for helping improve Stirling PDF for Home Assistant.
-
-## Before opening a pull request
-
-1. Open or reference an issue that explains the Home Assistant use case.
-2. Keep changes focused and avoid unrelated formatting rewrites.
-3. Use only documented Stirling PDF endpoints and include the official source
-   when adding or changing an endpoint.
-4. Add or update tests for every behavior change.
-5. Never commit API keys, private URLs, real documents, or unredacted logs.
+Thanks for helping improve Stirling PDF for Home Assistant. Keep pull requests
+focused and include tests for behavior changes. Use synthetic documents and
+never commit credentials, private URLs, real PDFs or unredacted logs.
 
 ## Local checks
 
-The development dependencies require Python 3.14.2 or newer. Use Linux for the
-full Home Assistant test environment.
+Use Python 3.14.2 or newer and Linux for the full Home Assistant test environment.
 
 ```bash
 python3.14 -m venv .venv
@@ -25,71 +17,45 @@ python3.14 -m venv .venv
 .venv/bin/ruff format --check --no-cache custom_components scripts tests tests_live
 ```
 
-Hassfest and HACS validation also run in GitHub Actions.
+CI checks both supported test baselines with `requirements-dev-min.txt` and
+`requirements-dev.txt`, and runs hassfest and HACS validation. Keep 100% line
+coverage for `config_flow.py` and more than 95% per other integration module.
+The [manual HA 2026.11 workflow](.github/workflows/ha-2026-11.yml) requires an
+exact compatible test-plugin version. Do not bypass dependency resolution or
+count a skipped check as passing.
 
-The coverage gate requires 100% line coverage for `config_flow.py` and more than
-95% for every other integration module. A high total cannot compensate for an
-uncovered module. Keep the report complete; do not weaken the thresholds or add
-coverage exclusions just to make a change pass. Test failures and recovery in
-the same config flow, not only the first displayed error. This integration
-deliberately uses a single-instance guard rather than a mutable URL/IP as its
-config-entry unique ID.
+## Testing against Stirling PDF
 
-CI tests Home Assistant 2026.9.0 with `requirements-dev-min.txt` and 2026.10.2
-with `requirements-dev.txt`. Keep their framework pins aligned with the
-Home Assistant versions in the workflow; shared pytest dependencies live in
-`requirements-dev-common.txt`.
+The [server workflow](.github/workflows/server-tests.yml) tests digest-pinned
+Stirling PDF versions with and without login. To run it locally, install
+`requirements-live.txt` in a separate environment and use a disposable server:
 
-Home Assistant 2026.11 preparation is tracked separately in
-[`docs/HA_2026_11.md`](docs/HA_2026_11.md). The manual readiness workflow needs an
-exact upstream test-plugin version whose dependencies resolve with Core
-2026.11.0. Never bypass the resolver with `--no-deps` or dependency overrides,
-silence failures with `continue-on-error`, or count a prepared/skipped job as a
-compatibility result. Preserve the two automatic jobs and their aggregate
-`pytest` check. Add the stable 2026.11 job to that matrix after its test package
-and a real passing result are available.
+```bash
+export STIRLING_PDF_URL=http://127.0.0.1:8080
+export STIRLING_PDF_API_KEY='<test-server-key>'
+export STIRLING_PDF_REQUIRE_AUTH=true
+export STIRLING_PDF_EXPECTED_VERSION=3.3.0
+python -m pytest -q -p no:cacheprovider tests_live
+```
 
-The existing entity base uses the cross-version `DeviceInfo(...)` constructor.
-Keep device information as typed constructor arguments, not plain dictionaries
-or dict-style mutation. The regression suite must cover registry-driven entity
-ID changes and device display-name changes without losing coordinator updates,
-stable registry IDs or saved operation statistics. Do not assert a complete
-`friendly_name` string: Home Assistant owns display-name composition.
+Set the expected version to the backend you started. For a server without
+login, omit the key and use `STIRLING_PDF_REQUIRE_AUTH=false`. The suite skips
+server-dependent tests when no URL is set. It uses synthetic PDFs, including
+an [image-only OCR fixture](tests_live/fixtures/README.md).
 
-The Marketplace still reads `hacs.json` and uses the HACS validation action.
-Keep the older `hacs_repository` My link while older HA versions are supported.
-Check the documented category identifier rather than inventing one, and never
-describe a custom repository as accepted into the public catalog without the
-corresponding catalog merge. A Marketplace listing is not Core inclusion or a
-security audit by the Home Assistant project.
+Use the [Home Assistant test scripts](examples/README.md) for acceptance on a
+test instance. Record the versions, exact failures and checked outputs in the
+PR. Mock tests and a successful retry are not proof of backend compatibility
+or of a fix for the first failure.
 
-Real-server contract tests live in `tests_live/` and use
-`requirements-live.txt` in a separate environment. See the README for the
-required test-server environment variables. They deliberately avoid real
-documents and run with both enabled and disabled server authentication.
+## Changing actions
 
-The real-server suite includes selected-page extraction and OCR from a committed
-image-only synthetic scan. Do not replace it with an already-searchable PDF or
-skip OCR when the pinned standard image lacks its expected capability. Fixture
-provenance and optional Node.js regeneration are documented in
-`tests_live/fixtures/README.md`; the generator is not a runtime/CI dependency.
-
-The native acceptance script is under `examples/`. Keep its name and report
-version-independent. CI validates its HA schema, renders templates and checks
-safe output targets, but real HA execution and manual trace/output checks remain
-required. Record evidence honestly in `docs/TESTING.md`, distinguishing historical
-release validation from pending tests for newly added behavior.
-
-## Pull-request scope
-
-A new action should include:
-
-- a client method in `api.py`;
-- validation and registration in `__init__.py`;
-- action metadata in `services.yaml`;
-- English and German translations;
-- API-client and Home Assistant service tests;
-- README documentation and a sanitized example.
-
-The maintainer reviews all submitted code and documentation before release,
-including contributions initially prepared with AI assistance.
+- Link the upstream endpoint contract. Update the action's validation,
+  `services.yaml`, English and German translations, and tests together.
+- Use allowlisted paths, explicit server selection, and typed inputs. Test
+  invalid inputs, version restrictions, and isolation between server entries.
+- Preserve entity IDs and saved statistics. Optional metrics stay disabled
+  by default.
+- Keep credentials and private URLs out of errors. Do not automatically
+  retry processing requests: a disconnected client cannot know whether
+  Stirling PDF already processed the upload.

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib
 import io
+import json
 import os
 import re
 import sys
@@ -28,6 +29,7 @@ sys.modules[_PACKAGE_NAME] = _package
 _api = importlib.import_module(f"{_PACKAGE_NAME}.api")
 StirlingPdfApiClient = _api.StirlingPdfApiClient
 StirlingPdfAuthError = _api.StirlingPdfAuthError
+StirlingPdfApiError = _api.StirlingPdfApiError
 
 _OCR_FIXTURE = Path(__file__).parent / "fixtures" / "ocr_scan.pdf"
 
@@ -78,6 +80,12 @@ def server_url() -> str:
 
 
 @pytest.fixture
+def expected_server_version() -> str:
+    """Assert the version selected by CI, not a label inferred from a response."""
+    return os.environ.get("STIRLING_PDF_EXPECTED_VERSION", "3.2.0")
+
+
+@pytest.fixture
 async def session() -> AsyncIterator[aiohttp.ClientSession]:
     """Avoid session cookies masking missing API-key authentication."""
     async with aiohttp.ClientSession(cookie_jar=aiohttp.DummyCookieJar()) as client:
@@ -100,12 +108,54 @@ def test_generated_fixture_has_identifiable_pages() -> None:
     assert _markers(_pdf("A1", "A2")) == ["A1", "A2"]
 
 
-async def test_status_and_authenticated_health(client) -> None:
+async def test_status_and_authenticated_health(client, expected_server_version) -> None:
     status = await client.async_validate_connection()
 
     assert status["status"] == "UP"
-    assert status["version"].removeprefix("v") == "3.2.0"
+    assert status["version"].removeprefix("v") == expected_server_version
     assert client.authentication_check_supported is True
+
+
+async def test_330_removed_text_editor_has_no_processing_route(
+    client, expected_server_version
+) -> None:
+    """Check the documented removal on the pinned new server, not older servers."""
+    if expected_server_version != "3.3.0":
+        pytest.skip("The removed-endpoint assertion applies only to the 3.3.0 job")
+    with pytest.raises(StirlingPdfApiError, match="HTTP 404"):
+        await client.async_process(
+            "/api/v1/general/edit-text",
+            [("synthetic.pdf", _pdf("OLD TEXT EDITOR"))],
+            {"pageNumbers": "all", "edits": "[]"},
+        )
+
+
+async def test_330_rejects_out_of_range_poster_multiplier(
+    client, expected_server_version
+) -> None:
+    """The newer server must reject 11 before allocating an oversized result."""
+    if expected_server_version != "3.3.0":
+        pytest.skip("The newer validation assertion applies only to the 3.3.0 job")
+    with pytest.raises(StirlingPdfApiError, match="HTTP 400"):
+        await client.async_process(
+            "/api/v1/general/split-for-poster-print",
+            [("synthetic.pdf", _pdf("POSTER LIMIT"))],
+            {"pageSize": "A4", "xFactor": 11, "yFactor": 2},
+        )
+
+
+async def test_explicit_legacy_markdown_conversion_produces_searchable_pdf(
+    client,
+) -> None:
+    """Exercise explicit false on both pinned versions, without external resources."""
+    status, content = await client.async_process(
+        "/api/v1/convert/markdown/pdf",
+        [("synthetic.md", b"# CONVERTER LEGACY 12345\n\nSynthetic local test.\n")],
+        {"useStirlingOfficeConvert": False},
+    )
+    assert status == 200
+    text = " ".join(" ".join(_markers(content)).split())
+    assert "CONVERTER LEGACY 12345" in text
 
 
 async def test_merge_preserves_requested_order_and_unicode_filenames(client) -> None:
@@ -133,6 +183,61 @@ async def test_compress_preserves_pages_and_text(client) -> None:
 
     assert _markers(compressed) == ["A1", "A2"]
     assert len(compressed) < len(source)
+
+
+@pytest.mark.parametrize(
+    ("endpoint", "fields"),
+    [
+        ("/api/v1/general/rotate-pdf", {"angle": 90}),
+        ("/api/v1/misc/repair", {}),
+        ("/api/v1/misc/flatten", {"flattenOnlyForms": True}),
+        (
+            "/api/v1/misc/update-metadata",
+            {"deleteAll": False, "title": "Synthetic test title"},
+        ),
+    ],
+)
+async def test_representative_additional_tools_preserve_page_content(
+    client, endpoint, fields
+) -> None:
+    """Exercise selected catalog tools on the real pinned server, not all tools."""
+    status, content = await client.async_process(
+        endpoint, [("a.pdf", _pdf("A1", "A2"))], fields
+    )
+    assert status == 200
+    assert _markers(content) == ["A1", "A2"]
+    reader = PdfReader(io.BytesIO(content))
+    if endpoint.endswith("rotate-pdf"):
+        assert all(page.rotation == 90 for page in reader.pages)
+    if endpoint.endswith("update-metadata"):
+        assert reader.metadata.title == "Synthetic test title"
+
+
+async def test_additional_analysis_page_count(client) -> None:
+    status, content = await client.async_process(
+        "/api/v1/analysis/page-count", [("a.pdf", _pdf("A1", "A2"))], {}
+    )
+    assert status == 200
+    assert json.loads(content)["pageCount"] == 2
+
+
+@pytest.mark.parametrize(
+    ("text", "expected_status"), [("A1", 200), ("UNIQUE_ABSENT_MARKER", 204)]
+)
+async def test_additional_text_filter_match_and_non_match(
+    client, text, expected_status
+) -> None:
+    """Send the documented page selection; the server does not default null."""
+    status, content = await client.async_process(
+        "/api/v1/filter/filter-contains-text",
+        [("a.pdf", _pdf("A1"))],
+        {"text": text, "pageNumbers": "all"},
+    )
+    assert status == expected_status
+    if expected_status == 204:
+        assert content == b""
+    else:
+        assert _markers(content) == ["A1"]
 
 
 @pytest.mark.parametrize(

@@ -16,16 +16,22 @@ concurrency:
 
 jobs:
   server:
-    name: PDF server (login ${{ matrix.login }})
+    name: PDF server ${{ matrix.version }} (login ${{ matrix.login }})
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
+        version: ["3.2.0", "3.3.0"]
         login: ["true", "false"]
+        include:
+          - version: "3.2.0"
+            image: stirlingtools/stirling-pdf:3.2.0@sha256:10164ffe04961b02ebc9fa4da12064eeacb8d3bc3e09ceb059f78ce7aaa83207
+          - version: "3.3.0"
+            image: stirlingtools/stirling-pdf:3.3.0@sha256:ed7b1775c6706b5e5ea24fa6155f078eff1027bd35a17d21834e4407036025e6
     services:
       stirling:
-        image: stirlingtools/stirling-pdf:3.2.0@sha256:10164ffe04961b02ebc9fa4da12064eeacb8d3bc3e09ceb059f78ce7aaa83207
+        image: ${{ matrix.image }}
         ports:
           - 8080:8080
         env:
@@ -58,6 +64,7 @@ jobs:
           STIRLING_PDF_URL: http://127.0.0.1:8080
           STIRLING_PDF_API_KEY: ci-test-key-not-a-secret
           STIRLING_PDF_REQUIRE_AUTH: ${{ matrix.login }}
+          STIRLING_PDF_EXPECTED_VERSION: ${{ matrix.version }}
         run: python -m pytest -q -p no:cacheprovider tests_live
       - name: Show server logs on failure
         if: failure()

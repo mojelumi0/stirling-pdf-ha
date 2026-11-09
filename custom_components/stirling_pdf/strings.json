@@ -9,7 +9,8 @@
           "url": "URL",
           "api_key": "API key (optional)",
           "username": "HTTP Basic username (optional)",
-          "password": "HTTP Basic password (optional)"
+          "password": "HTTP Basic password (optional)",
+          "server_name": "Server name (optional)"
         }
       },
       "reconfigure": {
@@ -19,7 +20,8 @@
           "url": "URL",
           "api_key": "API key (optional)",
           "username": "HTTP Basic username (optional)",
-          "password": "HTTP Basic password (optional)"
+          "password": "HTTP Basic password (optional)",
+          "server_name": "Server name (optional)"
         }
       },
       "reauth_confirm": {
@@ -41,15 +43,19 @@
       "unknown": "Unexpected error."
     },
     "abort": {
-      "single_instance_allowed": "Only one Stirling PDF instance can be configured.",
       "reauth_successful": "Authentication was updated successfully.",
-      "reconfigure_successful": "The configuration was updated successfully."
+      "reconfigure_successful": "The configuration was updated successfully.",
+      "already_configured": "This server URL is already configured."
     }
   },
   "entity": {
     "sensor": {
-      "version": { "name": "Version" },
-      "jobs_processed": { "name": "Jobs processed" },
+      "version": {
+        "name": "Version"
+      },
+      "jobs_processed": {
+        "name": "Jobs processed"
+      },
       "last_operation": {
         "name": "Last operation",
         "state": {
@@ -57,74 +63,4004 @@
           "split": "Split",
           "ocr": "OCR",
           "compress": "Compress",
-          "extract_pages": "Extract pages"
+          "extract_pages": "Extract pages",
+          "rotate": "Rotate pages",
+          "auto_rotate": "Auto-rotate pages",
+          "remove_pages": "Remove Pages",
+          "crop": "Crop pages",
+          "scale_pages": "Scale Pages",
+          "remove_blanks": "Remove blank pages",
+          "repair": "Repair PDF",
+          "split_by_size": "Split By Size",
+          "split_by_chapters": "Split By Chapters",
+          "auto_split": "Auto Split",
+          "split_by_sections": "Split By Sections",
+          "poster": "Poster",
+          "booklet": "Booklet",
+          "multi_page_layout": "Multi Page Layout",
+          "single_page": "Single Page",
+          "overlay": "Overlay",
+          "page_numbers": "Add page numbers",
+          "watermark": "Add watermark",
+          "stamp": "Stamp",
+          "add_image": "Add Image",
+          "add_comments": "Add Comments",
+          "replace_text": "Replace Text",
+          "metadata": "Update metadata",
+          "bookmarks": "Bookmarks",
+          "edit_bookmarks": "Edit Bookmarks",
+          "remove_images": "Remove Images",
+          "invert_colors": "Invert Colors",
+          "scanner_effect": "Scanner Effect",
+          "decompress": "Decompress",
+          "auto_rename": "Auto Rename",
+          "extract_images": "Extract Images",
+          "extract_scans": "Extract Scans",
+          "list_attachments": "List Attachments",
+          "extract_attachments": "Extract Attachments",
+          "add_attachments": "Add Attachments",
+          "delete_attachment": "Delete Attachment",
+          "rename_attachment": "Rename Attachment",
+          "batch_process_attachments": "Batch Process Attachments",
+          "create_portfolio": "Create Portfolio",
+          "flatten_portfolio": "Flatten Portfolio",
+          "flatten": "Flatten",
+          "unlock_pdf_forms": "Unlock Pdf Forms",
+          "images_to_pdf": "Images to PDF",
+          "pdf_to_img": "Pdf To Img",
+          "pdf_to_pdfa": "Pdf To Pdfa",
+          "pdf_to_text": "Pdf To Text",
+          "pdf_to_word": "Pdf To Word",
+          "file_to_pdf": "File to PDF",
+          "pdf_to_presentation": "Pdf To Presentation",
+          "pdf_to_csv": "Pdf To Csv",
+          "pdf_to_xlsx": "Pdf To Xlsx",
+          "pdf_to_xml": "Pdf To Xml",
+          "html_to_pdf": "Html To Pdf",
+          "markdown_to_pdf": "Markdown To Pdf",
+          "pdf_to_html": "Pdf To Html",
+          "pdf_to_markdown": "Pdf To Markdown",
+          "eml_to_pdf": "Eml To Pdf",
+          "svg_to_pdf": "Svg To Pdf",
+          "ebook_to_pdf": "Ebook To Pdf",
+          "pdf_to_epub": "Pdf To Epub",
+          "cbr_to_pdf": "Cbr To Pdf",
+          "cbz_to_pdf": "Cbz To Pdf",
+          "pdf_to_cbr": "Pdf To Cbr",
+          "pdf_to_cbz": "Pdf To Cbz",
+          "pdf_to_vector": "Pdf To Vector",
+          "vector_to_pdf": "Vector To Pdf",
+          "pdf_to_ua": "Pdf To Ua",
+          "url_to_pdf": "Website to PDF",
+          "analyze_basic_info": "Analyze Basic Info",
+          "analyze_page_count": "Analyze Page Count",
+          "analyze_page_dimensions": "Analyze Page Dimensions",
+          "analyze_document_properties": "Analyze Document Properties",
+          "analyze_font_info": "Analyze Font Info",
+          "analyze_annotation_info": "Analyze Annotation Info",
+          "analyze_form_fields": "Analyze Form Fields",
+          "analyze_security_info": "Analyze Security Info",
+          "pdf_info": "Pdf Info",
+          "check_contains_text": "Check Contains Text",
+          "check_contains_image": "Check Contains Image",
+          "check_page_count": "Check Page Count",
+          "check_page_size": "Check Page Size",
+          "check_file_size": "Check File Size",
+          "check_page_rotation": "Check Page Rotation",
+          "form_fields": "Form Fields",
+          "form_fields_with_coordinates": "Form Fields With Coordinates",
+          "form_fill": "Form Fill",
+          "form_extract_csv": "Form Extract Csv",
+          "form_extract_xlsx": "Form Extract Xlsx",
+          "form_add_fields": "Form Add Fields",
+          "form_modify_fields": "Form Modify Fields",
+          "form_edit_fields": "Form Edit Fields",
+          "form_delete_fields": "Form Delete Fields",
+          "form_detect": "Form Detect",
+          "add_password": "Add Password",
+          "remove_password": "Remove Password",
+          "auto_redact": "Auto Redact",
+          "redact": "Redact",
+          "redact_execute": "Redact Execute",
+          "cert_sign": "Cert Sign",
+          "timestamp": "Timestamp",
+          "remove_cert_sign": "Remove Cert Sign",
+          "sanitize": "Sanitize",
+          "validate_signature": "Validate Signature",
+          "verify": "Verify",
+          "validate_compliance": "Validate Compliance",
+          "accessibility_report": "Accessibility Report",
+          "show_javascript": "Show Javascript",
+          "classify_and_label": "Classify And Label",
+          "math_auditor_agent": "Math Auditor Agent",
+          "pdf_comment_agent": "Pdf Comment Agent"
         }
+      },
+      "uptime": {
+        "name": "Server uptime"
+      },
+      "post_requests": {
+        "name": "Server POST requests"
+      },
+      "get_requests": {
+        "name": "Server GET requests"
+      },
+      "total_jobs": {
+        "name": "Retained jobs"
+      },
+      "active_jobs": {
+        "name": "Active jobs"
+      },
+      "completed_jobs": {
+        "name": "Completed retained jobs"
+      },
+      "failed_jobs": {
+        "name": "Failed retained jobs"
+      },
+      "successful_jobs": {
+        "name": "Successful retained jobs"
+      },
+      "file_result_jobs": {
+        "name": "Retained file results"
+      },
+      "average_processing_time": {
+        "name": "Average processing time"
+      },
+      "oldest_active_job": {
+        "name": "Oldest active job (server local)"
+      },
+      "newest_active_job": {
+        "name": "Newest active job (server local)"
+      },
+      "queued_jobs": {
+        "name": "Queued jobs"
+      },
+      "queue_capacity": {
+        "name": "Queue capacity"
+      },
+      "total_queued_jobs": {
+        "name": "Total queued jobs"
+      },
+      "rejected_jobs": {
+        "name": "Rejected jobs"
+      },
+      "resource_status": {
+        "name": "Resource status"
+      },
+      "ocr_languages": {
+        "name": "Installed OCR languages"
+      },
+      "ai_health": {
+        "name": "AI health status"
+      },
+      "ai_smart_model": {
+        "name": "AI smart model"
+      },
+      "ai_fast_model": {
+        "name": "AI fast model"
+      },
+      "ai_latency": {
+        "name": "AI probe latency"
       }
     },
     "binary_sensor": {
-      "reachable": { "name": "Reachable" }
+      "reachable": {
+        "name": "Reachable"
+      },
+      "ai_enabled": {
+        "name": "AI enabled"
+      },
+      "ai_reachable": {
+        "name": "AI reachable"
+      },
+      "ai_authenticated": {
+        "name": "AI authenticated"
+      },
+      "document_parsing_enabled": {
+        "name": "Document parsing enabled"
+      },
+      "document_parsing_reachable": {
+        "name": "Document parsing reachable"
+      },
+      "indexing_ready": {
+        "name": "Indexing configured"
+      }
     }
   },
   "exceptions": {
-    "not_configured": { "message": "Stirling PDF is not configured." },
-    "entry_not_loaded": { "message": "The Stirling PDF configuration is not loaded." },
-    "path_not_allowed": { "message": "The path `{path}` is not allowed by Home Assistant. Add its parent directory to `allowlist_external_dirs`." },
-    "invalid_extension": { "message": "The path `{path}` must use the `{extension}` extension." },
-    "invalid_languages": { "message": "Enter at least one valid OCR language code, such as `eng` or `deu`." },
-    "invalid_page_numbers": { "message": "Enter positive page numbers or ascending ranges, for example `1,3-5`. Use at most 1024 characters. Expressions such as `all` or `2n+1` are not supported for extraction." },
-    "output_exists": { "message": "The output file `{path}` already exists. Enable overwrite or choose another path." },
-    "authentication_failed": { "message": "Stirling PDF rejected API access. Update authentication under Settings > Devices & services." },
-    "processing_failed": { "message": "Stirling PDF could not process the document: {error}" },
-    "file_error": { "message": "Home Assistant could not read or write the file: {error}" }
+    "not_configured": {
+      "message": "Stirling PDF is not configured."
+    },
+    "entry_not_loaded": {
+      "message": "The Stirling PDF configuration is not loaded."
+    },
+    "path_not_allowed": {
+      "message": "The path `{path}` is not allowed by Home Assistant. Add its parent directory to `allowlist_external_dirs`."
+    },
+    "invalid_extension": {
+      "message": "The path `{path}` must use the `{extension}` extension."
+    },
+    "invalid_languages": {
+      "message": "Enter at least one valid OCR language code, such as `eng` or `deu`."
+    },
+    "invalid_page_numbers": {
+      "message": "Enter positive page numbers or ascending ranges, for example `1,3-5`. Use at most 1024 characters. Expressions such as `all` or `2n+1` are not supported for extraction."
+    },
+    "output_exists": {
+      "message": "The output file `{path}` already exists. Enable overwrite or choose another path."
+    },
+    "authentication_failed": {
+      "message": "Stirling PDF rejected API access. Update authentication under Settings > Devices & services."
+    },
+    "processing_failed": {
+      "message": "Stirling PDF could not process the document: {error}"
+    },
+    "file_error": {
+      "message": "Home Assistant could not read or write the file: {error}"
+    },
+    "invalid_server": {
+      "message": "Select a valid Stirling PDF server."
+    },
+    "server_required": {
+      "message": "Multiple servers are configured. Select the server using config_entry_id."
+    },
+    "action_group_disabled": {
+      "message": "Enable this action group in the selected server's integration options first."
+    },
+    "remote_host_not_allowed": {
+      "message": "Provide an HTTP(S) URL without embedded credentials and explicitly allow its hostname in the selected server's options."
+    },
+    "input_too_large": {
+      "message": "Additional tools accept at most 32 files with a combined 64 MiB and structured fields of at most 4 MiB."
+    },
+    "tool_forbidden": {
+      "message": "The selected tool is forbidden for this server/account. Base authentication was not changed."
+    },
+    "server_version_unknown": {
+      "message": "The stable server version could not be determined for {operation}. Refresh its status. Custom or pre-release versions do not establish support for this version-restricted action or option."
+    },
+    "tool_removed": {
+      "message": "Stirling PDF removed {operation} in version {version}. Select an older server that still supports it. No document was uploaded and statistics were not changed."
+    },
+    "tool_option_unsupported": {
+      "message": "The Stirling Office Convert option for {operation} requires Stirling PDF {version} or newer. Disable that option or select a supported server. No document was uploaded."
+    }
   },
   "services": {
     "merge": {
       "name": "Merge PDFs",
       "description": "Combine two or more PDF files in the specified order.",
       "fields": {
-        "file_paths": { "name": "File paths", "description": "Absolute paths of the PDF files to merge, in order." },
-        "output_path": { "name": "Output path", "description": "Absolute path for the merged PDF." },
-        "overwrite": { "name": "Overwrite", "description": "Replace the output file if it already exists." }
+        "file_paths": {
+          "name": "File paths",
+          "description": "Absolute paths of the PDF files to merge, in order."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Absolute path for the merged PDF."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Replace the output file if it already exists."
+        },
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        }
       }
     },
     "split": {
       "name": "Split PDF",
       "description": "Split a PDF after the specified page numbers.",
       "fields": {
-        "file_path": { "name": "File path", "description": "Absolute path of the PDF to split." },
-        "page_numbers": { "name": "Page numbers", "description": "Split points such as `2,5`, ranges, `all`, or functions such as `2n+1`." },
-        "output_path": { "name": "Output path", "description": "Absolute `.zip` path for the resulting PDFs." },
-        "overwrite": { "name": "Overwrite", "description": "Replace the output file if it already exists." }
+        "file_path": {
+          "name": "File path",
+          "description": "Absolute path of the PDF to split."
+        },
+        "page_numbers": {
+          "name": "Page numbers",
+          "description": "Split points such as `2,5`, ranges, `all`, or functions such as `2n+1`."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Absolute `.zip` path for the resulting PDFs."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Replace the output file if it already exists."
+        },
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        }
       }
     },
     "ocr": {
       "name": "Run OCR on PDF",
       "description": "Make a scanned PDF searchable using OCR.",
       "fields": {
-        "file_path": { "name": "File path", "description": "Absolute path of the scanned PDF." },
-        "languages": { "name": "Languages", "description": "Installed Tesseract language codes, for example `eng` and `deu`." },
-        "output_path": { "name": "Output path", "description": "Absolute path for the searchable PDF." },
-        "overwrite": { "name": "Overwrite", "description": "Replace the output file if it already exists." }
+        "file_path": {
+          "name": "File path",
+          "description": "Absolute path of the scanned PDF."
+        },
+        "languages": {
+          "name": "Languages",
+          "description": "Installed Tesseract language codes, for example `eng` and `deu`."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Absolute path for the searchable PDF."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Replace the output file if it already exists."
+        },
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        }
       }
     },
     "extract_pages": {
       "name": "Extract PDF pages",
       "description": "Save selected pages from one PDF into a new PDF.",
       "fields": {
-        "file_path": { "name": "File path", "description": "Absolute path of the source PDF." },
-        "page_numbers": { "name": "Page numbers", "description": "Positive one-based pages and ascending ranges, for example `1,3-5`. Maximum 1024 characters. No `all` or function expressions." },
-        "output_path": { "name": "Output path", "description": "Absolute `.pdf` path for the selected pages." },
-        "overwrite": { "name": "Overwrite", "description": "Replace the output file if it already exists." }
+        "file_path": {
+          "name": "File path",
+          "description": "Absolute path of the source PDF."
+        },
+        "page_numbers": {
+          "name": "Page numbers",
+          "description": "Positive one-based pages and ascending ranges, for example `1,3-5`. Maximum 1024 characters. No `all` or function expressions."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Absolute `.pdf` path for the selected pages."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Replace the output file if it already exists."
+        },
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        }
       }
     },
     "compress": {
       "name": "Compress PDF",
       "description": "Reduce the file size of a PDF.",
       "fields": {
-        "file_path": { "name": "File path", "description": "Absolute path of the PDF to compress." },
-        "optimize_level": { "name": "Optimization level", "description": "A value from 1 (light) through 9 (most aggressive)." },
-        "output_path": { "name": "Output path", "description": "Absolute path for the compressed PDF." },
-        "overwrite": { "name": "Overwrite", "description": "Replace the output file if it already exists." }
+        "file_path": {
+          "name": "File path",
+          "description": "Absolute path of the PDF to compress."
+        },
+        "optimize_level": {
+          "name": "Optimization level",
+          "description": "A value from 1 (light) through 9 (most aggressive)."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Absolute path for the compressed PDF."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Replace the output file if it already exists."
+        },
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        }
+      }
+    },
+    "rotate": {
+      "name": "Rotate pages",
+      "description": "Rotate pages. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "angle": {
+          "name": "Angle",
+          "description": "Stirling PDF field: angle. Values: 0, 90, 180, 270."
+        }
+      }
+    },
+    "auto_rotate": {
+      "name": "Auto-rotate pages",
+      "description": "Auto-rotate pages. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf, .json."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "detection_mode": {
+          "name": "Detection mode",
+          "description": "Stirling PDF field: detectionMode. Values: auto, text, osd."
+        },
+        "confidence_threshold": {
+          "name": "Confidence threshold",
+          "description": "Stirling PDF field: confidenceThreshold."
+        },
+        "dry_run": {
+          "name": "Dry run",
+          "description": "Stirling PDF field: dryRun."
+        },
+        "infer_undetected": {
+          "name": "Infer undetected",
+          "description": "Stirling PDF field: inferUndetected."
+        },
+        "page_rotations": {
+          "name": "Page rotations",
+          "description": "Stirling PDF field: pageRotations."
+        }
+      }
+    },
+    "remove_pages": {
+      "name": "Remove Pages",
+      "description": "Remove Pages. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "page_numbers": {
+          "name": "Page numbers",
+          "description": "Stirling PDF field: pageNumbers."
+        }
+      }
+    },
+    "crop": {
+      "name": "Crop pages",
+      "description": "Crop pages. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "page_numbers": {
+          "name": "Page numbers",
+          "description": "Stirling PDF field: pageNumbers."
+        },
+        "x": {
+          "name": "X",
+          "description": "Stirling PDF field: x."
+        },
+        "y": {
+          "name": "Y",
+          "description": "Stirling PDF field: y."
+        },
+        "width": {
+          "name": "Width",
+          "description": "Stirling PDF field: width."
+        },
+        "height": {
+          "name": "Height",
+          "description": "Stirling PDF field: height."
+        },
+        "remove_data_outside_crop": {
+          "name": "Remove data outside crop",
+          "description": "Stirling PDF field: removeDataOutsideCrop."
+        },
+        "auto_crop": {
+          "name": "Auto crop",
+          "description": "Stirling PDF field: autoCrop."
+        }
+      }
+    },
+    "scale_pages": {
+      "name": "Scale Pages",
+      "description": "Scale Pages. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "page_size": {
+          "name": "Page size",
+          "description": "Stirling PDF field: pageSize. Values: A0, A1, A2, A3, A4, A5, A6, LETTER, LEGAL, KEEP."
+        },
+        "orientation": {
+          "name": "Orientation",
+          "description": "Stirling PDF field: orientation. Values: PORTRAIT, LANDSCAPE."
+        },
+        "scale_factor": {
+          "name": "Scale factor",
+          "description": "Stirling PDF field: scaleFactor."
+        }
+      }
+    },
+    "remove_blanks": {
+      "name": "Remove blank pages",
+      "description": "Remove blank pages. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "threshold": {
+          "name": "Threshold",
+          "description": "Stirling PDF field: threshold."
+        },
+        "white_percent": {
+          "name": "White percent",
+          "description": "Stirling PDF field: whitePercent."
+        }
+      }
+    },
+    "repair": {
+      "name": "Repair PDF",
+      "description": "Repair PDF. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "split_by_size": {
+      "name": "Split By Size",
+      "description": "Split By Size. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .zip, .pdf, .png, .jpg, .jpeg."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "split_type": {
+          "name": "Split type",
+          "description": "Stirling PDF field: splitType. Values: 0, 1, 2."
+        },
+        "split_value": {
+          "name": "Split value",
+          "description": "Stirling PDF field: splitValue."
+        }
+      }
+    },
+    "split_by_chapters": {
+      "name": "Split By Chapters",
+      "description": "Split By Chapters. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .zip, .pdf, .png, .jpg, .jpeg."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "include_metadata": {
+          "name": "Include metadata",
+          "description": "Stirling PDF field: includeMetadata."
+        },
+        "allow_duplicates": {
+          "name": "Allow duplicates",
+          "description": "Stirling PDF field: allowDuplicates."
+        },
+        "bookmark_level": {
+          "name": "Bookmark level",
+          "description": "Stirling PDF field: bookmarkLevel."
+        }
+      }
+    },
+    "auto_split": {
+      "name": "Auto Split",
+      "description": "Auto Split. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .zip, .pdf, .png, .jpg, .jpeg."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "duplex_mode": {
+          "name": "Duplex mode",
+          "description": "Stirling PDF field: duplexMode."
+        }
+      }
+    },
+    "split_by_sections": {
+      "name": "Split By Sections",
+      "description": "Split By Sections. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .zip, .pdf, .png, .jpg, .jpeg."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "page_numbers": {
+          "name": "Page numbers",
+          "description": "Stirling PDF field: pageNumbers."
+        },
+        "split_mode": {
+          "name": "Split mode",
+          "description": "Stirling PDF field: splitMode. Values: CUSTOM, SPLIT_ALL_EXCEPT_FIRST_AND_LAST, SPLIT_ALL_EXCEPT_FIRST, SPLIT_ALL_EXCEPT_LAST, SPLIT_ALL."
+        },
+        "horizontal_divisions": {
+          "name": "Horizontal divisions",
+          "description": "Stirling PDF field: horizontalDivisions."
+        },
+        "vertical_divisions": {
+          "name": "Vertical divisions",
+          "description": "Stirling PDF field: verticalDivisions."
+        },
+        "merge": {
+          "name": "Merge",
+          "description": "Stirling PDF field: merge."
+        }
+      }
+    },
+    "poster": {
+      "name": "Poster",
+      "description": "Poster. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .zip, .pdf, .png, .jpg, .jpeg."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "page_size": {
+          "name": "Page size",
+          "description": "Stirling PDF field: pageSize. Values: A4, Letter, A3, A5, Legal, Tabloid."
+        },
+        "right_to_left": {
+          "name": "Right to left",
+          "description": "Stirling PDF field: rightToLeft."
+        },
+        "x_factor": {
+          "name": "X factor",
+          "description": "Stirling PDF field: xFactor."
+        },
+        "y_factor": {
+          "name": "Y factor",
+          "description": "Stirling PDF field: yFactor."
+        }
+      }
+    },
+    "booklet": {
+      "name": "Booklet",
+      "description": "Booklet. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "pages_per_sheet": {
+          "name": "Pages per sheet",
+          "description": "Stirling PDF field: pagesPerSheet. Values: 2."
+        },
+        "add_border": {
+          "name": "Add border",
+          "description": "Stirling PDF field: addBorder."
+        },
+        "spine_location": {
+          "name": "Spine location",
+          "description": "Stirling PDF field: spineLocation. Values: LEFT, RIGHT."
+        },
+        "add_gutter": {
+          "name": "Add gutter",
+          "description": "Stirling PDF field: addGutter."
+        },
+        "gutter_size": {
+          "name": "Gutter size",
+          "description": "Stirling PDF field: gutterSize."
+        },
+        "double_sided": {
+          "name": "Double sided",
+          "description": "Stirling PDF field: doubleSided."
+        },
+        "duplex_pass": {
+          "name": "Duplex pass",
+          "description": "Stirling PDF field: duplexPass. Values: BOTH, FIRST, SECOND."
+        },
+        "flip_on_short_edge": {
+          "name": "Flip on short edge",
+          "description": "Stirling PDF field: flipOnShortEdge."
+        }
+      }
+    },
+    "multi_page_layout": {
+      "name": "Multi Page Layout",
+      "description": "Multi Page Layout. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "mode": {
+          "name": "Mode",
+          "description": "Stirling PDF field: mode. Values: DEFAULT, CUSTOM."
+        },
+        "pages_per_sheet": {
+          "name": "Pages per sheet",
+          "description": "Stirling PDF field: pagesPerSheet. Values: 2, 4, 9, 16."
+        },
+        "arrangement": {
+          "name": "Arrangement",
+          "description": "Stirling PDF field: arrangement. Values: BY_ROWS, BY_COLUMNS."
+        },
+        "reading_direction": {
+          "name": "Reading direction",
+          "description": "Stirling PDF field: readingDirection. Values: LTR, RTL."
+        },
+        "rows": {
+          "name": "Rows",
+          "description": "Stirling PDF field: rows."
+        },
+        "cols": {
+          "name": "Cols",
+          "description": "Stirling PDF field: cols."
+        },
+        "orientation": {
+          "name": "Orientation",
+          "description": "Stirling PDF field: orientation. Values: PORTRAIT, LANDSCAPE."
+        },
+        "inner_margin": {
+          "name": "Inner margin",
+          "description": "Stirling PDF field: innerMargin."
+        },
+        "top_margin": {
+          "name": "Top margin",
+          "description": "Stirling PDF field: topMargin."
+        },
+        "bottom_margin": {
+          "name": "Bottom margin",
+          "description": "Stirling PDF field: bottomMargin."
+        },
+        "left_margin": {
+          "name": "Left margin",
+          "description": "Stirling PDF field: leftMargin."
+        },
+        "right_margin": {
+          "name": "Right margin",
+          "description": "Stirling PDF field: rightMargin."
+        },
+        "border_width": {
+          "name": "Border width",
+          "description": "Stirling PDF field: borderWidth."
+        },
+        "add_border": {
+          "name": "Add border",
+          "description": "Stirling PDF field: addBorder."
+        }
+      }
+    },
+    "single_page": {
+      "name": "Single Page",
+      "description": "Single Page. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "overlay": {
+      "name": "Overlay",
+      "description": "Overlay. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "overlay_files": {
+          "name": "Overlay files",
+          "description": "Absolute allowlisted local file path(s). Allowed extensions: .pdf."
+        },
+        "overlay_mode": {
+          "name": "Overlay mode",
+          "description": "Stirling PDF field: overlayMode. Values: SequentialOverlay, InterleavedOverlay, FixedRepeatOverlay."
+        },
+        "counts": {
+          "name": "Counts",
+          "description": "Stirling PDF field: counts."
+        },
+        "overlay_position": {
+          "name": "Overlay position",
+          "description": "Stirling PDF field: overlayPosition. Values: 0, 1."
+        }
+      }
+    },
+    "page_numbers": {
+      "name": "Add page numbers",
+      "description": "Add page numbers. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "page_numbers": {
+          "name": "Page numbers",
+          "description": "Stirling PDF field: pageNumbers."
+        },
+        "font_type": {
+          "name": "Font type",
+          "description": "Stirling PDF field: fontType. Values: helvetica, courier, times."
+        },
+        "position": {
+          "name": "Position",
+          "description": "Stirling PDF field: position. Values: 1, 2, 3, 4, 5, 6, 7, 8, 9."
+        },
+        "custom_text": {
+          "name": "Custom text",
+          "description": "Stirling PDF field: customText."
+        },
+        "pages_to_number": {
+          "name": "Pages to number",
+          "description": "Stirling PDF field: pagesToNumber."
+        },
+        "starting_number": {
+          "name": "Starting number",
+          "description": "Stirling PDF field: startingNumber."
+        },
+        "font_size": {
+          "name": "Font size",
+          "description": "Stirling PDF field: fontSize."
+        },
+        "font_color": {
+          "name": "Font color",
+          "description": "Stirling PDF field: fontColor."
+        },
+        "custom_margin": {
+          "name": "Custom margin",
+          "description": "Stirling PDF field: customMargin. Values: small, medium, large, x-large."
+        },
+        "zero_pad": {
+          "name": "Zero pad",
+          "description": "Stirling PDF field: zeroPad."
+        }
+      }
+    },
+    "watermark": {
+      "name": "Add watermark",
+      "description": "Add watermark. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "watermark_image": {
+          "name": "Watermark image",
+          "description": "Absolute allowlisted local file path(s). Allowed extensions: .png, .jpg, .jpeg, .gif, .webp."
+        },
+        "watermark_type": {
+          "name": "Watermark type",
+          "description": "Stirling PDF field: watermarkType. Values: text, image."
+        },
+        "watermark_text": {
+          "name": "Watermark text",
+          "description": "Stirling PDF field: watermarkText."
+        },
+        "alphabet": {
+          "name": "Alphabet",
+          "description": "Stirling PDF field: alphabet. Values: roman, arabic, japanese, korean, chinese, thai."
+        },
+        "font_size": {
+          "name": "Font size",
+          "description": "Stirling PDF field: fontSize."
+        },
+        "rotation": {
+          "name": "Rotation",
+          "description": "Stirling PDF field: rotation."
+        },
+        "opacity": {
+          "name": "Opacity",
+          "description": "Stirling PDF field: opacity."
+        },
+        "custom_color": {
+          "name": "Custom color",
+          "description": "Stirling PDF field: customColor."
+        },
+        "convert_pdf_to_image": {
+          "name": "Convert pdf to image",
+          "description": "Stirling PDF field: convertPDFToImage."
+        },
+        "width_spacer": {
+          "name": "Width spacer",
+          "description": "Stirling PDF field: widthSpacer."
+        },
+        "height_spacer": {
+          "name": "Height spacer",
+          "description": "Stirling PDF field: heightSpacer."
+        }
+      }
+    },
+    "stamp": {
+      "name": "Stamp",
+      "description": "Stamp. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "stamp_image": {
+          "name": "Stamp image",
+          "description": "Absolute allowlisted local file path(s). Allowed extensions: .png, .jpg, .jpeg, .gif, .webp."
+        },
+        "page_numbers": {
+          "name": "Page numbers",
+          "description": "Stirling PDF field: pageNumbers."
+        },
+        "stamp_type": {
+          "name": "Stamp type",
+          "description": "Stirling PDF field: stampType. Values: text, image, qr."
+        },
+        "stamp_text": {
+          "name": "Stamp text",
+          "description": "Stirling PDF field: stampText."
+        },
+        "position": {
+          "name": "Position",
+          "description": "Stirling PDF field: position. Values: 1, 2, 3, 4, 5, 6, 7, 8, 9."
+        },
+        "font_size": {
+          "name": "Font size",
+          "description": "Stirling PDF field: fontSize."
+        },
+        "opacity": {
+          "name": "Opacity",
+          "description": "Stirling PDF field: opacity."
+        },
+        "custom_color": {
+          "name": "Custom color",
+          "description": "Stirling PDF field: customColor."
+        },
+        "rotation": {
+          "name": "Rotation",
+          "description": "Stirling PDF field: rotation."
+        },
+        "alphabet": {
+          "name": "Alphabet",
+          "description": "Stirling PDF field: alphabet. Values: roman, arabic, japanese, korean, chinese, thai."
+        },
+        "override_x": {
+          "name": "Override x",
+          "description": "Stirling PDF field: overrideX."
+        },
+        "override_y": {
+          "name": "Override y",
+          "description": "Stirling PDF field: overrideY."
+        },
+        "custom_margin": {
+          "name": "Custom margin",
+          "description": "Stirling PDF field: customMargin. Values: small, medium, large, x-large."
+        }
+      }
+    },
+    "add_image": {
+      "name": "Add Image",
+      "description": "Add Image. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "image_file": {
+          "name": "Image file",
+          "description": "Absolute allowlisted local file path(s). Allowed extensions: .png, .jpg, .jpeg, .gif, .webp."
+        },
+        "x": {
+          "name": "X",
+          "description": "Stirling PDF field: x."
+        },
+        "y": {
+          "name": "Y",
+          "description": "Stirling PDF field: y."
+        },
+        "every_page": {
+          "name": "Every page",
+          "description": "Stirling PDF field: everyPage."
+        }
+      }
+    },
+    "add_comments": {
+      "name": "Add Comments",
+      "description": "Add Comments. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "comments": {
+          "name": "Comments",
+          "description": "Stirling PDF field: comments."
+        }
+      }
+    },
+    "replace_text": {
+      "name": "Replace Text",
+      "description": "Text editing through the legacy API. Removed in Stirling PDF 3.3.0; only available on older servers. Unsupported or unknown versions are rejected before file access.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "page_numbers": {
+          "name": "Page numbers",
+          "description": "Stirling PDF field: pageNumbers."
+        },
+        "edits": {
+          "name": "Edits",
+          "description": "Stirling PDF field: edits."
+        },
+        "whole_word_search": {
+          "name": "Whole word search",
+          "description": "Stirling PDF field: wholeWordSearch."
+        }
+      }
+    },
+    "metadata": {
+      "name": "Update metadata",
+      "description": "Update metadata. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "delete_all": {
+          "name": "Delete all",
+          "description": "Stirling PDF field: deleteAll."
+        },
+        "author": {
+          "name": "Author",
+          "description": "Stirling PDF field: author."
+        },
+        "creation_date": {
+          "name": "Creation date",
+          "description": "Stirling PDF field: creationDate."
+        },
+        "creator": {
+          "name": "Creator",
+          "description": "Stirling PDF field: creator."
+        },
+        "keywords": {
+          "name": "Keywords",
+          "description": "Stirling PDF field: keywords."
+        },
+        "modification_date": {
+          "name": "Modification date",
+          "description": "Stirling PDF field: modificationDate."
+        },
+        "producer": {
+          "name": "Producer",
+          "description": "Stirling PDF field: producer."
+        },
+        "subject": {
+          "name": "Subject",
+          "description": "Stirling PDF field: subject."
+        },
+        "title": {
+          "name": "Title",
+          "description": "Stirling PDF field: title."
+        },
+        "trapped": {
+          "name": "Trapped",
+          "description": "Stirling PDF field: trapped. Values: True, False, Unknown."
+        },
+        "all_request_params": {
+          "name": "All request params",
+          "description": "Stirling PDF field: allRequestParams."
+        }
+      }
+    },
+    "bookmarks": {
+      "name": "Bookmarks",
+      "description": "Bookmarks. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "edit_bookmarks": {
+      "name": "Edit Bookmarks",
+      "description": "Edit Bookmarks. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "bookmark_data": {
+          "name": "Bookmark data",
+          "description": "Stirling PDF field: bookmarkData."
+        },
+        "replace_existing": {
+          "name": "Replace existing",
+          "description": "Stirling PDF field: replaceExisting."
+        }
+      }
+    },
+    "remove_images": {
+      "name": "Remove Images",
+      "description": "Remove Images. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "invert_colors": {
+      "name": "Invert Colors",
+      "description": "Invert Colors. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "replace_and_invert_option": {
+          "name": "Replace and invert option",
+          "description": "Stirling PDF field: replaceAndInvertOption. Values: HIGH_CONTRAST_COLOR, CUSTOM_COLOR, FULL_INVERSION, COLOR_SPACE_CONVERSION."
+        },
+        "high_contrast_color_combination": {
+          "name": "High contrast color combination",
+          "description": "Stirling PDF field: highContrastColorCombination. Values: WHITE_TEXT_ON_BLACK, BLACK_TEXT_ON_WHITE, YELLOW_TEXT_ON_BLACK, GREEN_TEXT_ON_BLACK."
+        },
+        "back_ground_color": {
+          "name": "Back ground color",
+          "description": "Stirling PDF field: backGroundColor."
+        },
+        "text_color": {
+          "name": "Text color",
+          "description": "Stirling PDF field: textColor."
+        }
+      }
+    },
+    "scanner_effect": {
+      "name": "Scanner Effect",
+      "description": "Scanner Effect. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "quality": {
+          "name": "Quality",
+          "description": "Stirling PDF field: quality. Values: low, medium, high."
+        },
+        "rotation": {
+          "name": "Rotation",
+          "description": "Stirling PDF field: rotation. Values: none, slight, moderate, severe."
+        },
+        "colorspace": {
+          "name": "Colorspace",
+          "description": "Stirling PDF field: colorspace. Values: grayscale, color."
+        },
+        "advanced_enabled": {
+          "name": "Advanced enabled",
+          "description": "Stirling PDF field: advancedEnabled."
+        },
+        "brightness": {
+          "name": "Brightness",
+          "description": "Stirling PDF field: brightness."
+        },
+        "contrast": {
+          "name": "Contrast",
+          "description": "Stirling PDF field: contrast."
+        },
+        "blur": {
+          "name": "Blur",
+          "description": "Stirling PDF field: blur."
+        },
+        "noise": {
+          "name": "Noise",
+          "description": "Stirling PDF field: noise."
+        },
+        "resolution": {
+          "name": "Resolution",
+          "description": "Stirling PDF field: resolution."
+        },
+        "border": {
+          "name": "Border",
+          "description": "Stirling PDF field: border."
+        },
+        "rotate": {
+          "name": "Rotate",
+          "description": "Stirling PDF field: rotate."
+        },
+        "rotate_variance": {
+          "name": "Rotate variance",
+          "description": "Stirling PDF field: rotateVariance."
+        },
+        "yellowish": {
+          "name": "Yellowish",
+          "description": "Stirling PDF field: yellowish."
+        },
+        "rotation_value": {
+          "name": "Rotation value",
+          "description": "Stirling PDF field: rotationValue."
+        }
+      }
+    },
+    "decompress": {
+      "name": "Decompress",
+      "description": "Decompress. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "auto_rename": {
+      "name": "Auto Rename",
+      "description": "Auto Rename. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "use_first_text_as_fallback": {
+          "name": "Use first text as fallback",
+          "description": "Stirling PDF field: useFirstTextAsFallback."
+        }
+      }
+    },
+    "extract_images": {
+      "name": "Extract Images",
+      "description": "Extract Images. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .zip, .pdf, .png, .jpg, .jpeg."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "format": {
+          "name": "Format",
+          "description": "Stirling PDF field: format. Values: png, jpeg, gif."
+        }
+      }
+    },
+    "extract_scans": {
+      "name": "Extract Scans",
+      "description": "Extract Scans. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .zip, .pdf, .png, .jpg, .jpeg."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "angle_threshold": {
+          "name": "Angle threshold",
+          "description": "Stirling PDF field: angleThreshold."
+        },
+        "tolerance": {
+          "name": "Tolerance",
+          "description": "Stirling PDF field: tolerance."
+        },
+        "min_area": {
+          "name": "Min area",
+          "description": "Stirling PDF field: minArea."
+        },
+        "min_contour_area": {
+          "name": "Min contour area",
+          "description": "Stirling PDF field: minContourArea."
+        },
+        "border_size": {
+          "name": "Border size",
+          "description": "Stirling PDF field: borderSize."
+        }
+      }
+    },
+    "list_attachments": {
+      "name": "List Attachments",
+      "description": "List Attachments. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "extract_attachments": {
+      "name": "Extract Attachments",
+      "description": "Extract Attachments. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .zip, .pdf, .png, .jpg, .jpeg."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "add_attachments": {
+      "name": "Add Attachments",
+      "description": "Add Attachments. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "attachments": {
+          "name": "Attachments",
+          "description": "Absolute allowlisted local file path(s). Allowed extensions: .pdf, .txt, .csv, .json, .png, .jpg, .docx, .xlsx, .zip."
+        },
+        "convert_to_pdf_a3b": {
+          "name": "Convert to pdf a3b",
+          "description": "Stirling PDF field: convertToPdfA3b."
+        }
+      }
+    },
+    "delete_attachment": {
+      "name": "Delete Attachment",
+      "description": "Delete Attachment. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "attachment_name": {
+          "name": "Attachment name",
+          "description": "Stirling PDF field: attachmentName."
+        }
+      }
+    },
+    "rename_attachment": {
+      "name": "Rename Attachment",
+      "description": "Rename Attachment. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "attachment_name": {
+          "name": "Attachment name",
+          "description": "Stirling PDF field: attachmentName."
+        },
+        "new_name": {
+          "name": "New name",
+          "description": "Stirling PDF field: newName."
+        }
+      }
+    },
+    "batch_process_attachments": {
+      "name": "Batch Process Attachments",
+      "description": "Batch Process Attachments. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "attachments": {
+          "name": "Attachments",
+          "description": "Absolute allowlisted local file path(s). Allowed extensions: .pdf, .txt, .csv, .json, .png, .jpg, .docx, .xlsx, .zip."
+        },
+        "ops_json": {
+          "name": "Ops json",
+          "description": "Stirling PDF field: opsJson."
+        },
+        "convert_to_pdf_a3b": {
+          "name": "Convert to pdf a3b",
+          "description": "Stirling PDF field: convertToPdfA3b."
+        }
+      }
+    },
+    "create_portfolio": {
+      "name": "Create Portfolio",
+      "description": "Create Portfolio. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_paths": {
+          "name": "Input files",
+          "description": "Absolute allowlisted HA paths. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "cover_title": {
+          "name": "Cover title",
+          "description": "Stirling PDF field: coverTitle."
+        }
+      }
+    },
+    "flatten_portfolio": {
+      "name": "Flatten Portfolio",
+      "description": "Flatten Portfolio. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "flatten": {
+      "name": "Flatten",
+      "description": "Flatten. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "flatten_only_forms": {
+          "name": "Flatten only forms",
+          "description": "Stirling PDF field: flattenOnlyForms."
+        },
+        "render_dpi": {
+          "name": "Render dpi",
+          "description": "Stirling PDF field: renderDpi."
+        }
+      }
+    },
+    "unlock_pdf_forms": {
+      "name": "Unlock Pdf Forms",
+      "description": "Unlock Pdf Forms. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "images_to_pdf": {
+      "name": "Images to PDF",
+      "description": "Images to PDF. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_paths": {
+          "name": "Input files",
+          "description": "Absolute allowlisted HA paths. .png, .jpg, .jpeg, .tif, .tiff, .gif, .webp, .svg, .bmp."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "fit_option": {
+          "name": "Fit option",
+          "description": "Stirling PDF field: fitOption. Values: fillPage, fitDocumentToImage, fitDocumentToPage, maintainAspectRatio."
+        },
+        "color_type": {
+          "name": "Color type",
+          "description": "Stirling PDF field: colorType. Values: color, greyscale, blackwhite."
+        },
+        "auto_rotate": {
+          "name": "Auto rotate",
+          "description": "Stirling PDF field: autoRotate."
+        }
+      }
+    },
+    "pdf_to_img": {
+      "name": "Pdf To Img",
+      "description": "Pdf To Img. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .zip, .png, .jpg, .jpeg, .tif, .tiff, .webp, .gif, .bmp."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "page_numbers": {
+          "name": "Page numbers",
+          "description": "Stirling PDF field: pageNumbers."
+        },
+        "image_format": {
+          "name": "Image format",
+          "description": "Stirling PDF field: imageFormat. Values: png, jpeg, jpg, gif, webp."
+        },
+        "single_or_multiple": {
+          "name": "Single or multiple",
+          "description": "Stirling PDF field: singleOrMultiple. Values: single, multiple."
+        },
+        "color_type": {
+          "name": "Color type",
+          "description": "Stirling PDF field: colorType. Values: color, greyscale, blackwhite."
+        },
+        "dpi": {
+          "name": "Dpi",
+          "description": "Stirling PDF field: dpi."
+        },
+        "include_annotations": {
+          "name": "Include annotations",
+          "description": "Stirling PDF field: includeAnnotations."
+        }
+      }
+    },
+    "pdf_to_pdfa": {
+      "name": "Pdf To Pdfa",
+      "description": "Pdf To Pdfa. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "output_format": {
+          "name": "Output format",
+          "description": "Stirling PDF field: outputFormat. Values: pdfa, pdfa-1, pdfa-2, pdfa-2b, pdfa-3, pdfa-3b, pdfa-1a, pdfa-2a, pdfa-3a, pdfx."
+        },
+        "pdf_ua": {
+          "name": "Pdf ua",
+          "description": "Stirling PDF field: pdfUa."
+        },
+        "strict": {
+          "name": "Strict",
+          "description": "Stirling PDF field: strict."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
+        }
+      }
+    },
+    "pdf_to_text": {
+      "name": "Pdf To Text",
+      "description": "Pdf To Text. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .txt, .rtf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "output_format": {
+          "name": "Output format",
+          "description": "Stirling PDF field: outputFormat. Values: rtf, txt."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
+        }
+      }
+    },
+    "pdf_to_word": {
+      "name": "Pdf To Word",
+      "description": "Pdf To Word. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .doc, .docx, .odt."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "output_format": {
+          "name": "Output format",
+          "description": "Stirling PDF field: outputFormat. Values: doc, docx, odt."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
+        }
+      }
+    },
+    "file_to_pdf": {
+      "name": "File to PDF",
+      "description": "File to PDF. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .doc, .docx, .xls, .xlsx, .ppt, .pptx, .odt, .ods, .odp, .rtf, .txt."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
+        }
+      }
+    },
+    "pdf_to_presentation": {
+      "name": "Pdf To Presentation",
+      "description": "Pdf To Presentation. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .ppt, .pptx, .odp."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "output_format": {
+          "name": "Output format",
+          "description": "Stirling PDF field: outputFormat. Values: ppt, pptx, odp."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
+        }
+      }
+    },
+    "pdf_to_csv": {
+      "name": "Pdf To Csv",
+      "description": "Pdf To Csv. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .csv, .zip."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "page_numbers": {
+          "name": "Page numbers",
+          "description": "Stirling PDF field: pageNumbers."
+        }
+      }
+    },
+    "pdf_to_xlsx": {
+      "name": "Pdf To Xlsx",
+      "description": "Pdf To Xlsx. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .xlsx."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "page_numbers": {
+          "name": "Page numbers",
+          "description": "Stirling PDF field: pageNumbers."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
+        }
+      }
+    },
+    "pdf_to_xml": {
+      "name": "Pdf To Xml",
+      "description": "Pdf To Xml. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .xml."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
+        }
+      }
+    },
+    "html_to_pdf": {
+      "name": "Html To Pdf",
+      "description": "Html To Pdf. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .html, .htm, .zip."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "zoom": {
+          "name": "Zoom",
+          "description": "Stirling PDF field: zoom."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
+        }
+      }
+    },
+    "markdown_to_pdf": {
+      "name": "Markdown To Pdf",
+      "description": "Markdown To Pdf. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .md, .markdown."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
+        }
+      }
+    },
+    "pdf_to_html": {
+      "name": "Pdf To Html",
+      "description": "Pdf To Html. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .html, .zip."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
+        }
+      }
+    },
+    "pdf_to_markdown": {
+      "name": "Pdf To Markdown",
+      "description": "Pdf To Markdown. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .md, .zip."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
+        }
+      }
+    },
+    "eml_to_pdf": {
+      "name": "Eml To Pdf",
+      "description": "Eml To Pdf. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .eml, .msg."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "include_attachments": {
+          "name": "Include attachments",
+          "description": "Stirling PDF field: includeAttachments."
+        },
+        "max_attachment_size_mb": {
+          "name": "Max attachment size mb",
+          "description": "Stirling PDF field: maxAttachmentSizeMB."
+        },
+        "download_html": {
+          "name": "Download html",
+          "description": "Stirling PDF field: downloadHtml."
+        },
+        "include_all_recipients": {
+          "name": "Include all recipients",
+          "description": "Stirling PDF field: includeAllRecipients."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
+        }
+      }
+    },
+    "svg_to_pdf": {
+      "name": "Svg To Pdf",
+      "description": "Svg To Pdf. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_paths": {
+          "name": "Input files",
+          "description": "Absolute allowlisted HA paths. .svg."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "combine_into_single_pdf": {
+          "name": "Combine into single pdf",
+          "description": "Stirling PDF field: combineIntoSinglePdf."
+        }
+      }
+    },
+    "ebook_to_pdf": {
+      "name": "Ebook To Pdf",
+      "description": "Ebook To Pdf. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .epub, .azw3, .mobi."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "embed_all_fonts": {
+          "name": "Embed all fonts",
+          "description": "Stirling PDF field: embedAllFonts. Values: true, false."
+        },
+        "include_table_of_contents": {
+          "name": "Include table of contents",
+          "description": "Stirling PDF field: includeTableOfContents. Values: true, false."
+        },
+        "include_page_numbers": {
+          "name": "Include page numbers",
+          "description": "Stirling PDF field: includePageNumbers. Values: true, false."
+        },
+        "optimize_for_ebook": {
+          "name": "Optimize for ebook",
+          "description": "Stirling PDF field: optimizeForEbook. Values: true, false."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
+        }
+      }
+    },
+    "pdf_to_epub": {
+      "name": "Pdf To Epub",
+      "description": "Pdf To Epub. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .epub, .azw3."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "detect_chapters": {
+          "name": "Detect chapters",
+          "description": "Stirling PDF field: detectChapters. Values: true, false."
+        },
+        "target_device": {
+          "name": "Target device",
+          "description": "Stirling PDF field: targetDevice. Values: TABLET_PHONE_IMAGES, KINDLE_EINK_TEXT."
+        },
+        "output_format": {
+          "name": "Output format",
+          "description": "Stirling PDF field: outputFormat. Values: EPUB, AZW3."
+        },
+        "use_stirling_office_convert": {
+          "name": "Stirling Office Convert",
+          "description": "For this action, requires server 3.3.0 or newer. Off by default: explicitly select the legacy converter instead of inheriting the server default. Enabling requires this server's external-action opt-in and admin permission for user calls. PDF/X keeps its legacy converter; HTML zoom does not apply to Office Convert."
+        }
+      }
+    },
+    "cbr_to_pdf": {
+      "name": "Cbr To Pdf",
+      "description": "Cbr To Pdf. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .cbr."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "optimize_for_ebook": {
+          "name": "Optimize for ebook",
+          "description": "Stirling PDF field: optimizeForEbook."
+        }
+      }
+    },
+    "cbz_to_pdf": {
+      "name": "Cbz To Pdf",
+      "description": "Cbz To Pdf. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .cbz."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "optimize_for_ebook": {
+          "name": "Optimize for ebook",
+          "description": "Stirling PDF field: optimizeForEbook."
+        }
+      }
+    },
+    "pdf_to_cbr": {
+      "name": "Pdf To Cbr",
+      "description": "Pdf To Cbr. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .cbr."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "dpi": {
+          "name": "Dpi",
+          "description": "Stirling PDF field: dpi."
+        }
+      }
+    },
+    "pdf_to_cbz": {
+      "name": "Pdf To Cbz",
+      "description": "Pdf To Cbz. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .cbz."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "dpi": {
+          "name": "Dpi",
+          "description": "Stirling PDF field: dpi."
+        }
+      }
+    },
+    "pdf_to_vector": {
+      "name": "Pdf To Vector",
+      "description": "Pdf To Vector. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .ps, .eps, .pcl, .xps."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "output_format": {
+          "name": "Output format",
+          "description": "Stirling PDF field: outputFormat. Values: eps, ps, pcl, xps."
+        },
+        "prepress": {
+          "name": "Prepress",
+          "description": "Stirling PDF field: prepress. Values: true, false."
+        }
+      }
+    },
+    "vector_to_pdf": {
+      "name": "Vector To Pdf",
+      "description": "Vector To Pdf. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .ps, .eps."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "output_format": {
+          "name": "Output format",
+          "description": "Stirling PDF field: outputFormat. Values: eps, ps, pcl, xps."
+        },
+        "prepress": {
+          "name": "Prepress",
+          "description": "Stirling PDF field: prepress. Values: true, false."
+        }
+      }
+    },
+    "pdf_to_ua": {
+      "name": "Pdf To Ua",
+      "description": "Pdf To Ua. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "profile": {
+          "name": "Profile",
+          "description": "Stirling PDF field: profile. Values: ua1, ua2."
+        },
+        "title": {
+          "name": "Title",
+          "description": "Stirling PDF field: title."
+        },
+        "language": {
+          "name": "Language",
+          "description": "Stirling PDF field: language."
+        },
+        "override_language": {
+          "name": "Override language",
+          "description": "Stirling PDF field: overrideLanguage."
+        },
+        "existing_tags": {
+          "name": "Existing tags",
+          "description": "Stirling PDF field: existingTags. Values: auto, keep, rebuild."
+        },
+        "figure_policy": {
+          "name": "Figure policy",
+          "description": "Stirling PDF field: figurePolicy. Values: require-alt, mark-decorative."
+        },
+        "embed_fonts": {
+          "name": "Embed fonts",
+          "description": "Stirling PDF field: embedFonts."
+        },
+        "alt_text": {
+          "name": "Alt text",
+          "description": "Stirling PDF field: altText."
+        }
+      }
+    },
+    "url_to_pdf": {
+      "name": "Website to PDF",
+      "description": "Website to PDF. Server support and installed dependencies are required. Requires the per-server external action opt-in.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "url_input": {
+          "name": "Url input",
+          "description": "Stirling PDF field: urlInput."
+        }
+      }
+    },
+    "analyze_basic_info": {
+      "name": "Analyze Basic Info",
+      "description": "Analyze Basic Info. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "analyze_page_count": {
+      "name": "Analyze Page Count",
+      "description": "Analyze Page Count. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "analyze_page_dimensions": {
+      "name": "Analyze Page Dimensions",
+      "description": "Analyze Page Dimensions. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "analyze_document_properties": {
+      "name": "Analyze Document Properties",
+      "description": "Analyze Document Properties. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "analyze_font_info": {
+      "name": "Analyze Font Info",
+      "description": "Analyze Font Info. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "analyze_annotation_info": {
+      "name": "Analyze Annotation Info",
+      "description": "Analyze Annotation Info. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "analyze_form_fields": {
+      "name": "Analyze Form Fields",
+      "description": "Analyze Form Fields. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "analyze_security_info": {
+      "name": "Analyze Security Info",
+      "description": "Analyze Security Info. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "pdf_info": {
+      "name": "Pdf Info",
+      "description": "Pdf Info. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "check_contains_text": {
+      "name": "Check Contains Text",
+      "description": "Check Contains Text. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "page_numbers": {
+          "name": "Page numbers",
+          "description": "Stirling PDF field: pageNumbers."
+        },
+        "text": {
+          "name": "Text",
+          "description": "Stirling PDF field: text."
+        }
+      }
+    },
+    "check_contains_image": {
+      "name": "Check Contains Image",
+      "description": "Check Contains Image. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "page_numbers": {
+          "name": "Page numbers",
+          "description": "Stirling PDF field: pageNumbers."
+        }
+      }
+    },
+    "check_page_count": {
+      "name": "Check Page Count",
+      "description": "Check Page Count. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "comparator": {
+          "name": "Comparator",
+          "description": "Stirling PDF field: comparator. Values: Greater, Equal, Less."
+        },
+        "page_count": {
+          "name": "Page count",
+          "description": "Stirling PDF field: pageCount."
+        }
+      }
+    },
+    "check_page_size": {
+      "name": "Check Page Size",
+      "description": "Check Page Size. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "comparator": {
+          "name": "Comparator",
+          "description": "Stirling PDF field: comparator. Values: Greater, Equal, Less."
+        },
+        "standard_page_size": {
+          "name": "Standard page size",
+          "description": "Stirling PDF field: standardPageSize. Values: A0, A1, A2, A3, A4, A5, A6, LETTER, LEGAL."
+        }
+      }
+    },
+    "check_file_size": {
+      "name": "Check File Size",
+      "description": "Check File Size. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "comparator": {
+          "name": "Comparator",
+          "description": "Stirling PDF field: comparator. Values: Greater, Equal, Less."
+        },
+        "file_size": {
+          "name": "File size",
+          "description": "Stirling PDF field: fileSize."
+        }
+      }
+    },
+    "check_page_rotation": {
+      "name": "Check Page Rotation",
+      "description": "Check Page Rotation. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "comparator": {
+          "name": "Comparator",
+          "description": "Stirling PDF field: comparator. Values: Greater, Equal, Less."
+        },
+        "rotation": {
+          "name": "Rotation",
+          "description": "Stirling PDF field: rotation."
+        }
+      }
+    },
+    "form_fields": {
+      "name": "Form Fields",
+      "description": "Form Fields. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "form_fields_with_coordinates": {
+      "name": "Form Fields With Coordinates",
+      "description": "Form Fields With Coordinates. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "form_fill": {
+      "name": "Form Fill",
+      "description": "Form Fill. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "data": {
+          "name": "Data",
+          "description": "Stirling PDF field: data."
+        },
+        "flatten": {
+          "name": "Flatten",
+          "description": "Stirling PDF field: flatten."
+        }
+      }
+    },
+    "form_extract_csv": {
+      "name": "Form Extract Csv",
+      "description": "Form Extract Csv. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .csv."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "data": {
+          "name": "Data",
+          "description": "Absolute allowlisted local file path(s). Allowed extensions: .json, .csv."
+        }
+      }
+    },
+    "form_extract_xlsx": {
+      "name": "Form Extract Xlsx",
+      "description": "Form Extract Xlsx. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .xlsx."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "data": {
+          "name": "Data",
+          "description": "Absolute allowlisted local file path(s). Allowed extensions: .json, .csv."
+        }
+      }
+    },
+    "form_add_fields": {
+      "name": "Form Add Fields",
+      "description": "Form Add Fields. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "fields": {
+          "name": "Fields",
+          "description": "Stirling PDF field: fields."
+        }
+      }
+    },
+    "form_modify_fields": {
+      "name": "Form Modify Fields",
+      "description": "Form Modify Fields. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "updates": {
+          "name": "Updates",
+          "description": "Stirling PDF field: updates."
+        }
+      }
+    },
+    "form_edit_fields": {
+      "name": "Form Edit Fields",
+      "description": "Form Edit Fields. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf, .zip."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "edits": {
+          "name": "Edits",
+          "description": "Stirling PDF field: edits."
+        },
+        "include_fields": {
+          "name": "Include fields",
+          "description": "Stirling PDF field: includeFields."
+        }
+      }
+    },
+    "form_delete_fields": {
+      "name": "Form Delete Fields",
+      "description": "Form Delete Fields. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "names": {
+          "name": "Names",
+          "description": "Stirling PDF field: names."
+        }
+      }
+    },
+    "form_detect": {
+      "name": "Form Detect",
+      "description": "Form Detect. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf, .json."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "conf_threshold": {
+          "name": "Conf threshold",
+          "description": "Stirling PDF field: confThreshold."
+        },
+        "apply_to_pdf": {
+          "name": "Apply to pdf",
+          "description": "Stirling PDF field: applyToPdf."
+        }
+      }
+    },
+    "add_password": {
+      "name": "Add Password",
+      "description": "Add Password. Server support and installed dependencies are required. Requires the per-server sensitive action opt-in.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "owner_password": {
+          "name": "Owner password",
+          "description": "Stirling PDF field: ownerPassword. Warning: automation configuration and traces may retain this secret."
+        },
+        "password": {
+          "name": "Password",
+          "description": "Stirling PDF field: password. Warning: automation configuration and traces may retain this secret."
+        },
+        "source_password": {
+          "name": "Source password",
+          "description": "Stirling PDF field: sourcePassword. Warning: automation configuration and traces may retain this secret."
+        },
+        "preserve_existing": {
+          "name": "Preserve existing",
+          "description": "Stirling PDF field: preserveExisting."
+        },
+        "key_length": {
+          "name": "Key length",
+          "description": "Stirling PDF field: keyLength. Values: 40, 128, 256."
+        },
+        "prevent_assembly": {
+          "name": "Prevent assembly",
+          "description": "Stirling PDF field: preventAssembly."
+        },
+        "prevent_extract_content": {
+          "name": "Prevent extract content",
+          "description": "Stirling PDF field: preventExtractContent."
+        },
+        "prevent_extract_for_accessibility": {
+          "name": "Prevent extract for accessibility",
+          "description": "Stirling PDF field: preventExtractForAccessibility."
+        },
+        "prevent_fill_in_form": {
+          "name": "Prevent fill in form",
+          "description": "Stirling PDF field: preventFillInForm."
+        },
+        "prevent_modify": {
+          "name": "Prevent modify",
+          "description": "Stirling PDF field: preventModify."
+        },
+        "prevent_modify_annotations": {
+          "name": "Prevent modify annotations",
+          "description": "Stirling PDF field: preventModifyAnnotations."
+        },
+        "prevent_printing": {
+          "name": "Prevent printing",
+          "description": "Stirling PDF field: preventPrinting."
+        },
+        "prevent_printing_faithful": {
+          "name": "Prevent printing faithful",
+          "description": "Stirling PDF field: preventPrintingFaithful."
+        }
+      }
+    },
+    "remove_password": {
+      "name": "Remove Password",
+      "description": "Remove Password. Server support and installed dependencies are required. Requires the per-server sensitive action opt-in.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "password": {
+          "name": "Password",
+          "description": "Stirling PDF field: password. Warning: automation configuration and traces may retain this secret."
+        },
+        "remove_all": {
+          "name": "Remove all",
+          "description": "Stirling PDF field: removeAll."
+        },
+        "owner_password": {
+          "name": "Owner password",
+          "description": "Stirling PDF field: ownerPassword. Warning: automation configuration and traces may retain this secret."
+        },
+        "source_password": {
+          "name": "Source password",
+          "description": "Stirling PDF field: sourcePassword. Warning: automation configuration and traces may retain this secret."
+        },
+        "retained_opening_password": {
+          "name": "Retained opening password",
+          "description": "Stirling PDF field: retainedOpeningPassword. Warning: automation configuration and traces may retain this secret."
+        }
+      }
+    },
+    "auto_redact": {
+      "name": "Auto Redact",
+      "description": "Auto Redact. Server support and installed dependencies are required. Requires the per-server sensitive action opt-in.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "list_of_text": {
+          "name": "List of text",
+          "description": "Stirling PDF field: listOfText."
+        },
+        "use_regex": {
+          "name": "Use regex",
+          "description": "Stirling PDF field: useRegex."
+        },
+        "whole_word_search": {
+          "name": "Whole word search",
+          "description": "Stirling PDF field: wholeWordSearch."
+        },
+        "case_sensitive": {
+          "name": "Case sensitive",
+          "description": "Stirling PDF field: caseSensitive."
+        },
+        "redact_color": {
+          "name": "Redact color",
+          "description": "Stirling PDF field: redactColor."
+        },
+        "custom_padding": {
+          "name": "Custom padding",
+          "description": "Stirling PDF field: customPadding."
+        },
+        "convert_pdf_to_image": {
+          "name": "Convert pdf to image",
+          "description": "Stirling PDF field: convertPDFToImage."
+        }
+      }
+    },
+    "redact": {
+      "name": "Redact",
+      "description": "Redact. Server support and installed dependencies are required. Requires the per-server sensitive action opt-in.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "page_numbers": {
+          "name": "Page numbers",
+          "description": "Stirling PDF field: pageNumbers."
+        },
+        "redactions": {
+          "name": "Redactions",
+          "description": "Stirling PDF field: redactions."
+        },
+        "convert_pdf_to_image": {
+          "name": "Convert pdf to image",
+          "description": "Stirling PDF field: convertPDFToImage."
+        },
+        "page_redaction_color": {
+          "name": "Page redaction color",
+          "description": "Stirling PDF field: pageRedactionColor."
+        }
+      }
+    },
+    "redact_execute": {
+      "name": "Redact Execute",
+      "description": "Redact Execute. Server support and installed dependencies are required. Requires the per-server sensitive action opt-in.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "text_values": {
+          "name": "Text values",
+          "description": "Stirling PDF field: textValues."
+        },
+        "regex_patterns": {
+          "name": "Regex patterns",
+          "description": "Stirling PDF field: regexPatterns."
+        },
+        "wipe_pages": {
+          "name": "Wipe pages",
+          "description": "Stirling PDF field: wipePages."
+        },
+        "ranges": {
+          "name": "Ranges",
+          "description": "Stirling PDF field: ranges."
+        },
+        "image_boxes": {
+          "name": "Image boxes",
+          "description": "Stirling PDF field: imageBoxes."
+        },
+        "redact_image_pages": {
+          "name": "Redact image pages",
+          "description": "Stirling PDF field: redactImagePages."
+        },
+        "style": {
+          "name": "Style",
+          "description": "Stirling PDF field: style."
+        }
+      }
+    },
+    "cert_sign": {
+      "name": "Cert Sign",
+      "description": "Cert Sign. Server support and installed dependencies are required. Requires the per-server sensitive action opt-in.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "private_key_file": {
+          "name": "Private key file",
+          "description": "Absolute allowlisted local file path(s). Allowed extensions: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
+        },
+        "cert_file": {
+          "name": "Cert file",
+          "description": "Absolute allowlisted local file path(s). Allowed extensions: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
+        },
+        "p12_file": {
+          "name": "P12 file",
+          "description": "Absolute allowlisted local file path(s). Allowed extensions: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
+        },
+        "jks_file": {
+          "name": "Jks file",
+          "description": "Absolute allowlisted local file path(s). Allowed extensions: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
+        },
+        "cert_type": {
+          "name": "Cert type",
+          "description": "Stirling PDF field: certType. Values: PEM, PKCS12, PFX, JKS."
+        },
+        "password": {
+          "name": "Password",
+          "description": "Stirling PDF field: password. Warning: automation configuration and traces may retain this secret."
+        },
+        "alias": {
+          "name": "Alias",
+          "description": "Stirling PDF field: alias."
+        },
+        "show_signature": {
+          "name": "Show signature",
+          "description": "Stirling PDF field: showSignature."
+        },
+        "reason": {
+          "name": "Reason",
+          "description": "Stirling PDF field: reason."
+        },
+        "location": {
+          "name": "Location",
+          "description": "Stirling PDF field: location."
+        },
+        "name": {
+          "name": "Name",
+          "description": "Stirling PDF field: name."
+        },
+        "page_number": {
+          "name": "Page number",
+          "description": "Stirling PDF field: pageNumber."
+        },
+        "show_logo": {
+          "name": "Show logo",
+          "description": "Stirling PDF field: showLogo."
+        }
+      }
+    },
+    "timestamp": {
+      "name": "Timestamp",
+      "description": "Timestamp. Server support and installed dependencies are required. Requires the per-server external action opt-in.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "tsa_url": {
+          "name": "Tsa url",
+          "description": "Stirling PDF field: tsaUrl."
+        }
+      }
+    },
+    "remove_cert_sign": {
+      "name": "Remove Cert Sign",
+      "description": "Remove Cert Sign. Server support and installed dependencies are required. Requires the per-server sensitive action opt-in.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "sanitize": {
+      "name": "Sanitize",
+      "description": "Sanitize. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "remove_java_script": {
+          "name": "Remove java script",
+          "description": "Stirling PDF field: removeJavaScript."
+        },
+        "remove_embedded_files": {
+          "name": "Remove embedded files",
+          "description": "Stirling PDF field: removeEmbeddedFiles."
+        },
+        "remove_xmp_metadata": {
+          "name": "Remove xmp metadata",
+          "description": "Stirling PDF field: removeXMPMetadata."
+        },
+        "remove_metadata": {
+          "name": "Remove metadata",
+          "description": "Stirling PDF field: removeMetadata."
+        },
+        "remove_links": {
+          "name": "Remove links",
+          "description": "Stirling PDF field: removeLinks."
+        },
+        "remove_fonts": {
+          "name": "Remove fonts",
+          "description": "Stirling PDF field: removeFonts."
+        }
+      }
+    },
+    "validate_signature": {
+      "name": "Validate Signature",
+      "description": "Validate Signature. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "cert_file": {
+          "name": "Cert file",
+          "description": "Absolute allowlisted local file path(s). Allowed extensions: .pem, .key, .crt, .cer, .p12, .pfx, .jks."
+        }
+      }
+    },
+    "verify": {
+      "name": "Verify",
+      "description": "Verify. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "validate_compliance": {
+      "name": "Validate Compliance",
+      "description": "Validate Compliance. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "accessibility_report": {
+      "name": "Accessibility Report",
+      "description": "Accessibility Report. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "profile": {
+          "name": "Profile",
+          "description": "Stirling PDF field: profile. Values: ua1, ua2."
+        }
+      }
+    },
+    "show_javascript": {
+      "name": "Show Javascript",
+      "description": "Show Javascript. Server support and installed dependencies are required.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .js."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        }
+      }
+    },
+    "classify_and_label": {
+      "name": "Classify And Label",
+      "description": "Classify And Label. Server support and installed dependencies are required. Requires the per-server ai action opt-in.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "reclassify": {
+          "name": "Reclassify",
+          "description": "Stirling PDF field: reclassify."
+        }
+      }
+    },
+    "math_auditor_agent": {
+      "name": "Math Auditor Agent",
+      "description": "Math Auditor Agent. Server support and installed dependencies are required. Requires the per-server ai action opt-in.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .json. Optional; result is returned as action response."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "tolerance": {
+          "name": "Tolerance",
+          "description": "Stirling PDF field: tolerance."
+        }
+      }
+    },
+    "pdf_comment_agent": {
+      "name": "Pdf Comment Agent",
+      "description": "Pdf Comment Agent. Server support and installed dependencies are required. Requires the per-server ai action opt-in.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Server",
+          "description": "Required with multiple configured servers. Optional when exactly one server is configured."
+        },
+        "file_path": {
+          "name": "Input file",
+          "description": "Absolute allowlisted HA path. .pdf."
+        },
+        "output_path": {
+          "name": "Output path",
+          "description": "Allowed extensions: .pdf."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Explicitly replace an existing output file."
+        },
+        "prompt": {
+          "name": "Prompt",
+          "description": "Stirling PDF field: prompt."
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Optional action groups",
+        "description": "These permissions apply only to this server. Passwords and certificates may be retained in automations and traces. External and AI tools may transfer documents outside the server and incur costs. The host list only restricts the initial URL, not redirects, DNS or embedded resources.",
+        "data": {
+          "enable_sensitive_actions": "Enable sensitive actions",
+          "enable_external_actions": "Enable external network actions",
+          "enable_ai_actions": "Enable AI actions",
+          "allowed_url_hosts": "Allowed URL hosts, comma separated"
+        }
       }
     }
   }

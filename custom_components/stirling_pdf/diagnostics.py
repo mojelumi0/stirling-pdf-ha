@@ -20,6 +20,7 @@ _TO_REDACT = {
     "authorization",
     "Authorization",
     "token",
+    "server_name",
 }
 
 

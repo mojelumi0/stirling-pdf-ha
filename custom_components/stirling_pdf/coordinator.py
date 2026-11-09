@@ -14,6 +14,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from .api import StirlingPdfApiClient, StirlingPdfApiError, StirlingPdfAuthError
 from .const import DOMAIN, SERVICES
+from .metrics import StirlingPdfMetricsCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -53,6 +54,7 @@ class StirlingPdfCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             config_entry=entry,
         )
         self.client = client
+        self.metrics = StirlingPdfMetricsCoordinator(hass, client, entry)
         self.jobs_processed = 0
         self.last_operation: str | None = None
         self.last_operation_time: datetime | None = None
