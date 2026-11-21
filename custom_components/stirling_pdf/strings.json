@@ -323,7 +323,10 @@
       "message": "Stirling PDF removed {operation} in version {version}. Select an older server that still supports it. No document was uploaded and statistics were not changed."
     },
     "tool_option_unsupported": {
-      "message": "The Stirling Office Convert option for {operation} requires Stirling PDF {version} or newer. Disable that option or select a supported server. No document was uploaded."
+      "message": "A selected option for {operation} requires Stirling PDF {version} or newer. Omit that option or select a supported server. No document was uploaded."
+    },
+    "invalid_custom_page_size": {
+      "message": "Select CUSTOM and provide custom_width and custom_height. custom_unit is mm (default), cm or in. Each side must be between 3 PDF points and 200 inches. Do not combine custom dimensions with a preset page size."
     }
   },
   "services": {
@@ -599,7 +602,7 @@
     },
     "scale_pages": {
       "name": "Scale Pages",
-      "description": "Scale Pages. Server support and installed dependencies are required.",
+      "description": "Change page size and content scale. Custom dimensions require Stirling PDF 3.4.0 or newer.",
       "fields": {
         "config_entry_id": {
           "name": "Server",
@@ -619,15 +622,27 @@
         },
         "page_size": {
           "name": "Page size",
-          "description": "Stirling PDF field: pageSize. Values: A0, A1, A2, A3, A4, A5, A6, LETTER, LEGAL, KEEP."
+          "description": "A preset size or KEEP. CUSTOM requires 3.4.0 or newer and both width and height."
         },
         "orientation": {
           "name": "Orientation",
-          "description": "Stirling PDF field: orientation. Values: PORTRAIT, LANDSCAPE."
+          "description": "Orientation for preset sizes. Ignored by the server for KEEP and CUSTOM."
         },
         "scale_factor": {
           "name": "Scale factor",
           "description": "Stirling PDF field: scaleFactor."
+        },
+        "custom_width": {
+          "name": "Custom width",
+          "description": "CUSTOM only, since 3.4.0. Width in custom_unit; between 3 PDF points and 200 inches (at most 5080 mm, 508 cm or 200 in)."
+        },
+        "custom_height": {
+          "name": "Custom height",
+          "description": "CUSTOM only, since 3.4.0. Height in custom_unit, with the same limits as the width."
+        },
+        "custom_unit": {
+          "name": "Custom size unit",
+          "description": "CUSTOM only, since 3.4.0. mm, cm or in; when omitted, the server uses mm. Width and height determine orientation."
         }
       }
     },
@@ -1347,7 +1362,7 @@
     },
     "metadata": {
       "name": "Update metadata",
-      "description": "Update metadata. Server support and installed dependencies are required.",
+      "description": "Update PDF metadata. Without keep_omitted, omitted standard fields are cleared. delete_all removes all metadata.",
       "fields": {
         "config_entry_id": {
           "name": "Server",
@@ -1408,6 +1423,10 @@
         "all_request_params": {
           "name": "All request params",
           "description": "Stirling PDF field: allRequestParams."
+        },
+        "keep_omitted": {
+          "name": "Keep omitted metadata",
+          "description": "Requires 3.4.0 or newer, including when false. True preserves omitted standard fields. Omit this field for the existing clearing behavior. delete_all takes precedence."
         }
       }
     },
@@ -2659,7 +2678,7 @@
     },
     "pdf_to_vector": {
       "name": "Pdf To Vector",
-      "description": "Pdf To Vector. Server support and installed dependencies are required.",
+      "description": "Only for Stirling PDF before 3.4.0. Removed upstream in 3.4.0; unsupported calls are rejected before file access.",
       "fields": {
         "config_entry_id": {
           "name": "Server",
@@ -2689,7 +2708,7 @@
     },
     "vector_to_pdf": {
       "name": "Vector To Pdf",
-      "description": "Vector To Pdf. Server support and installed dependencies are required.",
+      "description": "Only for Stirling PDF before 3.4.0. Removed upstream in 3.4.0; unsupported calls are rejected before file access.",
       "fields": {
         "config_entry_id": {
           "name": "Server",

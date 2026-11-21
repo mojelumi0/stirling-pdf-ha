@@ -10,11 +10,11 @@ import pytest
 from homeassistant.const import CONF_URL
 from homeassistant.core import Context, HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.stirling_pdf.const import DOMAIN
 from custom_components.stirling_pdf.operations import OPERATIONS
 from custom_components.stirling_pdf.tools import ha_field_name, server_release
+from tests.ha_helpers import MockConfigEntry
 
 NEW_CONVERTERS = [
     name

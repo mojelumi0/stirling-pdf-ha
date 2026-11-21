@@ -12,6 +12,25 @@ file I/O or upload. The same registered action remains available to older
 servers with a recognized stable version. This is not a replacement API for the
 new upstream Text Editor.
 
+`pdf_to_vector` and `vector_to_pdf` were removed upstream in 3.4.0. They remain
+registered for older servers; calls on 3.4.0 or newer are rejected locally,
+before reading a file, uploading a document or changing statistics. There is
+no integration-wide minimum of Stirling PDF 3.4.0.
+
+On 3.4.0 or newer, `metadata` accepts `keep_omitted`. Set it to true to retain
+omitted standard metadata fields when changing another field. Omit the option
+to keep the existing clearing behavior, including on older servers. Supplying
+this new field, even as false, requires a recognized version of at least 3.4.0.
+`delete_all: true` takes precedence and still removes all metadata.
+
+`scale_pages` also accepts `page_size: CUSTOM` on 3.4.0 or newer. Supply both
+`custom_width` and `custom_height`, optionally with `custom_unit: mm`, `cm` or
+`in` (the server defaults to mm). Each side must be between 3 PDF points and
+200 inches: at most 5080 mm, 508 cm or 200 in. Custom dimensions determine
+orientation; the server ignores `orientation` for CUSTOM and KEEP. Do not
+combine custom fields with a preset size. Existing KEEP and preset calls send
+no new fields and keep working on older servers.
+
 Fourteen conversion actions expose `use_stirling_office_convert`, explicitly
 false by default. Nine gained the option in 3.3.0: `pdf_to_pdfa`, `pdf_to_xml`,
 `html_to_pdf`, `markdown_to_pdf`, `pdf_to_html`, `pdf_to_markdown`, `eml_to_pdf`,
@@ -35,6 +54,10 @@ in the action editor; descriptions identify their underlying API names.
 Additional tools accept up to 32 local files and 64 MiB total input. Structured
 fields and returned JSON have a 4 MiB limit. These limits do not make downloads
 streaming or cap memory used by every response.
+
+Stirling's `security.blockSignedPdfEdits` setting is enforced by its Web/Desktop
+apps, not by API calls or server pipelines. Do not treat it as protection for
+these actions. Work on copies and verify digital signatures independently.
 
 For URL-to-PDF and timestamping, use **Allowed URL hosts** on the selected
 server entry. Enter exact hostnames separated by commas. URL-to-PDF requires
@@ -108,8 +131,8 @@ resources or server-side backends. Review the server's own network controls.
 | `stirling_pdf.cbz_to_pdf` | standard | .cbz | .pdf | `/api/v1/convert/cbz/pdf` |
 | `stirling_pdf.pdf_to_cbr` | standard | .pdf | .cbr | `/api/v1/convert/pdf/cbr` |
 | `stirling_pdf.pdf_to_cbz` | standard | .pdf | .cbz | `/api/v1/convert/pdf/cbz` |
-| `stirling_pdf.pdf_to_vector` | standard | .pdf | .ps, .eps, .pcl, .xps | `/api/v1/convert/pdf/vector` |
-| `stirling_pdf.vector_to_pdf` | standard | .ps, .eps | .pdf | `/api/v1/convert/vector/pdf` |
+| `stirling_pdf.pdf_to_vector` (before 3.4.0 only) | standard | .pdf | .ps, .eps, .pcl, .xps | `/api/v1/convert/pdf/vector` |
+| `stirling_pdf.vector_to_pdf` (before 3.4.0 only) | standard | .ps, .eps | .pdf | `/api/v1/convert/vector/pdf` |
 | `stirling_pdf.pdf_to_ua` | standard | .pdf | .pdf | `/api/v1/convert/pdf/ua` |
 | `stirling_pdf.url_to_pdf` | external | No local input | .pdf | `/api/v1/convert/url/pdf` |
 | `stirling_pdf.analyze_basic_info` | standard | .pdf | .json | `/api/v1/analysis/basic-info` |

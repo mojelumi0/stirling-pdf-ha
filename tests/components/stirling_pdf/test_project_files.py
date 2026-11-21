@@ -170,7 +170,6 @@ def test_github_validation_workflows_exist() -> None:
         "validate.yaml",
         "release-version-check.yml",
         "server-tests.yml",
-        "ha-2026-11.yml",
     }
 
     for name in workflow_names:
@@ -204,39 +203,49 @@ def test_github_validation_workflows_exist() -> None:
     assert "custom_components/stirling_pdf/manifest.json" in release_version_workflow
 
 
-def test_manual_2026_11_workflow_keeps_dependency_and_coverage_checks() -> None:
-    """Do not confuse a prepared manual job with automatic compatibility proof."""
-    workflow = (WORKFLOWS / "ha-2026-11.yml").read_text(encoding="utf-8")
+def test_automatic_ha_matrix_keeps_dependency_and_coverage_checks() -> None:
+    """Use a matching test package per Core version, without dependency overrides."""
+    workflow = (WORKFLOWS / "tests.yml").read_text(encoding="utf-8")
     parsed = yaml.safe_load(workflow)
     # PyYAML's YAML 1.1 loader treats the unquoted workflow key `on` as True.
     triggers = parsed.get("on", parsed.get(True))
-    assert set(triggers) == {"workflow_dispatch"}
-    version_input = triggers["workflow_dispatch"]["inputs"]["test_plugin_version"]
-    assert version_input["required"] is True
-    assert "default" not in version_input
+    assert {"push", "pull_request", "workflow_dispatch"} <= set(triggers)
     job = parsed["jobs"]["compatibility"]
-    assert job["env"]["EXPECTED_HA_VERSION"] == "2026.11.0"
+    assert job["strategy"]["matrix"]["include"] == [
+        {"homeassistant": "2026.9.0", "requirements": "requirements-dev-min.txt"},
+        {"homeassistant": "2026.10.2", "requirements": "requirements-dev-2026-10.txt"},
+        {"homeassistant": "2026.11.2", "requirements": "requirements-dev.txt"},
+    ]
+    for row in job["strategy"]["matrix"]["include"]:
+        requirements = (ROOT / row["requirements"]).read_text("utf-8")
+        assert "-r requirements-dev-common.txt" in requirements
+        if row["homeassistant"] == "2026.11.2":
+            assert "pytest-homeassistant==2026.11.2" in requirements
+            assert "pytest-homeassistant-custom-component" not in requirements
+        else:
+            assert "pytest-homeassistant-custom-component==" in requirements
+            assert "pytest-homeassistant==" not in requirements
+    assert not (WORKFLOWS / "ha-2026-11.yml").exists()
     assert "continue-on-error" not in job
     commands = "\n".join(step.get("run", "") for step in job["steps"])
-    assert '"homeassistant==$EXPECTED_HA_VERSION"' in commands
-    assert (
-        '"pytest-homeassistant-custom-component==$HA_TEST_PLUGIN_VERSION"' in commands
-    )
-    assert "-r requirements-dev-common.txt" in commands
+    assert "${{ matrix.requirements }}" in commands
+    assert 'importlib.metadata.version("homeassistant")' in commands
     assert "python -m pip check" in commands
     assert "--no-deps" not in commands
     assert "--override" not in commands
     assert "--cov-fail-under=95" in commands
     assert "python scripts/check_coverage.py coverage.json" in commands
     assert all("continue-on-error" not in step for step in job["steps"])
+    assert parsed["jobs"]["pytest"]["name"] == "pytest"
+    assert parsed["jobs"]["pytest"]["needs"] == "compatibility"
 
 
-def test_server_matrix_pins_both_versions_and_login_modes() -> None:
+def test_server_matrix_pins_all_versions_and_login_modes() -> None:
     """A green old-server job is not compatibility evidence for the new release."""
     workflow = yaml.safe_load((WORKFLOWS / "server-tests.yml").read_text("utf-8"))
     job = workflow["jobs"]["server"]
     matrix = job["strategy"]["matrix"]
-    assert matrix["version"] == ["3.2.0", "3.3.0"]
+    assert matrix["version"] == ["3.2.0", "3.3.0", "3.4.0"]
     assert matrix["login"] == ["true", "false"]
     images = {row["version"]: row["image"] for row in matrix["include"]}
     assert set(images) == set(matrix["version"])
@@ -251,6 +260,9 @@ def test_server_matrix_pins_both_versions_and_login_modes() -> None:
         "10164ffe04961b02ebc9fa4da12064eeacb8d3bc3e09ceb059f78ce7aaa83207"
     )
     assert job["services"]["stirling"]["image"] == "${{ matrix.image }}"
+    assert images["3.4.0"].endswith(
+        "972ffc10fbd63a9e7178253a49050c7658e0d4e03b2701005c3e12e210d2e068"
+    )
     step = next(step for step in job["steps"] if "tests_live" in step.get("run", ""))
     assert step["env"]["STIRLING_PDF_EXPECTED_VERSION"] == "${{ matrix.version }}"
     assert "continue-on-error" not in job
@@ -288,6 +300,21 @@ def test_330_contract_metadata_and_converter_defaults_are_explicit() -> None:
         if name in newer:
             assert operation["office_convert_since"] == [3, 3, 0]
     assert converters == 14
+
+
+def test_340_contract_fields_do_not_change_existing_defaults() -> None:
+    for name in ("pdf_to_vector", "vector_to_pdf"):
+        assert OPERATIONS[name]["removed_in"] == [3, 4, 0]
+    metadata = OPERATIONS["metadata"]["fields"]
+    assert metadata["deleteAll"]["default"] is False
+    assert metadata["keepOmitted"]["since"] == [3, 4, 0]
+    assert "default" not in metadata["keepOmitted"]
+    scale = OPERATIONS["scale_pages"]["fields"]
+    assert scale["pageSize"]["default"] == "KEEP"
+    assert scale["pageSize"]["enum_since"] == {"CUSTOM": [3, 4, 0]}
+    for name in ("customWidth", "customHeight", "customUnit"):
+        assert scale[name]["since"] == [3, 4, 0]
+        assert "default" not in scale[name]
 
 
 def test_config_forms_always_supply_an_explicit_step_id() -> None:

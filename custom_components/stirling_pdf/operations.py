@@ -102,8 +102,10 @@ OPERATIONS: dict[str, dict] = {
                     "LETTER",
                     "LEGAL",
                     "KEEP",
+                    "CUSTOM",
                 ],
                 "default": "KEEP",
+                "enum_since": {"CUSTOM": [3, 4, 0]},
             },
             "orientation": {
                 "type": "string",
@@ -116,6 +118,24 @@ OPERATIONS: dict[str, dict] = {
                 "required": False,
                 "default": 1,
                 "minimum": 0,
+            },
+            "customWidth": {
+                "type": "number",
+                "required": False,
+                "minimum": 0,
+                "since": [3, 4, 0],
+            },
+            "customHeight": {
+                "type": "number",
+                "required": False,
+                "minimum": 0,
+                "since": [3, 4, 0],
+            },
+            "customUnit": {
+                "type": "string",
+                "required": False,
+                "enum": ["mm", "cm", "in"],
+                "since": [3, 4, 0],
             },
         },
     },
@@ -657,6 +677,11 @@ OPERATIONS: dict[str, dict] = {
         "files": {},
         "fields": {
             "deleteAll": {"type": "boolean", "required": True, "default": False},
+            "keepOmitted": {
+                "type": "boolean",
+                "required": False,
+                "since": [3, 4, 0],
+            },
             "author": {"type": "string", "required": False},
             "creationDate": {"type": "string", "required": False},
             "creator": {"type": "string", "required": False},
@@ -1530,6 +1555,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "pdf_to_vector": {
         "endpoint": "/api/v1/convert/pdf/vector",
+        "removed_in": [3, 4, 0],
         "group": "standard",
         "output": "document",
         "suffixes": [".ps", ".eps", ".pcl", ".xps"],
@@ -1554,6 +1580,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "vector_to_pdf": {
         "endpoint": "/api/v1/convert/vector/pdf",
+        "removed_in": [3, 4, 0],
         "group": "standard",
         "output": "pdf",
         "suffixes": [".pdf"],

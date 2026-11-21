@@ -18,11 +18,11 @@ from homeassistant.helpers.entity import entity_sources
 from homeassistant.helpers.script import Script
 from homeassistant.helpers.script_variables import ScriptVariables
 from homeassistant.helpers.template import Template
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.stirling_pdf.const import DOMAIN
 from custom_components.stirling_pdf.operations import OPERATIONS
 from custom_components.stirling_pdf.tools import tool_schema
+from tests.ha_helpers import MockConfigEntry
 
 ROOT = Path(__file__).resolve().parents[3]
 

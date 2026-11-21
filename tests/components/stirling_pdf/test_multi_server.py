@@ -10,10 +10,10 @@ from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import CONF_API_KEY, CONF_URL
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.stirling_pdf import _get_coordinator
 from custom_components.stirling_pdf.const import DOMAIN
+from tests.ha_helpers import MockConfigEntry
 
 
 async def test_two_entries_route_files_credentials_and_statistics_independently(

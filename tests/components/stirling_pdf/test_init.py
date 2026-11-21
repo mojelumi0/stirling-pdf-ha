@@ -11,13 +11,30 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.update_coordinator import UpdateFailed
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.stirling_pdf import async_unload_entry
 from custom_components.stirling_pdf import binary_sensor as binary_sensor_platform
 from custom_components.stirling_pdf import sensor as sensor_platform
 from custom_components.stirling_pdf.api import StirlingPdfAuthError
 from custom_components.stirling_pdf.const import DOMAIN
+from custom_components.stirling_pdf.entity import StirlingPdfEntity
+from tests.ha_helpers import MockConfigEntry
+
+
+async def test_device_info_uses_supported_object_comparison(
+    loaded_entry: MockConfigEntry,
+) -> None:
+    """Compare objects, not deprecated dict access on the 2026.11 dataclass."""
+    entity = StirlingPdfEntity(loaded_entry.runtime_data, loaded_entry)
+    assert entity.device_info == dr.DeviceInfo(
+        identifiers={(DOMAIN, loaded_entry.entry_id)},
+        name=loaded_entry.title,
+        entry_type=dr.DeviceEntryType.SERVICE,
+        manufacturer="Stirling PDF",
+        model="Server",
+        sw_version="2.14.3",
+        configuration_url="http://pdf.local:8080",
+    )
 
 
 def _entity_id(

@@ -11,7 +11,6 @@ import voluptuous as vol
 from homeassistant.config_entries import SOURCE_REAUTH
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.stirling_pdf import async_setup
 from custom_components.stirling_pdf.api import (
@@ -36,6 +35,7 @@ from custom_components.stirling_pdf.const import (
     SERVICE_OCR,
     SERVICE_SPLIT,
 )
+from tests.ha_helpers import MockConfigEntry
 
 PDF_INPUT = b"%PDF-1.4\ninput\n%%EOF\n"
 PDF_RESULT = b"%PDF-1.4\nresult\n%%EOF\n"
