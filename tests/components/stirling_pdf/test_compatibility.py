@@ -223,16 +223,18 @@ async def test_new_converter_choice_rejects_old_or_unknown_versions_before_uploa
 
 @pytest.mark.parametrize("name", ALL_CONVERTERS)
 @pytest.mark.parametrize("choice", [None, False, True])
+@pytest.mark.parametrize("version", ["3.3.0", "3.4.0", "3.5.0"])
 async def test_all_converter_choices_are_explicit_and_keep_admin_opt_in_rules(
     hass: HomeAssistant,
     loaded_entry: MockConfigEntry,
     tmp_path: Path,
     name: str,
     choice: bool | None,
+    version: str,
 ) -> None:
     """Test routing/wire fields with mocked output, not converter rendering quality."""
     coordinator = loaded_entry.runtime_data
-    coordinator.data = {"version": "3.3.0", "status": "UP"}
+    coordinator.data = {"version": version, "status": "UP"}
     hass.config_entries.async_update_entry(
         loaded_entry, options={"enable_external_actions": choice is True}
     )
@@ -241,6 +243,8 @@ async def test_all_converter_choices_are_explicit_and_keep_admin_opt_in_rules(
     source = tmp_path / ("input" + operation["inputExtensions"][0])
     source.write_bytes(b"synthetic converter input")
     suffix = operation["suffixes"][0]
+    if name == "pdf_to_word" and version == "3.5.0":
+        suffix = ".docx"
     output = tmp_path / ("output" + suffix)
     data = _payload(name, source, output)
     if choice is not None:
@@ -248,6 +252,7 @@ async def test_all_converter_choices_are_explicit_and_keep_admin_opt_in_rules(
     result = {
         ".pdf": b"%PDF-synthetic-result",
         ".doc": b"\xd0\xcf\x11\xe0synthetic-result",
+        ".docx": b"PK\x03\x04synthetic-result",
         ".ppt": b"\xd0\xcf\x11\xe0synthetic-result",
         ".xlsx": b"PK\x03\x04synthetic-result",
         ".epub": b"PK\x03\x04synthetic-result",
@@ -266,7 +271,10 @@ async def test_all_converter_choices_are_explicit_and_keep_admin_opt_in_rules(
     else:
         lookup.assert_not_awaited()
     wire = coordinator.client.async_process.await_args.args[2]
-    assert wire["useStirlingOfficeConvert"] is (choice is True)
+    if version == "3.5.0":
+        assert "useStirlingOfficeConvert" not in wire
+    else:
+        assert wire["useStirlingOfficeConvert"] is (choice is True)
     assert output.read_bytes() == result
     assert source.read_bytes() == b"synthetic converter input"
     assert coordinator.jobs_processed == 1

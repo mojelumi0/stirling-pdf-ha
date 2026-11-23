@@ -187,6 +187,8 @@ def _validate_tool_version(
     removed = operation.get("removed_in")
     converter_since = operation.get("office_convert_since")
     minimum_versions = []
+    removed_formats = []
+    limited_values = []
     if converter_since and call.data.get("use_stirling_office_convert"):
         minimum_versions.append(tuple(converter_since))
     for name, spec in operation["fields"].items():
@@ -198,7 +200,16 @@ def _validate_tool_version(
         if choices := spec.get("enum_since"):
             if since := choices.get(call.data[public_name]):
                 minimum_versions.append(tuple(since))
-    if removed is None and not minimum_versions:
+        if choices := spec.get("enum_removed_in"):
+            if since := choices.get(call.data[public_name]):
+                removed_formats.append((str(call.data[public_name]), tuple(since)))
+        if limits := spec.get("limits_since"):
+            if not limits["minimum"] <= call.data[public_name] <= limits["maximum"]:
+                limited_values.append((public_name, limits))
+    suffix = Path(call.data.get("output_path", "")).suffix.lower()
+    if since := operation.get("suffixes_removed_in", {}).get(suffix):
+        removed_formats.append((suffix, tuple(since)))
+    if removed is None and not (minimum_versions or removed_formats or limited_values):
         return
     release = server_release(getattr(coordinator, "data", None))
     if release is None:
@@ -216,6 +227,30 @@ def _validate_tool_version(
                 "version": ".".join(str(part) for part in removed),
             },
         )
+    for output_format, since in removed_formats:
+        if release >= since:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="tool_format_removed",
+                translation_placeholders={
+                    "operation": call.service,
+                    "format": output_format,
+                    "version": ".".join(str(part) for part in since),
+                },
+            )
+    for field, limits in limited_values:
+        if release >= tuple(limits["version"]):
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="tool_value_unsupported",
+                translation_placeholders={
+                    "operation": call.service,
+                    "field": field,
+                    "minimum": str(limits["minimum"]),
+                    "maximum": str(limits["maximum"]),
+                    "version": ".".join(str(part) for part in limits["version"]),
+                },
+            )
     if minimum_versions and release < (minimum := max(minimum_versions)):
         raise ServiceValidationError(
             translation_domain=DOMAIN,
@@ -225,6 +260,15 @@ def _validate_tool_version(
                 "version": ".".join(str(part) for part in minimum),
             },
         )
+
+
+def _office_selector_retired(
+    coordinator: StirlingPdfCoordinator, operation: dict[str, Any]
+) -> bool:
+    """The 3.5+ in-process converter no longer accepts the old engine selector."""
+    until = operation.get("office_convert_until")
+    release = server_release(getattr(coordinator, "data", None))
+    return until is not None and release is not None and release >= tuple(until)
 
 
 def _validate_custom_page_size(data: dict[str, Any]) -> None:
@@ -435,6 +479,10 @@ async def async_handle_tool(
             )
         data = {}
         for name, spec in operation["fields"].items():
+            if name == "useStirlingOfficeConvert" and _office_selector_retired(
+                coordinator, operation
+            ):
+                continue
             public_name = ha_field_name(name)
             if public_name in call.data:
                 value = call.data[public_name]

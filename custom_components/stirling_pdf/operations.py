@@ -1127,6 +1127,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "pdf_to_pdfa": {
         "endpoint": "/api/v1/convert/pdf/pdfa",
+        "office_convert_until": [3, 5, 0],
         "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "pdf",
@@ -1163,6 +1164,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "pdf_to_text": {
         "endpoint": "/api/v1/convert/pdf/text",
+        "office_convert_until": [3, 5, 0],
         "group": "standard",
         "output": "document",
         "suffixes": [".txt", ".rtf"],
@@ -1185,6 +1187,8 @@ OPERATIONS: dict[str, dict] = {
     },
     "pdf_to_word": {
         "endpoint": "/api/v1/convert/pdf/word",
+        "office_convert_until": [3, 5, 0],
+        "suffixes_removed_in": {".doc": [3, 5, 0]},
         "group": "standard",
         "output": "document",
         "suffixes": [".doc", ".docx", ".odt"],
@@ -1197,6 +1201,7 @@ OPERATIONS: dict[str, dict] = {
                 "type": "string",
                 "required": True,
                 "enum": ["doc", "docx", "odt"],
+                "enum_removed_in": {"doc": [3, 5, 0]},
             },
             "useStirlingOfficeConvert": {
                 "type": "boolean",
@@ -1207,6 +1212,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "file_to_pdf": {
         "endpoint": "/api/v1/convert/file/pdf",
+        "office_convert_until": [3, 5, 0],
         "group": "standard",
         "output": "pdf",
         "suffixes": [".pdf"],
@@ -1236,6 +1242,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "pdf_to_presentation": {
         "endpoint": "/api/v1/convert/pdf/presentation",
+        "office_convert_until": [3, 5, 0],
         "group": "standard",
         "output": "document",
         "suffixes": [".ppt", ".pptx", ".odp"],
@@ -1271,6 +1278,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "pdf_to_xlsx": {
         "endpoint": "/api/v1/convert/pdf/xlsx",
+        "office_convert_until": [3, 5, 0],
         "group": "standard",
         "output": "document",
         "suffixes": [".xlsx"],
@@ -1289,6 +1297,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "pdf_to_xml": {
         "endpoint": "/api/v1/convert/pdf/xml",
+        "office_convert_until": [3, 5, 0],
         "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "document",
@@ -1307,6 +1316,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "html_to_pdf": {
         "endpoint": "/api/v1/convert/html/pdf",
+        "office_convert_until": [3, 5, 0],
         "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "pdf",
@@ -1316,7 +1326,12 @@ OPERATIONS: dict[str, dict] = {
         "multiple": False,
         "files": {},
         "fields": {
-            "zoom": {"type": "number", "required": True, "default": 1},
+            "zoom": {
+                "type": "number",
+                "required": True,
+                "default": 1,
+                "limits_since": {"version": [3, 5, 0], "minimum": 0.1, "maximum": 8},
+            },
             "useStirlingOfficeConvert": {
                 "type": "boolean",
                 "required": False,
@@ -1326,6 +1341,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "markdown_to_pdf": {
         "endpoint": "/api/v1/convert/markdown/pdf",
+        "office_convert_until": [3, 5, 0],
         "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "pdf",
@@ -1344,6 +1360,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "pdf_to_html": {
         "endpoint": "/api/v1/convert/pdf/html",
+        "office_convert_until": [3, 5, 0],
         "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "document",
@@ -1362,6 +1379,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "pdf_to_markdown": {
         "endpoint": "/api/v1/convert/pdf/markdown",
+        "office_convert_until": [3, 5, 0],
         "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "document",
@@ -1380,6 +1398,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "eml_to_pdf": {
         "endpoint": "/api/v1/convert/eml/pdf",
+        "office_convert_until": [3, 5, 0],
         "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "pdf",
@@ -1424,6 +1443,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "ebook_to_pdf": {
         "endpoint": "/api/v1/convert/ebook/pdf",
+        "office_convert_until": [3, 5, 0],
         "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "pdf",
@@ -1466,6 +1486,7 @@ OPERATIONS: dict[str, dict] = {
     },
     "pdf_to_epub": {
         "endpoint": "/api/v1/convert/pdf/epub",
+        "office_convert_until": [3, 5, 0],
         "office_convert_since": [3, 3, 0],
         "group": "standard",
         "output": "document",

@@ -327,6 +327,12 @@
     },
     "invalid_custom_page_size": {
       "message": "Waehle CUSTOM und gib custom_width und custom_height an. Die Einheit custom_unit ist mm (Standard), cm oder in. Jede Seite muss zwischen 3 PDF-Punkten und 200 Zoll lang sein. Eigene Masse duerfen nicht mit einem Standardformat kombiniert werden."
+    },
+    "tool_format_removed": {
+      "message": "Stirling PDF unterstuetzt die Ausgabe {format} fuer {operation} ab Version {version} nicht mehr. Waehle ein unterstuetztes Format und eine passende Endung. Es wurde kein Dokument hochgeladen und keine Statistik geaendert."
+    },
+    "tool_value_unsupported": {
+      "message": "Fuer {operation} muss {field} unter Stirling PDF {version} oder neuer zwischen {minimum} und {maximum} liegen. Es wurde kein Dokument hochgeladen."
     }
   },
   "services": {
@@ -2114,7 +2120,7 @@
         },
         "use_stirling_office_convert": {
           "name": "Stirling Office Convert",
-          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
+          "description": "Konverter-Auswahl nur vor 3.5.0. False waehlt ausdruecklich den alten Konverter. Ab 3.5.0 wird das Feld nicht an die API gesendet; Stirling bestimmt den Konverter. True erfordert weiterhin die Freigabe externer Aktionen und Adminrechte. Versionsgrenzen stehen im Aktionskatalog."
         }
       }
     },
@@ -2144,13 +2150,13 @@
         },
         "use_stirling_office_convert": {
           "name": "Stirling Office Convert",
-          "description": "Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
+          "description": "Konverter-Auswahl nur vor 3.5.0. False waehlt ausdruecklich den alten Konverter. Ab 3.5.0 wird das Feld nicht an die API gesendet; Stirling bestimmt den Konverter. True erfordert weiterhin die Freigabe externer Aktionen und Adminrechte. Versionsgrenzen stehen im Aktionskatalog."
         }
       }
     },
     "pdf_to_word": {
       "name": "PDF zu Word",
-      "description": "Eine bearbeitbare Textverarbeitungsdatei erzeugen. Der Server muss das Werkzeug unterstuetzen.",
+      "description": "PDF nach Word/ODT konvertieren. Ab 3.5.0 sind nur docx und odt als Ausgabe erlaubt; doc bleibt fuer aeltere Server verfuegbar.",
       "fields": {
         "config_entry_id": {
           "name": "Server",
@@ -2170,17 +2176,17 @@
         },
         "output_format": {
           "name": "Output format",
-          "description": "Stirling-PDF-Feld: outputFormat."
+          "description": "docx oder odt. doc ist nur vor Stirling PDF 3.5.0 erlaubt. Die Dateiendung muss zum Ausgabeformat passen."
         },
         "use_stirling_office_convert": {
           "name": "Stirling Office Convert",
-          "description": "Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
+          "description": "Konverter-Auswahl nur vor 3.5.0. False waehlt ausdruecklich den alten Konverter. Ab 3.5.0 wird das Feld nicht an die API gesendet; Stirling bestimmt den Konverter. True erfordert weiterhin die Freigabe externer Aktionen und Adminrechte. Versionsgrenzen stehen im Aktionskatalog."
         }
       }
     },
     "file_to_pdf": {
       "name": "Office/Datei zu PDF",
-      "description": "Unterstützte Quelldateien mit dem verfügbaren Konverter nach PDF umwandeln. Der Server muss das Werkzeug unterstuetzen.",
+      "description": "Office-Dateien nach PDF konvertieren. Alte doc-Dateien bleiben auch ab 3.5.0 als Eingabe erlaubt.",
       "fields": {
         "config_entry_id": {
           "name": "Server",
@@ -2200,7 +2206,7 @@
         },
         "use_stirling_office_convert": {
           "name": "Stirling Office Convert",
-          "description": "Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
+          "description": "Konverter-Auswahl nur vor 3.5.0. False waehlt ausdruecklich den alten Konverter. Ab 3.5.0 wird das Feld nicht an die API gesendet; Stirling bestimmt den Konverter. True erfordert weiterhin die Freigabe externer Aktionen und Adminrechte. Versionsgrenzen stehen im Aktionskatalog."
         }
       }
     },
@@ -2230,7 +2236,7 @@
         },
         "use_stirling_office_convert": {
           "name": "Stirling Office Convert",
-          "description": "Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
+          "description": "Konverter-Auswahl nur vor 3.5.0. False waehlt ausdruecklich den alten Konverter. Ab 3.5.0 wird das Feld nicht an die API gesendet; Stirling bestimmt den Konverter. True erfordert weiterhin die Freigabe externer Aktionen und Adminrechte. Versionsgrenzen stehen im Aktionskatalog."
         }
       }
     },
@@ -2286,7 +2292,7 @@
         },
         "use_stirling_office_convert": {
           "name": "Stirling Office Convert",
-          "description": "Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
+          "description": "Konverter-Auswahl nur vor 3.5.0. False waehlt ausdruecklich den alten Konverter. Ab 3.5.0 wird das Feld nicht an die API gesendet; Stirling bestimmt den Konverter. True erfordert weiterhin die Freigabe externer Aktionen und Adminrechte. Versionsgrenzen stehen im Aktionskatalog."
         }
       }
     },
@@ -2312,7 +2318,7 @@
         },
         "use_stirling_office_convert": {
           "name": "Stirling Office Convert",
-          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
+          "description": "Konverter-Auswahl nur vor 3.5.0. False waehlt ausdruecklich den alten Konverter. Ab 3.5.0 wird das Feld nicht an die API gesendet; Stirling bestimmt den Konverter. True erfordert weiterhin die Freigabe externer Aktionen und Adminrechte. Versionsgrenzen stehen im Aktionskatalog."
         }
       }
     },
@@ -2338,11 +2344,11 @@
         },
         "zoom": {
           "name": "Zoom",
-          "description": "Stirling-PDF-Feld: zoom."
+          "description": "Zoomfaktor. Unter Stirling PDF 3.5.0 oder neuer zwischen 0.1 und 8. Auf aelteren Servern vom gewaehlten Konverter abhaengig."
         },
         "use_stirling_office_convert": {
           "name": "Stirling Office Convert",
-          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
+          "description": "Konverter-Auswahl nur vor 3.5.0. False waehlt ausdruecklich den alten Konverter. Ab 3.5.0 wird das Feld nicht an die API gesendet; Stirling bestimmt den Konverter. True erfordert weiterhin die Freigabe externer Aktionen und Adminrechte. Versionsgrenzen stehen im Aktionskatalog."
         }
       }
     },
@@ -2368,7 +2374,7 @@
         },
         "use_stirling_office_convert": {
           "name": "Stirling Office Convert",
-          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
+          "description": "Konverter-Auswahl nur vor 3.5.0. False waehlt ausdruecklich den alten Konverter. Ab 3.5.0 wird das Feld nicht an die API gesendet; Stirling bestimmt den Konverter. True erfordert weiterhin die Freigabe externer Aktionen und Adminrechte. Versionsgrenzen stehen im Aktionskatalog."
         }
       }
     },
@@ -2394,7 +2400,7 @@
         },
         "use_stirling_office_convert": {
           "name": "Stirling Office Convert",
-          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
+          "description": "Konverter-Auswahl nur vor 3.5.0. False waehlt ausdruecklich den alten Konverter. Ab 3.5.0 wird das Feld nicht an die API gesendet; Stirling bestimmt den Konverter. True erfordert weiterhin die Freigabe externer Aktionen und Adminrechte. Versionsgrenzen stehen im Aktionskatalog."
         }
       }
     },
@@ -2420,7 +2426,7 @@
         },
         "use_stirling_office_convert": {
           "name": "Stirling Office Convert",
-          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
+          "description": "Konverter-Auswahl nur vor 3.5.0. False waehlt ausdruecklich den alten Konverter. Ab 3.5.0 wird das Feld nicht an die API gesendet; Stirling bestimmt den Konverter. True erfordert weiterhin die Freigabe externer Aktionen und Adminrechte. Versionsgrenzen stehen im Aktionskatalog."
         }
       }
     },
@@ -2462,7 +2468,7 @@
         },
         "use_stirling_office_convert": {
           "name": "Stirling Office Convert",
-          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
+          "description": "Konverter-Auswahl nur vor 3.5.0. False waehlt ausdruecklich den alten Konverter. Ab 3.5.0 wird das Feld nicht an die API gesendet; Stirling bestimmt den Konverter. True erfordert weiterhin die Freigabe externer Aktionen und Adminrechte. Versionsgrenzen stehen im Aktionskatalog."
         }
       }
     },
@@ -2530,7 +2536,7 @@
         },
         "use_stirling_office_convert": {
           "name": "Stirling Office Convert",
-          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
+          "description": "Konverter-Auswahl nur vor 3.5.0. False waehlt ausdruecklich den alten Konverter. Ab 3.5.0 wird das Feld nicht an die API gesendet; Stirling bestimmt den Konverter. True erfordert weiterhin die Freigabe externer Aktionen und Adminrechte. Versionsgrenzen stehen im Aktionskatalog."
         }
       }
     },
@@ -2568,7 +2574,7 @@
         },
         "use_stirling_office_convert": {
           "name": "Stirling Office Convert",
-          "description": "Für diese Aktion ab Serverversion 3.3.0. Standardmäßig aus: Der bisherige Converter wird ausdrücklich gewählt, unabhängig von der Server-Voreinstellung. Aktivierung erfordert die Freigabe externer Aktionen für diesen Server und bei Benutzeraufrufen Administratorrechte. PDF/X verwendet weiterhin den bisherigen Converter; HTML-Zoom gilt nicht für Office Convert."
+          "description": "Konverter-Auswahl nur vor 3.5.0. False waehlt ausdruecklich den alten Konverter. Ab 3.5.0 wird das Feld nicht an die API gesendet; Stirling bestimmt den Konverter. True erfordert weiterhin die Freigabe externer Aktionen und Adminrechte. Versionsgrenzen stehen im Aktionskatalog."
         }
       }
     },

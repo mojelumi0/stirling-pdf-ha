@@ -11,6 +11,7 @@ import sys
 from collections.abc import AsyncIterator
 from pathlib import Path
 from types import ModuleType
+from xml.etree import ElementTree
 from zipfile import ZipFile
 
 import aiohttp
@@ -70,6 +71,11 @@ def _markers(content: bytes) -> list[str]:
     ]
 
 
+def _server_at_least(version: str, minimum: tuple[int, int, int]) -> bool:
+    """Compare explicit stable CI baselines, not arbitrary discovered versions."""
+    return tuple(map(int, version.split("."))) >= minimum
+
+
 @pytest.fixture
 def server_url() -> str:
     """Only contact a server explicitly selected for these opt-in tests."""
@@ -120,7 +126,7 @@ async def test_removed_text_editor_has_no_processing_route(
     client, expected_server_version
 ) -> None:
     """Check the documented removal on the pinned new server, not older servers."""
-    if expected_server_version not in {"3.3.0", "3.4.0"}:
+    if not _server_at_least(expected_server_version, (3, 3, 0)):
         pytest.skip("The text-editor route was removed in 3.3.0")
     with pytest.raises(StirlingPdfApiError, match="HTTP 404"):
         await client.async_process(
@@ -134,7 +140,7 @@ async def test_newer_servers_reject_out_of_range_poster_multiplier(
     client, expected_server_version
 ) -> None:
     """The newer server must reject 11 before allocating an oversized result."""
-    if expected_server_version not in {"3.3.0", "3.4.0"}:
+    if not _server_at_least(expected_server_version, (3, 3, 0)):
         pytest.skip("The newer poster validation starts with 3.3.0")
     with pytest.raises(StirlingPdfApiError, match="HTTP 400"):
         await client.async_process(
@@ -144,18 +150,24 @@ async def test_newer_servers_reject_out_of_range_poster_multiplier(
         )
 
 
-async def test_explicit_legacy_markdown_conversion_produces_searchable_pdf(
+async def test_version_appropriate_markdown_conversion_produces_searchable_pdf(
     client,
+    expected_server_version,
 ) -> None:
-    """Exercise explicit false on all pinned versions, without external resources."""
+    """Select legacy before 3.5, and omit the retired selector on newer servers."""
+    fields = (
+        {}
+        if _server_at_least(expected_server_version, (3, 5, 0))
+        else {"useStirlingOfficeConvert": False}
+    )
     status, content = await client.async_process(
         "/api/v1/convert/markdown/pdf",
-        [("synthetic.md", b"# CONVERTER LEGACY 12345\n\nSynthetic local test.\n")],
-        {"useStirlingOfficeConvert": False},
+        [("synthetic.md", b"# CONVERTER LOCAL 12345\n\nSynthetic local test.\n")],
+        fields,
     )
     assert status == 200
     text = " ".join(" ".join(_markers(content)).split())
-    assert "CONVERTER LEGACY 12345" in text
+    assert "CONVERTER LOCAL 12345" in text
 
 
 async def test_merge_preserves_requested_order_and_unicode_filenames(client) -> None:
@@ -241,7 +253,7 @@ async def test_additional_analysis_page_count(client) -> None:
 async def test_340_vector_routes_are_removed(
     client, expected_server_version, endpoint, filename, content, fields
 ) -> None:
-    if expected_server_version != "3.4.0":
+    if not _server_at_least(expected_server_version, (3, 4, 0)):
         pytest.skip("The vector routes were removed in 3.4.0")
     with pytest.raises(StirlingPdfApiError, match="HTTP 404"):
         await client.async_process(endpoint, [(filename, content)], fields)
@@ -287,7 +299,7 @@ async def test_legacy_metadata_update_still_clears_omitted_standard_fields(
 async def test_340_metadata_option_preserves_fields_only_when_enabled(
     client, expected_server_version, keep
 ) -> None:
-    if expected_server_version != "3.4.0":
+    if not _server_at_least(expected_server_version, (3, 4, 0)):
         pytest.skip("keepOmitted was added in 3.4.0")
     status, content = await client.async_process(
         "/api/v1/misc/update-metadata",
@@ -309,7 +321,7 @@ async def test_340_metadata_option_preserves_fields_only_when_enabled(
 async def test_340_delete_all_takes_precedence_over_metadata_preservation(
     client, expected_server_version
 ) -> None:
-    if expected_server_version != "3.4.0":
+    if not _server_at_least(expected_server_version, (3, 4, 0)):
         pytest.skip("keepOmitted was added in 3.4.0")
     status, content = await client.async_process(
         "/api/v1/misc/update-metadata",
@@ -336,7 +348,7 @@ async def test_340_delete_all_takes_precedence_over_metadata_preservation(
 async def test_340_custom_page_size_preserves_content_and_exact_requested_size(
     client, expected_server_version, unit, width, height, points_per_unit
 ) -> None:
-    if expected_server_version != "3.4.0":
+    if not _server_at_least(expected_server_version, (3, 4, 0)):
         pytest.skip("CUSTOM dimensions were added in 3.4.0")
     fields = {
         "pageSize": "CUSTOM",
@@ -379,7 +391,7 @@ async def test_340_custom_page_size_preserves_content_and_exact_requested_size(
 async def test_340_server_rejects_missing_or_oversized_custom_dimensions(
     client, expected_server_version, fields
 ) -> None:
-    if expected_server_version != "3.4.0":
+    if not _server_at_least(expected_server_version, (3, 4, 0)):
         pytest.skip("CUSTOM dimensions were added in 3.4.0")
     with pytest.raises(StirlingPdfApiError, match="HTTP 400"):
         await client.async_process(
@@ -392,7 +404,7 @@ async def test_340_accessibility_report_describes_an_untagged_document(
     client, expected_server_version, profile
 ) -> None:
     """Require a completed check, not HTTP 200 containing a validator failure."""
-    if expected_server_version != "3.4.0":
+    if not _server_at_least(expected_server_version, (3, 4, 0)):
         pytest.skip("The expanded accessibility report is checked on 3.4.0")
     status, content = await client.async_process(
         "/api/v1/security/accessibility-report",
@@ -407,6 +419,89 @@ async def test_340_accessibility_report_describes_an_untagged_document(
     assert isinstance(report["issues"], list) and report["issues"]
     assert report["checks"]["total"] > 0
     assert report["checks"]["failed"] > 0
+
+
+@pytest.mark.parametrize(
+    ("format", "member"), [("docx", "word/document.xml"), ("odt", "content.xml")]
+)
+async def test_350_word_conversion_and_round_trip_use_the_local_backend(
+    client, expected_server_version, format, member
+) -> None:
+    if not _server_at_least(expected_server_version, (3, 5, 0)):
+        pytest.skip("The in-process conversion backend starts with 3.5.0")
+    status, document = await client.async_process(
+        "/api/v1/convert/pdf/word",
+        [("synthetic.pdf", _pdf("OFFICE LOCAL 12345"))],
+        {"outputFormat": format},
+    )
+    assert status == 200
+    with ZipFile(io.BytesIO(document)) as archive:
+        assert archive.testzip() is None
+        text = " ".join(
+            "".join(ElementTree.fromstring(archive.read(member)).itertext()).split()
+        )
+        assert "OFFICE LOCAL 12345" in text
+    status, result = await client.async_process(
+        "/api/v1/convert/file/pdf",
+        [("roundtrip." + format, document)],
+        {},
+    )
+    assert status == 200
+    assert "OFFICE LOCAL 12345" in " ".join(" ".join(_markers(result)).split())
+
+
+async def test_350_doc_output_is_rejected_by_the_real_server(
+    client, expected_server_version
+) -> None:
+    if not _server_at_least(expected_server_version, (3, 5, 0)):
+        pytest.skip("DOC output was removed in 3.5.0")
+    with pytest.raises(StirlingPdfApiError, match="HTTP 400"):
+        await client.async_process(
+            "/api/v1/convert/pdf/word",
+            [("synthetic.pdf", _pdf("DOC REMOVED"))],
+            {"outputFormat": "doc"},
+        )
+
+
+@pytest.mark.parametrize("zoom", [0.1, 1, 8])
+async def test_350_html_zoom_accepts_documented_boundaries(
+    client, expected_server_version, zoom
+) -> None:
+    if not _server_at_least(expected_server_version, (3, 5, 0)):
+        pytest.skip("The new HTML backend starts with 3.5.0")
+    status, content = await client.async_process(
+        "/api/v1/convert/html/pdf",
+        [("inline.html", b"<!doctype html><html><body><p>ZOOM</p></body></html>")],
+        {"zoom": zoom},
+    )
+    assert status == 200
+    assert "ZOOM" in " ".join(_markers(content))
+
+
+@pytest.mark.parametrize("zoom", [0.09, 8.01, 20])
+async def test_350_html_zoom_rejects_out_of_range_values(
+    client, expected_server_version, zoom
+) -> None:
+    if not _server_at_least(expected_server_version, (3, 5, 0)):
+        pytest.skip("The new HTML backend starts with 3.5.0")
+    with pytest.raises(StirlingPdfApiError, match="HTTP 400"):
+        await client.async_process(
+            "/api/v1/convert/html/pdf",
+            [("inline.html", b"<p>ZOOM</p>")],
+            {"zoom": zoom},
+        )
+
+
+@pytest.mark.parametrize("level", [1, 9])
+async def test_350_compression_levels_preserve_text_and_do_not_increase_size(
+    client, expected_server_version, level
+) -> None:
+    if not _server_at_least(expected_server_version, (3, 5, 0)):
+        pytest.skip("The replacement optimizer starts with 3.5.0")
+    source = _pdf("COMPRESS A", "COMPRESS B")
+    result = await client.async_compress("synthetic.pdf", source, level)
+    assert _markers(result) == ["COMPRESS A", "COMPRESS B"]
+    assert len(result) <= len(source)
 
 
 @pytest.mark.parametrize(

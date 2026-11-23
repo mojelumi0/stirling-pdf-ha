@@ -37,7 +37,7 @@ Stirling PDF versions with and without login. To run it locally, install
 export STIRLING_PDF_URL=http://127.0.0.1:8080
 export STIRLING_PDF_API_KEY='<test-server-key>'
 export STIRLING_PDF_REQUIRE_AUTH=true
-export STIRLING_PDF_EXPECTED_VERSION=3.4.0
+export STIRLING_PDF_EXPECTED_VERSION=3.5.0
 python -m pytest -q -p no:cacheprovider tests_live
 ```
 

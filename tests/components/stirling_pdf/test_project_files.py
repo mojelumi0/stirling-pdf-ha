@@ -245,7 +245,7 @@ def test_server_matrix_pins_all_versions_and_login_modes() -> None:
     workflow = yaml.safe_load((WORKFLOWS / "server-tests.yml").read_text("utf-8"))
     job = workflow["jobs"]["server"]
     matrix = job["strategy"]["matrix"]
-    assert matrix["version"] == ["3.2.0", "3.3.0", "3.4.0"]
+    assert matrix["version"] == ["3.2.0", "3.3.0", "3.4.0", "3.5.0"]
     assert matrix["login"] == ["true", "false"]
     images = {row["version"]: row["image"] for row in matrix["include"]}
     assert set(images) == set(matrix["version"])
@@ -262,6 +262,9 @@ def test_server_matrix_pins_all_versions_and_login_modes() -> None:
     assert job["services"]["stirling"]["image"] == "${{ matrix.image }}"
     assert images["3.4.0"].endswith(
         "972ffc10fbd63a9e7178253a49050c7658e0d4e03b2701005c3e12e210d2e068"
+    )
+    assert images["3.5.0"].endswith(
+        "f5a38801f2dd551c26d0089ee3ea48d86a565e3adb414cb31e974bc9562cb48a"
     )
     step = next(step for step in job["steps"] if "tests_live" in step.get("run", ""))
     assert step["env"]["STIRLING_PDF_EXPECTED_VERSION"] == "${{ matrix.version }}"
@@ -315,6 +318,23 @@ def test_340_contract_fields_do_not_change_existing_defaults() -> None:
     for name in ("customWidth", "customHeight", "customUnit"):
         assert scale[name]["since"] == [3, 4, 0]
         assert "default" not in scale[name]
+
+
+def test_350_contracts_keep_legacy_fields_and_formats_version_restricted() -> None:
+    word = OPERATIONS["pdf_to_word"]
+    assert word["fields"]["outputFormat"]["enum_removed_in"] == {"doc": [3, 5, 0]}
+    assert word["suffixes_removed_in"] == {".doc": [3, 5, 0]}
+    assert word["fields"]["outputFormat"]["enum"] == ["doc", "docx", "odt"]
+    assert ".doc" in OPERATIONS["file_to_pdf"]["inputExtensions"]
+    assert OPERATIONS["html_to_pdf"]["fields"]["zoom"]["limits_since"] == {
+        "version": [3, 5, 0],
+        "minimum": 0.1,
+        "maximum": 8,
+    }
+    for operation in OPERATIONS.values():
+        if "useStirlingOfficeConvert" in operation["fields"]:
+            assert operation["office_convert_until"] == [3, 5, 0]
+            assert operation["fields"]["useStirlingOfficeConvert"]["default"] is False
 
 
 def test_config_forms_always_supply_an_explicit_step_id() -> None:
