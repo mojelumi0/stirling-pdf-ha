@@ -10,7 +10,6 @@ import pytest
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import UpdateFailed
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.stirling_pdf.api import (
     StirlingPdfApiClient,
@@ -19,6 +18,7 @@ from custom_components.stirling_pdf.api import (
 )
 from custom_components.stirling_pdf.const import DEFAULT_SCAN_INTERVAL
 from custom_components.stirling_pdf.coordinator import StirlingPdfCoordinator
+from tests.ha_helpers import MockConfigEntry
 
 
 @pytest.fixture

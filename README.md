@@ -129,6 +129,8 @@ calls to those tools require a Home Assistant administrator. Review the
 server's settings first: external tools, conversions or AI backends may send
 data outside your network. Passwords supplied to actions may be kept in YAML,
 traces or backups. Check redaction and signature results independently.
+Stirling's setting to block changes to signed PDFs protects its Web/Desktop
+apps, not API actions from Home Assistant. Use copies of signed documents.
 
 ## Available entities
 
@@ -146,7 +148,9 @@ OCR diagnostics can be enabled individually in the entity settings.
 - **Reachable, but an action fails?** Check the credentials and whether that
   tool is available on your server. A status check does not prove access to
   every tool. On Stirling PDF 3.3.0 and newer, the old `replace_text` action is
-  no longer supported. See the action catalog for converter requirements.
+  no longer supported. From 3.4.0, `pdf_to_vector` and `vector_to_pdf` are also
+  unavailable. Older servers remain supported. See the action catalog for
+  version-specific options.
 - **File path rejected?** Check the allowlist, file extension and output
   directory. Split results use `.zip`; selected-page extraction uses `.pdf`.
 - **OCR fails?** Check that the requested language, such as `eng` or `deu`,

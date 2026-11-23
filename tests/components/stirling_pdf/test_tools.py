@@ -16,7 +16,6 @@ from homeassistant.exceptions import (
     Unauthorized,
     UnknownUser,
 )
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.stirling_pdf.api import (
     StirlingPdfApiError,
@@ -34,6 +33,7 @@ from custom_components.stirling_pdf.tools import (
     validate_remote_url,
     validate_result,
 )
+from tests.ha_helpers import MockConfigEntry
 
 
 def _coordinator(options=None):
@@ -110,6 +110,8 @@ async def test_each_contract_can_be_validated_and_executed(
         payload["url_input"] = "https://allowed.example/page"
     if name == "timestamp":
         payload["tsa_url"] = "https://allowed.example/tsa"
+    if name == "scale_pages":
+        payload.update(page_size="CUSTOM", custom_width=210, custom_height=297)
     suffix = operation["suffixes"][0]
     payload["output_path"] = str(tmp_path / ("result" + suffix))
     coordinator = _coordinator(
@@ -121,6 +123,8 @@ async def test_each_contract_can_be_validated_and_executed(
         }
     )
     coordinator.client.async_process.return_value = (200, _result(suffix))
+    if name in {"metadata", "scale_pages"}:
+        coordinator.data = {"version": "3.4.0", "status": "UP"}
     validate = MagicMock()
     write = AsyncMock()
     response = await async_handle_tool(

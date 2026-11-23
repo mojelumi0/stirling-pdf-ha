@@ -11,6 +11,7 @@ import sys
 from collections.abc import AsyncIterator
 from pathlib import Path
 from types import ModuleType
+from xml.etree import ElementTree
 from zipfile import ZipFile
 
 import aiohttp
@@ -70,6 +71,11 @@ def _markers(content: bytes) -> list[str]:
     ]
 
 
+def _server_at_least(version: str, minimum: tuple[int, int, int]) -> bool:
+    """Compare explicit stable CI baselines, not arbitrary discovered versions."""
+    return tuple(map(int, version.split("."))) >= minimum
+
+
 @pytest.fixture
 def server_url() -> str:
     """Only contact a server explicitly selected for these opt-in tests."""
@@ -116,12 +122,12 @@ async def test_status_and_authenticated_health(client, expected_server_version) 
     assert client.authentication_check_supported is True
 
 
-async def test_330_removed_text_editor_has_no_processing_route(
+async def test_removed_text_editor_has_no_processing_route(
     client, expected_server_version
 ) -> None:
     """Check the documented removal on the pinned new server, not older servers."""
-    if expected_server_version != "3.3.0":
-        pytest.skip("The removed-endpoint assertion applies only to the 3.3.0 job")
+    if not _server_at_least(expected_server_version, (3, 3, 0)):
+        pytest.skip("The text-editor route was removed in 3.3.0")
     with pytest.raises(StirlingPdfApiError, match="HTTP 404"):
         await client.async_process(
             "/api/v1/general/edit-text",
@@ -130,12 +136,12 @@ async def test_330_removed_text_editor_has_no_processing_route(
         )
 
 
-async def test_330_rejects_out_of_range_poster_multiplier(
+async def test_newer_servers_reject_out_of_range_poster_multiplier(
     client, expected_server_version
 ) -> None:
     """The newer server must reject 11 before allocating an oversized result."""
-    if expected_server_version != "3.3.0":
-        pytest.skip("The newer validation assertion applies only to the 3.3.0 job")
+    if not _server_at_least(expected_server_version, (3, 3, 0)):
+        pytest.skip("The newer poster validation starts with 3.3.0")
     with pytest.raises(StirlingPdfApiError, match="HTTP 400"):
         await client.async_process(
             "/api/v1/general/split-for-poster-print",
@@ -144,18 +150,24 @@ async def test_330_rejects_out_of_range_poster_multiplier(
         )
 
 
-async def test_explicit_legacy_markdown_conversion_produces_searchable_pdf(
+async def test_version_appropriate_markdown_conversion_produces_searchable_pdf(
     client,
+    expected_server_version,
 ) -> None:
-    """Exercise explicit false on both pinned versions, without external resources."""
+    """Select legacy before 3.5, and omit the retired selector on newer servers."""
+    fields = (
+        {}
+        if _server_at_least(expected_server_version, (3, 5, 0))
+        else {"useStirlingOfficeConvert": False}
+    )
     status, content = await client.async_process(
         "/api/v1/convert/markdown/pdf",
-        [("synthetic.md", b"# CONVERTER LEGACY 12345\n\nSynthetic local test.\n")],
-        {"useStirlingOfficeConvert": False},
+        [("synthetic.md", b"# CONVERTER LOCAL 12345\n\nSynthetic local test.\n")],
+        fields,
     )
     assert status == 200
     text = " ".join(" ".join(_markers(content)).split())
-    assert "CONVERTER LEGACY 12345" in text
+    assert "CONVERTER LOCAL 12345" in text
 
 
 async def test_merge_preserves_requested_order_and_unicode_filenames(client) -> None:
@@ -219,6 +231,277 @@ async def test_additional_analysis_page_count(client) -> None:
     )
     assert status == 200
     assert json.loads(content)["pageCount"] == 2
+
+
+@pytest.mark.parametrize(
+    ("endpoint", "filename", "content", "fields"),
+    [
+        (
+            "/api/v1/convert/pdf/vector",
+            "synthetic.pdf",
+            _pdf("VECTOR REMOVED"),
+            {"outputFormat": "eps", "prepress": False},
+        ),
+        (
+            "/api/v1/convert/vector/pdf",
+            "synthetic.ps",
+            b"%!PS\nshowpage\n",
+            {"outputFormat": "eps", "prepress": False},
+        ),
+    ],
+)
+async def test_340_vector_routes_are_removed(
+    client, expected_server_version, endpoint, filename, content, fields
+) -> None:
+    if not _server_at_least(expected_server_version, (3, 4, 0)):
+        pytest.skip("The vector routes were removed in 3.4.0")
+    with pytest.raises(StirlingPdfApiError, match="HTTP 404"):
+        await client.async_process(endpoint, [(filename, content)], fields)
+
+
+def _pdf_with_metadata() -> bytes:
+    writer = PdfWriter()
+    writer.append_pages_from_reader(PdfReader(io.BytesIO(_pdf("METADATA CONTENT"))))
+    writer.add_metadata(
+        {
+            "/Title": "Original title",
+            "/Author": "Synthetic author",
+            "/Subject": "Synthetic subject",
+            "/Keywords": "Synthetic keywords",
+            "/CreationDate": "D:20260102030405Z",
+            "/ModDate": "D:20260203040506Z",
+            "/CustomField": "Synthetic custom value",
+        }
+    )
+    result = io.BytesIO()
+    writer.write(result)
+    return result.getvalue()
+
+
+async def test_legacy_metadata_update_still_clears_omitted_standard_fields(
+    client,
+) -> None:
+    """Omitting the new option must preserve the original behavior on every baseline."""
+    status, content = await client.async_process(
+        "/api/v1/misc/update-metadata",
+        [("metadata.pdf", _pdf_with_metadata())],
+        {"deleteAll": False, "title": "Replacement title"},
+    )
+    assert status == 200
+    reader = PdfReader(io.BytesIO(content))
+    assert reader.metadata.title == "Replacement title"
+    assert reader.metadata.author is None
+    assert reader.metadata.subject is None
+    assert _markers(content) == ["METADATA CONTENT"]
+
+
+@pytest.mark.parametrize("keep", [True, False])
+async def test_340_metadata_option_preserves_fields_only_when_enabled(
+    client, expected_server_version, keep
+) -> None:
+    if not _server_at_least(expected_server_version, (3, 4, 0)):
+        pytest.skip("keepOmitted was added in 3.4.0")
+    status, content = await client.async_process(
+        "/api/v1/misc/update-metadata",
+        [("metadata.pdf", _pdf_with_metadata())],
+        {"deleteAll": False, "title": "Replacement title", "keepOmitted": keep},
+    )
+    assert status == 200
+    metadata = PdfReader(io.BytesIO(content)).metadata
+    assert metadata.title == "Replacement title"
+    assert metadata.author == ("Synthetic author" if keep else None)
+    assert metadata.subject == ("Synthetic subject" if keep else None)
+    assert metadata["/CustomField"] == "Synthetic custom value"
+    if keep:
+        assert metadata["/CreationDate"] == "D:20260102030405Z"
+        assert metadata["/ModDate"] == "D:20260203040506Z"
+    assert _markers(content) == ["METADATA CONTENT"]
+
+
+async def test_340_delete_all_takes_precedence_over_metadata_preservation(
+    client, expected_server_version
+) -> None:
+    if not _server_at_least(expected_server_version, (3, 4, 0)):
+        pytest.skip("keepOmitted was added in 3.4.0")
+    status, content = await client.async_process(
+        "/api/v1/misc/update-metadata",
+        [("metadata.pdf", _pdf_with_metadata())],
+        {"deleteAll": True, "keepOmitted": True, "title": "Must not survive"},
+    )
+    assert status == 200
+    metadata = PdfReader(io.BytesIO(content)).metadata
+    assert not metadata or not {
+        "/Title",
+        "/Author",
+        "/Subject",
+        "/CustomField",
+        "/CreationDate",
+        "/ModDate",
+    }.intersection(metadata)
+    assert _markers(content) == ["METADATA CONTENT"]
+
+
+@pytest.mark.parametrize(
+    ("unit", "width", "height", "points_per_unit"),
+    [(None, 210, 297, 72 / 25.4), ("cm", 21, 29.7, 72 / 2.54), ("in", 8.5, 11, 72)],
+)
+async def test_340_custom_page_size_preserves_content_and_exact_requested_size(
+    client, expected_server_version, unit, width, height, points_per_unit
+) -> None:
+    if not _server_at_least(expected_server_version, (3, 4, 0)):
+        pytest.skip("CUSTOM dimensions were added in 3.4.0")
+    fields = {
+        "pageSize": "CUSTOM",
+        "customWidth": width,
+        "customHeight": height,
+        "orientation": "LANDSCAPE",
+        "scaleFactor": 1,
+    }
+    if unit is not None:
+        fields["customUnit"] = unit
+    status, content = await client.async_process(
+        "/api/v1/general/scale-pages", [("pages.pdf", _pdf("SIZE A", "SIZE B"))], fields
+    )
+    assert status == 200
+    assert _markers(content) == ["SIZE A", "SIZE B"]
+    pages = PdfReader(io.BytesIO(content)).pages
+    assert len(pages) == 2
+    for page in pages:
+        # The supplied width/height, not LANDSCAPE, determine custom orientation.
+        assert float(page.mediabox.width) == pytest.approx(
+            width * points_per_unit, abs=0.002
+        )
+        assert float(page.mediabox.height) == pytest.approx(
+            height * points_per_unit, abs=0.002
+        )
+
+
+@pytest.mark.parametrize(
+    "fields",
+    [
+        {"pageSize": "CUSTOM", "customWidth": 210},
+        {
+            "pageSize": "CUSTOM",
+            "customWidth": 201,
+            "customHeight": 11,
+            "customUnit": "in",
+        },
+    ],
+)
+async def test_340_server_rejects_missing_or_oversized_custom_dimensions(
+    client, expected_server_version, fields
+) -> None:
+    if not _server_at_least(expected_server_version, (3, 4, 0)):
+        pytest.skip("CUSTOM dimensions were added in 3.4.0")
+    with pytest.raises(StirlingPdfApiError, match="HTTP 400"):
+        await client.async_process(
+            "/api/v1/general/scale-pages", [("pages.pdf", _pdf("SIZE LIMIT"))], fields
+        )
+
+
+@pytest.mark.parametrize("profile", ["ua1", "ua2"])
+async def test_340_accessibility_report_describes_an_untagged_document(
+    client, expected_server_version, profile
+) -> None:
+    """Require a completed check, not HTTP 200 containing a validator failure."""
+    if not _server_at_least(expected_server_version, (3, 4, 0)):
+        pytest.skip("The expanded accessibility report is checked on 3.4.0")
+    status, content = await client.async_process(
+        "/api/v1/security/accessibility-report",
+        [("untagged.pdf", _pdf("ACCESSIBILITY CHECK"))],
+        {"profile": profile},
+    )
+    assert status == 200
+    report = json.loads(content)
+    assert report.get("validationError") is None
+    assert report["tagged"] is False
+    assert report["passesAutomatedChecks"] is False
+    assert isinstance(report["issues"], list) and report["issues"]
+    assert report["checks"]["total"] > 0
+    assert report["checks"]["failed"] > 0
+
+
+@pytest.mark.parametrize(
+    ("format", "member"), [("docx", "word/document.xml"), ("odt", "content.xml")]
+)
+async def test_350_word_conversion_and_round_trip_use_the_local_backend(
+    client, expected_server_version, format, member
+) -> None:
+    if not _server_at_least(expected_server_version, (3, 5, 0)):
+        pytest.skip("The in-process conversion backend starts with 3.5.0")
+    status, document = await client.async_process(
+        "/api/v1/convert/pdf/word",
+        [("synthetic.pdf", _pdf("OFFICE LOCAL 12345"))],
+        {"outputFormat": format},
+    )
+    assert status == 200
+    with ZipFile(io.BytesIO(document)) as archive:
+        assert archive.testzip() is None
+        text = " ".join(
+            "".join(ElementTree.fromstring(archive.read(member)).itertext()).split()
+        )
+        assert "OFFICE LOCAL 12345" in text
+    status, result = await client.async_process(
+        "/api/v1/convert/file/pdf",
+        [("roundtrip." + format, document)],
+        {},
+    )
+    assert status == 200
+    assert "OFFICE LOCAL 12345" in " ".join(" ".join(_markers(result)).split())
+
+
+async def test_350_doc_output_is_rejected_by_the_real_server(
+    client, expected_server_version
+) -> None:
+    if not _server_at_least(expected_server_version, (3, 5, 0)):
+        pytest.skip("DOC output was removed in 3.5.0")
+    with pytest.raises(StirlingPdfApiError, match="HTTP 400"):
+        await client.async_process(
+            "/api/v1/convert/pdf/word",
+            [("synthetic.pdf", _pdf("DOC REMOVED"))],
+            {"outputFormat": "doc"},
+        )
+
+
+@pytest.mark.parametrize("zoom", [0.1, 1, 8])
+async def test_350_html_zoom_accepts_documented_boundaries(
+    client, expected_server_version, zoom
+) -> None:
+    if not _server_at_least(expected_server_version, (3, 5, 0)):
+        pytest.skip("The new HTML backend starts with 3.5.0")
+    status, content = await client.async_process(
+        "/api/v1/convert/html/pdf",
+        [("inline.html", b"<!doctype html><html><body><p>ZOOM</p></body></html>")],
+        {"zoom": zoom},
+    )
+    assert status == 200
+    assert "ZOOM" in " ".join(_markers(content))
+
+
+@pytest.mark.parametrize("zoom", [0.09, 8.01, 20])
+async def test_350_html_zoom_rejects_out_of_range_values(
+    client, expected_server_version, zoom
+) -> None:
+    if not _server_at_least(expected_server_version, (3, 5, 0)):
+        pytest.skip("The new HTML backend starts with 3.5.0")
+    with pytest.raises(StirlingPdfApiError, match="HTTP 400"):
+        await client.async_process(
+            "/api/v1/convert/html/pdf",
+            [("inline.html", b"<p>ZOOM</p>")],
+            {"zoom": zoom},
+        )
+
+
+@pytest.mark.parametrize("level", [1, 9])
+async def test_350_compression_levels_preserve_text_and_do_not_increase_size(
+    client, expected_server_version, level
+) -> None:
+    if not _server_at_least(expected_server_version, (3, 5, 0)):
+        pytest.skip("The replacement optimizer starts with 3.5.0")
+    source = _pdf("COMPRESS A", "COMPRESS B")
+    result = await client.async_compress("synthetic.pdf", source, level)
+    assert _markers(result) == ["COMPRESS A", "COMPRESS B"]
+    assert len(result) <= len(source)
 
 
 @pytest.mark.parametrize(

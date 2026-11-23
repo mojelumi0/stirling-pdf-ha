@@ -17,12 +17,15 @@ python3.14 -m venv .venv
 .venv/bin/ruff format --check --no-cache custom_components scripts tests tests_live
 ```
 
-CI checks both supported test baselines with `requirements-dev-min.txt` and
-`requirements-dev.txt`, and runs hassfest and HACS validation. Keep 100% line
+CI checks HA 2026.9.0 (`requirements-dev-min.txt`), 2026.10.2
+(`requirements-dev-2026-10.txt`) and 2026.11.2 (`requirements-dev.txt`), and runs
+hassfest and HACS validation. Keep 100% line
 coverage for `config_flow.py` and more than 95% per other integration module.
-The [manual HA 2026.11 workflow](.github/workflows/ha-2026-11.yml) requires an
-exact compatible test-plugin version. Do not bypass dependency resolution or
-count a skipped check as passing.
+The latest baseline uses the official `pytest-homeassistant` package. Older
+baselines use `pytest-homeassistant-custom-component` in separate environments;
+never install both packages together. `tests/ha_helpers.py` selects the matching
+helper imports. Do not bypass dependency resolution or count a skipped check
+as passing.
 
 ## Testing against Stirling PDF
 
@@ -34,7 +37,7 @@ Stirling PDF versions with and without login. To run it locally, install
 export STIRLING_PDF_URL=http://127.0.0.1:8080
 export STIRLING_PDF_API_KEY='<test-server-key>'
 export STIRLING_PDF_REQUIRE_AUTH=true
-export STIRLING_PDF_EXPECTED_VERSION=3.3.0
+export STIRLING_PDF_EXPECTED_VERSION=3.5.0
 python -m pytest -q -p no:cacheprovider tests_live
 ```
 

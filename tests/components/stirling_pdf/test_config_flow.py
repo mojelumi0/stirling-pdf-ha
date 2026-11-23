@@ -10,7 +10,6 @@ from homeassistant import config_entries
 from homeassistant.const import CONF_API_KEY, CONF_PASSWORD, CONF_URL, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.stirling_pdf.api import (
     StirlingPdfApiError,
@@ -23,6 +22,7 @@ from custom_components.stirling_pdf.const import (
     DOMAIN,
     PASSWORD_PLACEHOLDER,
 )
+from tests.ha_helpers import MockConfigEntry
 
 pytestmark = pytest.mark.usefixtures("enable_custom_integrations")
 

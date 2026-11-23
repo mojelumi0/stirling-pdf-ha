@@ -11,7 +11,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.stirling_pdf.api import StirlingPdfApiError
 from custom_components.stirling_pdf.binary_sensor import StirlingPdfOptionalBinarySensor
@@ -24,6 +23,7 @@ from custom_components.stirling_pdf.metrics import (
     metric_value,
 )
 from custom_components.stirling_pdf.sensor import StirlingPdfMetricSensor
+from tests.ha_helpers import MockConfigEntry
 
 
 @pytest.fixture

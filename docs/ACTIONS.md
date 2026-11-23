@@ -12,14 +12,55 @@ file I/O or upload. The same registered action remains available to older
 servers with a recognized stable version. This is not a replacement API for the
 new upstream Text Editor.
 
-Fourteen conversion actions expose `use_stirling_office_convert`, explicitly
-false by default. Nine gained the option in 3.3.0: `pdf_to_pdfa`, `pdf_to_xml`,
+`pdf_to_vector` and `vector_to_pdf` were removed upstream in 3.4.0. They remain
+registered for older servers; calls on 3.4.0 or newer are rejected locally,
+before reading a file, uploading a document or changing statistics. There is
+no integration-wide minimum of Stirling PDF 3.4.0.
+
+On 3.4.0 or newer, `metadata` accepts `keep_omitted`. Set it to true to retain
+omitted standard metadata fields when changing another field. Omit the option
+to keep the existing clearing behavior, including on older servers. Supplying
+this new field, even as false, requires a recognized version of at least 3.4.0.
+`delete_all: true` takes precedence and still removes all metadata.
+
+`scale_pages` also accepts `page_size: CUSTOM` on 3.4.0 or newer. Supply both
+`custom_width` and `custom_height`, optionally with `custom_unit: mm`, `cm` or
+`in` (the server defaults to mm). Each side must be between 3 PDF points and
+200 inches: at most 5080 mm, 508 cm or 200 in. Custom dimensions determine
+orientation; the server ignores `orientation` for CUSTOM and KEEP. Do not
+combine custom fields with a preset size. Existing KEEP and preset calls send
+no new fields and keep working on older servers.
+
+Before 3.5.0, fourteen conversion actions expose `use_stirling_office_convert`,
+explicitly false by default. Nine gained the option in 3.3.0: `pdf_to_pdfa`, `pdf_to_xml`,
 `html_to_pdf`, `markdown_to_pdf`, `pdf_to_html`, `pdf_to_markdown`, `eml_to_pdf`,
 `ebook_to_pdf` and `pdf_to_epub`. Enabling those nine options requires a recognized
 stable server version at least 3.3.0, as well as the existing external-action
 opt-in and user-admin permission. False is sent explicitly rather than inheriting
-the server's converter default. PDF/X remains legacy; native HTML conversion
-does not apply zoom. Installed dependencies still determine availability.
+the server's converter default. On 3.3-3.4, PDF/X remains legacy and native HTML
+conversion does not apply zoom. Installed dependencies still determine availability.
+
+From 3.5.0, Stirling replaces several legacy conversion backends with an
+in-process Office Convert engine and removes the selector from its API models.
+PDF-to-text, spreadsheet and Markdown extraction retain their respective engines;
+the removal of the selector does not mean every conversion uses Office Convert.
+The integration keeps the HA field for older servers but does not send it to
+recognized stable 3.5.0+ servers. Explicit true still requires the existing
+external-action opt-in and administrator permission; this update does not relax
+those HA permissions. False on 3.5.0+ cannot request an unavailable LibreOffice
+backend. Unknown server versions keep the earlier wire behavior.
+
+`pdf_to_word` accepts `docx` and `odt` on 3.5.0+. Selecting `doc`, or a `.doc`
+output path, is rejected locally before file I/O. Older servers can still use
+that output format. This does not remove `.doc` input from `file_to_pdf`.
+For `html_to_pdf`, zoom must be between 0.1 and 8 on 3.5.0+; older versions keep
+their existing backend behavior. Incompatible choices on an unknown/custom
+version cannot establish support and are rejected rather than guessed.
+
+Stirling 3.5.0 also changes the compression optimizer. Levels remain 1-9,
+but stronger levels can downsample images. Check readability and visual quality,
+not just the file size. The new backend does not establish that conversions or
+accessibility reports are perfect; inspect important outputs independently.
 
 Unknown/custom/pre-release versions are rejected only when needed to establish
 support for a restricted action or an enabled new option; they do not disable
@@ -35,6 +76,10 @@ in the action editor; descriptions identify their underlying API names.
 Additional tools accept up to 32 local files and 64 MiB total input. Structured
 fields and returned JSON have a 4 MiB limit. These limits do not make downloads
 streaming or cap memory used by every response.
+
+Stirling's `security.blockSignedPdfEdits` setting is enforced by its Web/Desktop
+apps, not by API calls or server pipelines. Do not treat it as protection for
+these actions. Work on copies and verify digital signatures independently.
 
 For URL-to-PDF and timestamping, use **Allowed URL hosts** on the selected
 server entry. Enter exact hostnames separated by commas. URL-to-PDF requires
@@ -108,8 +153,8 @@ resources or server-side backends. Review the server's own network controls.
 | `stirling_pdf.cbz_to_pdf` | standard | .cbz | .pdf | `/api/v1/convert/cbz/pdf` |
 | `stirling_pdf.pdf_to_cbr` | standard | .pdf | .cbr | `/api/v1/convert/pdf/cbr` |
 | `stirling_pdf.pdf_to_cbz` | standard | .pdf | .cbz | `/api/v1/convert/pdf/cbz` |
-| `stirling_pdf.pdf_to_vector` | standard | .pdf | .ps, .eps, .pcl, .xps | `/api/v1/convert/pdf/vector` |
-| `stirling_pdf.vector_to_pdf` | standard | .ps, .eps | .pdf | `/api/v1/convert/vector/pdf` |
+| `stirling_pdf.pdf_to_vector` (before 3.4.0 only) | standard | .pdf | .ps, .eps, .pcl, .xps | `/api/v1/convert/pdf/vector` |
+| `stirling_pdf.vector_to_pdf` (before 3.4.0 only) | standard | .ps, .eps | .pdf | `/api/v1/convert/vector/pdf` |
 | `stirling_pdf.pdf_to_ua` | standard | .pdf | .pdf | `/api/v1/convert/pdf/ua` |
 | `stirling_pdf.url_to_pdf` | external | No local input | .pdf | `/api/v1/convert/url/pdf` |
 | `stirling_pdf.analyze_basic_info` | standard | .pdf | .json | `/api/v1/analysis/basic-info` |

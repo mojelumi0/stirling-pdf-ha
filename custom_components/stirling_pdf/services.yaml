@@ -466,7 +466,8 @@
               "A6",
               "LETTER",
               "LEGAL",
-              "KEEP"
+              "KEEP",
+              "CUSTOM"
             ],
             "mode": "dropdown"
           }
@@ -494,6 +495,41 @@
             "max": 1000000000,
             "step": 0.01,
             "mode": "box"
+          }
+        }
+      },
+      "custom_width": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 5080,
+            "step": 0.001,
+            "mode": "box"
+          }
+        }
+      },
+      "custom_height": {
+        "required": false,
+        "selector": {
+          "number": {
+            "min": 0,
+            "max": 5080,
+            "step": 0.001,
+            "mode": "box"
+          }
+        }
+      },
+      "custom_unit": {
+        "required": false,
+        "selector": {
+          "select": {
+            "options": [
+              "mm",
+              "cm",
+              "in"
+            ],
+            "mode": "dropdown"
           }
         }
       }
@@ -1924,6 +1960,12 @@
       "delete_all": {
         "required": true,
         "default": false,
+        "selector": {
+          "boolean": {}
+        }
+      },
+      "keep_omitted": {
+        "required": false,
         "selector": {
           "boolean": {}
         }
